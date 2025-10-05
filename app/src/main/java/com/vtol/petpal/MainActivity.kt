@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import com.vtol.petpal.presentation.NavGraph
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PetPalTheme {
                 Box(modifier = Modifier.fillMaxSize()) {
-
+                    NavGraph()
                 }
             }
         }
