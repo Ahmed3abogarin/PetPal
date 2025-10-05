@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation
+package com.vtol.petpal.presentation.navgraph
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -39,7 +39,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -50,6 +49,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.vtol.petpal.R
+import com.vtol.petpal.presentation.Routes
+import com.vtol.petpal.presentation.home.HomeScreen
+import com.vtol.petpal.presentation.pets.PetsScreen
+import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import kotlinx.coroutines.delay
@@ -198,9 +201,7 @@ fun AppNavigator() {
                 HomeScreen()
             }
             composable(Routes.PetsScreen.route) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Pets Screen")
-                }
+                PetsScreen()
 
             }
             composable(Routes.CalenderScreen.route) {
@@ -218,9 +219,7 @@ fun AppNavigator() {
                 }
             }
             composable(route = Routes.ProfileScreen.route) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Nearby Screen")
-                }
+                ProfileScreen()
             }
         }
 

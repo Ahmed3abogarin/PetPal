@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation
+package com.vtol.petpal.presentation.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
