@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation
+package com.vtol.petpal.presentation.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -12,15 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,12 +55,14 @@ fun HomeScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .verticalScroll(rememberScrollState())
     ) {
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp))
+                .clip(RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)).shadow(elevation = 6.dp)
                 .background(Color(0XFF8638FE))
                 .padding(horizontal = 12.dp)
+
         ) {
             Spacer(modifier = Modifier.height(18.dp))
             Row(
@@ -174,76 +176,78 @@ fun HomeScreen() {
                     .background(Color.White)
                     .padding(14.dp)
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 22.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(bottom = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row {
-                        Icon(
-                            modifier = Modifier.size(32.dp),
-                            imageVector = Icons.Default.Build,
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            modifier = Modifier.size(56.dp).padding(end = 8.dp),
+                            painter = painterResource(R.drawable.ic_walk),
                             contentDescription = null
                         )
-                        Text(text = "Walk", fontSize = 18.sp)
+                        Text(text = "Walk", fontSize = 22.sp)
                     }
-                    Row {
-                        Icon(
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                        Image(
                             modifier = Modifier.size(32.dp),
-                            imageVector = Icons.Default.Info,
+                            painter = painterResource(R.drawable.ic_clock) ,
                             contentDescription = null
                         )
-                        Text(text = "10:00AM", fontSize = 18.sp)
+                        Text(text = "07:00AM", fontSize = 18.sp, modifier= Modifier.padding(start = 6.dp))
                     }
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 22.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(bottom = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row {
-                        Icon(
-                            modifier = Modifier.size(32.dp),
-                            imageVector = Icons.Default.FavoriteBorder,
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            modifier = Modifier.size(52.dp).padding(end = 8.dp),
+                            painter = painterResource(R.drawable.ic_fed),
                             contentDescription = null
                         )
-                        Text(text = "Walk", fontSize = 18.sp)
+                        Text(text = "Feed", fontSize = 22.sp)
                     }
-                    Row {
-                        Icon(
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                        Image(
                             modifier = Modifier.size(32.dp),
-                            imageVector = Icons.Default.Info,
+                            painter = painterResource(R.drawable.ic_clock) ,
                             contentDescription = null
                         )
-                        Text(text = "04:00AM", fontSize = 18.sp)
+                        Text(text = "04:00PM", fontSize = 18.sp, modifier= Modifier.padding(start = 6.dp))
                     }
                 }
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 22.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(bottom = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row {
-                        Icon(
-                            modifier = Modifier.size(32.dp),
-                            imageVector = Icons.Default.Close,
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            modifier = Modifier.size(52.dp).padding(end = 8.dp),
+                            painter = painterResource(R.drawable.ic_pill),
                             contentDescription = null
                         )
-                        Text(text = "Walk", fontSize = 18.sp)
+                        Text(text = "Medicine", fontSize = 22.sp)
                     }
-                    Row {
-                        Icon(
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                        Image(
                             modifier = Modifier.size(32.dp),
-                            imageVector = Icons.Default.Info,
+                            painter = painterResource(R.drawable.ic_clock) ,
                             contentDescription = null
                         )
-                        Text(text = "08:00AM", fontSize = 18.sp)
+                        Text(text = "06:00PM", fontSize = 18.sp, modifier= Modifier.padding(start = 6.dp))
                     }
                 }
             }
@@ -257,14 +261,14 @@ fun HomeScreen() {
                 ActionsButton(
                     modifier = Modifier.weight(1f),
                     onClick = {},
-                    buttonText = "Add Food",
-                    buttonIcon = Icons.Default.Notifications
+                    buttonText = "Add \nFood",
+                    buttonIcon =R.drawable.ic_fed
                 )
                 ActionsButton(
                     modifier = Modifier.weight(1f),
                     onClick = {},
-                    buttonText = "Add Food",
-                    buttonIcon = Icons.Default.Notifications
+                    buttonText = "Add \nWalk",
+                    buttonIcon = R.drawable.ic_walk
                 )
             }
             Row(
@@ -276,19 +280,21 @@ fun HomeScreen() {
                 ActionsButton(
                     modifier = Modifier.weight(1f),
                     onClick = {},
-                    buttonText = "Add Food",
-                    buttonIcon = Icons.Default.Notifications
+                    buttonText = "Add \nVet visit",
+                    buttonIcon = R.drawable.ic_vet
                 )
 
                 ActionsButton(
                     modifier = Modifier.weight(1f),
                     onClick = {},
-                    buttonText = "Add Food",
-                    buttonIcon = Icons.Default.Notifications
+                    buttonText = "Add \nMedicine",
+                    buttonIcon = R.drawable.ic_pill
                 )
 
 
             }
+
+            Spacer(modifier = Modifier.statusBarsPadding().height(30.dp))
 
 
         }
