@@ -16,6 +16,4 @@ val MainPurple = Color(0xFF8638FE)
 
 val ButtonLightGray = Color(0xFFEAEAEA)
 
-val Black = Color(0xFF000000)
-
-val Transparent = Color.Transparent
+val BackgroundColor = Color(0xFFF8F4FF)
