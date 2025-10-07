@@ -69,6 +69,18 @@ fun ProfileScreen() {
             text = "Settings"
         )
 
+        SettingsButton(
+            leadIcon = R.drawable.ic_settings,
+            trailIcon = R.drawable.ic_arrow,
+            text = "Settings"
+        )
+
+        SettingsButton(
+            leadIcon = R.drawable.ic_settings,
+            trailIcon = R.drawable.ic_arrow,
+            text = "Settings"
+        )
+
 
 
 
