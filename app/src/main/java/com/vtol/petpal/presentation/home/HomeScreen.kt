@@ -294,7 +294,7 @@ fun HomeScreen() {
 
             }
 
-            Spacer(modifier = Modifier.statusBarsPadding().height(30.dp))
+            Spacer(modifier = Modifier.statusBarsPadding().height(4.dp))
 
 
         }

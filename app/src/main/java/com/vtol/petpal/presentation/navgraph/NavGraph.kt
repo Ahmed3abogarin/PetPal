@@ -1,9 +1,9 @@
 package com.vtol.petpal.presentation.navgraph
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,12 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,7 +28,6 @@ import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
 import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
-
 
 
 @Composable
@@ -71,42 +67,9 @@ fun AppNavigator() {
 
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        NavHost(startDestination = Routes.HomeScreen.route, navController = navController) {
-            composable(Routes.HomeScreen.route) {
-                HomeScreen()
-            }
-            composable(Routes.PetsScreen.route) {
-                PetsScreen()
-
-            }
-            composable(Routes.CalenderScreen.route) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Calender Screen")
-                }
-            }
-            composable(
-//                enterTransition = { slideInHorizontally(animationSpec = tween(400)) },
-//                popExitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
-                route = Routes.NearbyScreen.route
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Nearby Screen")
-                }
-            }
-            composable(route = Routes.ProfileScreen.route) {
-                ProfileScreen()
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .shadow(3.dp)
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-        ) {
+    Scaffold(
+        containerColor = Color.Transparent,
+        bottomBar = {
             AppBottomNavComponent(
                 selectedIndex = selectedItem,
                 bottomItems = bottomItems,
@@ -140,8 +103,39 @@ fun AppNavigator() {
                     }
                 }
             )
+        }
+    ) { innerPadding ->
+        NavHost(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    innerPadding
+                ), startDestination = Routes.HomeScreen.route, navController = navController
+        ) {
+            composable(Routes.HomeScreen.route) {
+                HomeScreen()
+            }
+            composable(Routes.PetsScreen.route) {
+                PetsScreen()
 
-
+            }
+            composable(Routes.CalenderScreen.route) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Calender Screen")
+                }
+            }
+            composable(
+//                enterTransition = { slideInHorizontally(animationSpec = tween(400)) },
+//                popExitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+                route = Routes.NearbyScreen.route
+            ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Nearby Screen")
+                }
+            }
+            composable(route = Routes.ProfileScreen.route) {
+                ProfileScreen()
+            }
         }
 
     }
