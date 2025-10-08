@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -22,16 +19,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vtol.petpal.ui.theme.LightPurple
+import com.vtol.petpal.R
+import com.vtol.petpal.ui.theme.VeryLightPurple
 
 @Composable
-fun SettingsButton(leadIcon: Int, trailIcon: Int, text: String ){
+fun SettingsButton(leadIcon: Int? = null, text: String ){
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 14.dp).padding(bottom = 10.dp),
+            .padding(horizontal = 14.dp).padding(bottom = 14.dp),
         onClick = {},
-        colors = ButtonDefaults.buttonColors(containerColor = LightPurple),
+        colors = ButtonDefaults.buttonColors(containerColor = VeryLightPurple),
         shape = RoundedCornerShape(14.dp)
     ) {
         Row(
@@ -41,19 +39,22 @@ fun SettingsButton(leadIcon: Int, trailIcon: Int, text: String ){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    tint = Color.Black,
-                    modifier = Modifier.size(36.dp),
-                    painter = painterResource(leadIcon),
-                    contentDescription = null
-                )
+                leadIcon?.let {
+                    Icon(
+                        tint = Color.Black,
+                        modifier = Modifier.size(36.dp),
+                        painter = painterResource(leadIcon),
+                        contentDescription = null
+                    )
+                }
+
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(text = text, fontSize = 22.sp, color = Color.Black)
             }
             Icon(
                 tint = Color.Black,
                 modifier = Modifier.size(32.dp),
-                painter = painterResource(trailIcon),
+                painter = painterResource(R.drawable.ic_arrow),
                 contentDescription = "arrow icon"
             )
 

@@ -38,7 +38,7 @@ fun ProfileScreen() {
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(text = "My Profile", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Image(
             modifier = Modifier
@@ -49,37 +49,42 @@ fun ProfileScreen() {
             contentDescription = "profile image"
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = "Ahmed Adil", fontSize = 18.sp, color = Color.Gray)
-        Spacer(modifier = Modifier.height(18.dp))
+        Text(text = "Ahmed Adil", fontSize = 20.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.height(32.dp))
 
         SettingsButton(
             leadIcon = R.drawable.ic_settings,
-            trailIcon = R.drawable.ic_arrow,
             text = "Settings"
         )
         SettingsButton(
-            leadIcon = R.drawable.ic_settings,
-            trailIcon = R.drawable.ic_arrow,
-            text = "Settings"
+            leadIcon = R.drawable.ic_bell,
+            text = "Notification"
         )
 
         SettingsButton(
-            leadIcon = R.drawable.ic_settings,
-            trailIcon = R.drawable.ic_arrow,
-            text = "Settings"
+            leadIcon = R.drawable.ic_world,
+            text = "Language"
         )
 
         SettingsButton(
-            leadIcon = R.drawable.ic_settings,
-            trailIcon = R.drawable.ic_arrow,
-            text = "Settings"
+            leadIcon = R.drawable.ic_contact,
+            text = "Emergency contacts"
         )
 
         SettingsButton(
-            leadIcon = R.drawable.ic_settings,
-            trailIcon = R.drawable.ic_arrow,
-            text = "Settings"
+            leadIcon = R.drawable.ic_invite,
+            text = "Invite friends"
         )
+
+        SettingsButton(
+            leadIcon = R.drawable.ic_help,
+            text = "Invite friends"
+        )
+
+        SettingsButton(
+            text = "Terms & Privacy"
+        )
+
 
 
 
