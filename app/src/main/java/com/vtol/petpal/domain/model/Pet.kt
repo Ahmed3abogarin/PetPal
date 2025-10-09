@@ -8,4 +8,5 @@ data class Pet(
     val gender: PetGender,
     val specie: String?,
     val weight: Double,
+    val weightUnit: WeightUnit
 )
