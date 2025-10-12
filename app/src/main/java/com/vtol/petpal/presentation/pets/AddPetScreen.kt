@@ -1,30 +1,34 @@
 package com.vtol.petpal.presentation.pets
 
 import android.app.DatePickerDialog
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -33,15 +37,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.model.WeightUnit
@@ -59,6 +67,13 @@ fun AddPetScreen() {
     var petWeight by remember { mutableStateOf("") }
     var selectWUnit by remember { mutableStateOf(WeightUnit.KG) }
     var gender by remember { mutableStateOf("") }
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Image picker
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri -> imageUri = uri }
 
 
     var expanded by remember { mutableStateOf(false) }
@@ -85,12 +100,28 @@ fun AddPetScreen() {
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
 
-        Button(
-            onClick = {}, modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
-            shape = RoundedCornerShape(14.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(14.dp))
+                .background(if (imageUri == null) Color.LightGray else Color.Transparent)
+                .clickable { imagePickerLauncher.launch("image/*") },
+            contentAlignment = Alignment.Center
+
         ) {
-            Text(text = "Add Image", modifier = Modifier.padding(70.dp))
+            if (imageUri == null) {
+                Text(text = "Add Image", modifier = Modifier.padding(70.dp))
+            } else {
+                Image(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape),
+                    painter = rememberAsyncImagePainter(imageUri),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Pet image"
+                )
+            }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -100,33 +131,16 @@ fun AddPetScreen() {
         PetTextField(placeHolder = "Specie", value = petSpecie) { petSpecie = it }
 
         // TODO: Add a unit in the end of the text field using Row and drop down menu kg/pound/gram
-        Row {
-            PetTextField(
-                modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                placeHolder = "Weight(kg)",
-                value = petWeight
-            ) { petWeight = it }
-
-            Box() {
-                OutlinedButton(onClick = { expanded = true }, shape = RoundedCornerShape(10.dp)) {
-                    Text(selectWUnit.displayName)
-                }
-                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    WeightUnit.entries.forEach { unit ->
-                        DropdownMenuItem(
-                            text = { Text(unit.displayName) },
-                            onClick = {
-                                selectWUnit = unit
-                                expanded = false
-                            }
-                        )
-                    }
-                }
+        PetTextField(
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            placeHolder = "Weight(kg)",
+            trailingIcon = Icons.Default.Face,
+            value = petWeight,
+            selectedUnit = selectWUnit,
+            onTrailingClicked = {
+                selectWUnit = WeightUnit.entries.iterator().next()
             }
-
-
-        }
+        ) { petWeight = it }
 
 
         // Gender
@@ -188,7 +202,11 @@ fun AddPetScreen() {
             readOnly = true,
             enabled = false,
             trailingIcon = {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = null, tint = Color.Black)
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = null,
+                    tint = Color.Black
+                )
             }
         )
 
