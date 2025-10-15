@@ -44,9 +44,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.FeedType
 import com.vtol.petpal.domain.model.Recurrence
+import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.formatDate
 import java.time.LocalDate
@@ -204,15 +206,10 @@ fun FeedScreen() {
             )
         }
 
-        Button(modifier = Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter), onClick = {}) {
-            Text("Add Feed")
-        }
-
+        SaveButton(modifier = Modifier.align(Alignment.BottomCenter),text= "Save Feed", color = Color(0XFFFFBC5E), onClick = {} )
     }
-
 }
+
 
 @Composable
 fun CustomDropdownMenu(
