@@ -1,8 +1,6 @@
 package com.vtol.petpal.presentation.home.components
 
 import android.app.DatePickerDialog
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -44,7 +42,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.FeedType
 import com.vtol.petpal.domain.model.Recurrence
@@ -210,67 +207,6 @@ fun FeedScreen() {
     }
 }
 
-
-@Composable
-fun CustomDropdownMenu(
-    modifier: Modifier = Modifier,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    val angle by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        label = "Angle Animation"
-    )
-
-    Column(modifier = modifier) {
-        // The "anchor" field
-        OutlinedTextField(
-            value = selectedOption,
-            onValueChange = {},
-            readOnly = true,
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded },
-            label = { Text("Recurrence") },
-            trailingIcon = {
-                Icon(
-                    modifier = Modifier.rotate(degrees = angle),
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
-                )
-            }
-        )
-
-        // The dropdown list (only shown when expanded)
-        AnimatedVisibility(visible = expanded) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .border(1.dp, Color.LightGray)
-                    .background(Color.White)
-            ) {
-                Recurrence.entries.forEach { option ->
-                    Text(
-                        text = option.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onOptionSelected(option.name)
-                                expanded = false
-                            }
-                            .padding(12.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-    }
-}
 
 
 @Composable
