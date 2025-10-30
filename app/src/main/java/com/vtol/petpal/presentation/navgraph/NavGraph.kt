@@ -26,6 +26,7 @@ import com.vtol.petpal.presentation.Routes
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
+import com.vtol.petpal.presentation.nearby.NearByScreen
 import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 
@@ -129,9 +130,7 @@ fun AppNavigator() {
 //                popExitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
                 route = Routes.NearbyScreen.route
             ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Nearby Screen")
-                }
+                NearByScreen()
             }
             composable(route = Routes.ProfileScreen.route) {
                 ProfileScreen()

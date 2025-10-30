@@ -63,4 +63,13 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
 
+    // Google maps dependencies
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.places)
+
+
+    implementation("androidx.compose.material:material-icons-extended")
+
 }
