@@ -2,7 +2,6 @@ package com.vtol.petpal.presentation.nearby
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,10 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -45,18 +40,12 @@ import kotlinx.coroutines.launch
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 @Composable
 fun NearByScreenContent() {
-    val application = LocalContext.current.applicationContext as Application
+
+    val viewModel: NearViewModel = hiltViewModel()
 
     val cameraPositionState = rememberCameraPositionState()
 
 
-    val viewModel: NearViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return NearViewModel(application) as T
-            }
-        }
-    )
 
     val location by viewModel.location.collectAsState()
 
@@ -95,7 +84,7 @@ fun NearByScreenContent() {
             cameraPositionState = cameraPositionState
         ) {
             vets.forEachIndexed { index, vet ->
-                Log.v("gjkdsghs", "ITs: ${vet.address}")
+                Log.v("Address", "ITs: ${vet.address}")
                 Marker(state = MarkerState(LatLng(vet.lat, vet.lng)), onClick = {
                     selectedVet = index
                     coroutineScope.launch {
