@@ -84,7 +84,7 @@ fun NearByScreenContent() {
             cameraPositionState = cameraPositionState
         ) {
             vets.forEachIndexed { index, vet ->
-                Log.v("gjkdsghs", "ITs: ${vet.address}")
+                Log.v("Address", "ITs: ${vet.address}")
                 Marker(state = MarkerState(LatLng(vet.lat, vet.lng)), onClick = {
                     selectedVet = index
                     coroutineScope.launch {

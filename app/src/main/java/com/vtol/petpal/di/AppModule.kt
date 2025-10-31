@@ -20,7 +20,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(@ApplicationContext context: Context): AppRepositoryImpl =
+    fun provideAppRepository(@ApplicationContext context: Context): AppRepository =
         AppRepositoryImpl(context)
 
 
