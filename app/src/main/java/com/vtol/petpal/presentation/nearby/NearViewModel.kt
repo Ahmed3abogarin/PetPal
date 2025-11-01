@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.vtol.petpal.domain.LocationProvider
+import com.vtol.petpal.domain.model.PlaceCategory
 import com.vtol.petpal.domain.model.Vet
-import com.vtol.petpal.domain.repository.AppRepository
+import com.vtol.petpal.domain.usecases.AppUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,28 +17,36 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NearViewModel @Inject constructor(
-    private val repository: AppRepository,
+    private val appUseCases: AppUseCases,
     private val locationProvider: LocationProvider
 ): ViewModel(){
 
-    private val _vets = MutableStateFlow<List<Vet>>(emptyList())
-    val vets = _vets.asStateFlow()
+    private val _locations = MutableStateFlow<List<Vet>>(emptyList())
+    val locations = _locations.asStateFlow()
+
+    private val _selectedCategory = MutableStateFlow(PlaceCategory.VETS)
+    val selectedCategory = _selectedCategory.asStateFlow()
 
     private val _location = MutableStateFlow<LatLng?>(null)
     val location = _location.asStateFlow()
 
     init {
-        getVets()
+        getLocations()
     }
 
-    fun getVets(){
+    fun onCategorySelected(category: PlaceCategory) {
+        _selectedCategory.value = category
+        getLocations()
+    }
+
+    fun getLocations(){
         viewModelScope.launch {
             val userLocation = locationProvider.getCurrentLocation()
 //            val jeddahLocation = LatLng(21.4858, 39.1925)
             userLocation?.let {
                 Log.v("Current",it.toString())
                 _location.value = it
-                _vets.value = repository.getNearByVets(it)
+                _locations.value = appUseCases.getNearLocations(it,selectedCategory.value)
             }
 
         }

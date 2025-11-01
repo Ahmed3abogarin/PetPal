@@ -8,6 +8,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.net.SearchNearbyRequest
 import com.google.android.libraries.places.api.net.SearchNearbyResponse
+import com.vtol.petpal.domain.model.PlaceCategory
 import com.vtol.petpal.domain.model.Vet
 import com.vtol.petpal.domain.repository.AppRepository
 import kotlinx.coroutines.tasks.await
@@ -22,7 +23,7 @@ class AppRepositoryImpl(
         Places.createClient(context.applicationContext)
     }
 
-    override suspend fun getNearByVets(userLocation: LatLng): List<Vet> {
+    override suspend fun getNearLocations(userLocation: LatLng,category: PlaceCategory): List<Vet> {
         // Define what fields we want back
         val fields = listOf(
             Place.Field.DISPLAY_NAME,
@@ -37,7 +38,7 @@ class AppRepositoryImpl(
         // Build the SearchNearbyRequest
         val request = SearchNearbyRequest
             .builder(bounds, fields)
-            .setIncludedTypes(listOf("veterinary_care"))
+            .setIncludedTypes(listOf(category.apiType))
             .setMaxResultCount(20)
             .setRankPreference(SearchNearbyRequest.RankPreference.POPULARITY)
             .build()

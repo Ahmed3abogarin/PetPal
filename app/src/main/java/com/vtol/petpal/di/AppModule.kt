@@ -26,7 +26,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppUseCases(repository: AppRepository) = AppUseCases(getVets = GetVets(repository))
+    fun provideAppUseCases(repository: AppRepository) = AppUseCases(getNearLocations = GetVets(repository))
 
     @Provides
     @Singleton

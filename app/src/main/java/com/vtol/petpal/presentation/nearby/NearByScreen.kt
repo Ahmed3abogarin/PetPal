@@ -6,9 +6,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresPermission
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,16 +26,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.vtol.petpal.R
+import com.vtol.petpal.presentation.nearby.components.CategoryList
+import com.vtol.petpal.presentation.nearby.components.LoadingIndicator
 import com.vtol.petpal.presentation.nearby.components.LocationList
 import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.launch
@@ -46,11 +59,13 @@ fun NearByScreenContent() {
     val cameraPositionState = rememberCameraPositionState()
 
 
-
     val location by viewModel.location.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+
+    var isLoaded by remember { mutableStateOf(false) }
 
 
-    val vets by viewModel.vets.collectAsState()
+    val vets by viewModel.locations.collectAsState()
 
     LaunchedEffect(location) {
         location?.let {
@@ -67,6 +82,7 @@ fun NearByScreenContent() {
         vets.size
     }
 
+    // maybe i could let listen to the selected VEt index instead of pager state for smoother movement
     LaunchedEffect(pagerState.currentPage) {
         if (vets.isNotEmpty()) {
             val vet = vets[pagerState.currentPage]
@@ -78,29 +94,81 @@ fun NearByScreenContent() {
     }
 
 
+
     Box(modifier = Modifier.fillMaxSize()) {
-        GoogleMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState
-        ) {
-            vets.forEachIndexed { index, vet ->
-                Log.v("Address", "ITs: ${vet.address}")
-                Marker(state = MarkerState(LatLng(vet.lat, vet.lng)), onClick = {
-                    selectedVet = index
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
-                    true
-                })
+
+        location?.let { location ->
+            val cLocation = remember { MarkerState(LatLng(location.latitude, location.latitude)) }
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                onMapLoaded = { isLoaded = true }
+            ) {
+                // first display the user location
+
+                Marker(
+                    state = cLocation,
+                    icon = vectorToBitmapDescriptor(R.drawable.profile_img)
+                )
+
+
+                vets.forEachIndexed { index, vet ->
+                    Log.v("Address", "ITs: ${vet.address}")
+
+                    // then shows the near selected locations
+
+                        Marker(state = MarkerState(LatLng(vet.lat, vet.lng)), onClick = {
+                            selectedVet = index
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                            true
+                        })
+
+
+
+                }
             }
+
+            AnimatedVisibility(
+                visible = !isLoaded,
+                exit = fadeOut()
+            ) {
+                LoadingIndicator()
+            }
+
+            if (isLoaded) {
+                CategoryList(
+                    Modifier
+                        .align(Alignment.TopStart)
+                        .padding(start = 6.dp),
+                    selectedCategory,
+                    onCategoryClicked = {
+                        viewModel.onCategorySelected(it)
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    })
+
+                LocationList(
+                    Modifier
+                        .align(Alignment.BottomCenter),
+                    vets,
+                    pagerState
+                )
+
+            }
+
+
         }
-        LocationList(
-            Modifier
-                .align(Alignment.BottomCenter),
-            vets,
-            pagerState
-        )
     }
+}
+
+@Composable
+fun vectorToBitmapDescriptor(@DrawableRes resId: Int): BitmapDescriptor {
+    val imageBitmap = ImageBitmap.imageResource(resId)
+    val bitmap = imageBitmap.asAndroidBitmap()
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
 }
 
 
