@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Vet
@@ -37,9 +38,9 @@ import com.vtol.petpal.ui.theme.MainPurple
 fun LocationList(modifier: Modifier,locationList: List<Vet>, pagerState: PagerState) {
 
     HorizontalPager(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         state = pagerState,
-        contentPadding = PaddingValues(horizontal = 20.dp)
+        contentPadding = PaddingValues(horizontal = 42.dp)
     ) {
         LocationCard(locationList[it])
     }
@@ -51,9 +52,10 @@ fun LocationCard(vet: Vet) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
-            .height(230.dp)
-            .width(320.dp),
-        shape = RoundedCornerShape(12.dp),
+            .height(200.dp)
+            .width(290.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.elevatedCardElevation(12.dp),
         onClick = {
             Toast.makeText(context,vet.name, Toast.LENGTH_SHORT).show()
@@ -72,7 +74,9 @@ fun LocationCard(vet: Vet) {
             Text(
                 modifier = Modifier.padding(start = 10.dp, top = 8.dp),
                 fontWeight = FontWeight.Bold,
-                text = vet.name
+                text = vet.name,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Row(

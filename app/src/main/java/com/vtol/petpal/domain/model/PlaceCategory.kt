@@ -1,8 +1,10 @@
 package com.vtol.petpal.domain.model
 
-enum class PlaceCategory(val apiType: String, val displayName: String) {
-    VETS("veterinary_care","Vets"),
-    PET_STORES("pet_store", "Pet Stores"),
-    PHARMACIES("pharmacy", "Pharmacies"),
-    PARKS("park", "Parks")
+import com.vtol.petpal.R
+
+enum class PlaceCategory(val apiType: String, val displayName: String, val image: Int) {
+    VETS("veterinary_care","Vets", R.drawable.ic_vets),
+    PET_STORES("pet_store", "Pet Stores", R.drawable.ic_stores),
+    PHARMACIES("pharmacy", "Pharmacies", R.drawable.ic_pill),
+    PARKS("park", "Parks",R.drawable.ic_walk)
 }

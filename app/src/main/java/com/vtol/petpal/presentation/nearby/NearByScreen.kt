@@ -140,19 +140,20 @@ fun NearByScreenContent() {
             if (isLoaded) {
                 CategoryList(
                     Modifier
-                        .align(Alignment.TopStart)
-                        .padding(start = 6.dp),
+                        .align(Alignment.TopStart),
                     selectedCategory,
                     onCategoryClicked = {
                         viewModel.onCategorySelected(it)
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(0)
                         }
-                    })
+                    }
+                )
 
                 LocationList(
                     Modifier
-                        .align(Alignment.BottomCenter),
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 12.dp),
                     vets,
                     pagerState
                 )
