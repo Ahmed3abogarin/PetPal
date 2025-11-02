@@ -1,7 +1,7 @@
 package com.vtol.petpal.domain.model
 
 data class Pet(
-    val id: Int,
+    val id: String,
     val petName: String,
     val imagePath: String,
     val birthDate: Long?,

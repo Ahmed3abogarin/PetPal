@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.vtol.petpal" />
+                  <option name="mobileSdkAppId" value="1:1007685405239:android:586e9774deccfcc64b4db2" />
+                  <option name="projectId" value="petpal-1ef9e" />
+                  <option name="projectNumber" value="1007685405239" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

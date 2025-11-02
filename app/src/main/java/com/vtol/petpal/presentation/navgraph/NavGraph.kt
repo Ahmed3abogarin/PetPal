@@ -27,6 +27,7 @@ import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
 import com.vtol.petpal.presentation.nearby.NearByScreen
+import com.vtol.petpal.presentation.pets.AddPetScreen
 import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 
@@ -68,42 +69,53 @@ fun AppNavigator() {
 
     }
 
+    var isBottomNavVisible = remember(backstackState) {
+                backstackState?.destination?.route == Routes.HomeScreen.route ||
+                backstackState?.destination?.route == Routes.PetsScreen.route ||
+                backstackState?.destination?.route == Routes.CalenderScreen.route ||
+                backstackState?.destination?.route == Routes.NearbyScreen.route ||
+                backstackState?.destination?.route == Routes.ProfileScreen.route
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
-            AppBottomNavComponent(
-                selectedIndex = selectedItem,
-                bottomItems = bottomItems,
-                onItemClicked = { index ->
-                    when (index) {
-                        0 -> navigateToTab(
-                            navController,
-                            route = Routes.HomeScreen.route
-                        )
+            if (isBottomNavVisible){
+                AppBottomNavComponent(
+                    selectedIndex = selectedItem,
+                    bottomItems = bottomItems,
+                    onItemClicked = { index ->
+                        when (index) {
+                            0 -> navigateToTab(
+                                navController,
+                                route = Routes.HomeScreen.route
+                            )
 
-                        1 -> navigateToTab(
-                            navController,
-                            route = Routes.PetsScreen.route
-                        )
+                            1 -> navigateToTab(
+                                navController,
+                                route = Routes.PetsScreen.route
+                            )
 
-                        2 -> navigateToTab(
-                            navController = navController,
-                            route = Routes.CalenderScreen.route
-                        )
+                            2 -> navigateToTab(
+                                navController = navController,
+                                route = Routes.CalenderScreen.route
+                            )
 
-                        3 -> navigateToTab(
-                            navController = navController,
-                            route = Routes.NearbyScreen.route
-                        )
+                            3 -> navigateToTab(
+                                navController = navController,
+                                route = Routes.NearbyScreen.route
+                            )
 
-                        4 -> navigateToTab(
-                            navController = navController,
-                            route = Routes.ProfileScreen.route
-                        )
+                            4 -> navigateToTab(
+                                navController = navController,
+                                route = Routes.ProfileScreen.route
+                            )
 
+                        }
                     }
-                }
-            )
+                )
+            }
+
         }
     ) { innerPadding ->
         NavHost(
@@ -117,7 +129,11 @@ fun AppNavigator() {
                 HomeScreen()
             }
             composable(Routes.PetsScreen.route) {
-                PetsScreen()
+                PetsScreen(
+                    navigateToAddPetScreen = {
+                        navController.navigate(Routes.AddPetScreen.route)
+                    }
+                )
 
             }
             composable(Routes.CalenderScreen.route) {
@@ -134,6 +150,11 @@ fun AppNavigator() {
             }
             composable(route = Routes.ProfileScreen.route) {
                 ProfileScreen()
+            }
+
+            // sub screens
+            composable(route = Routes.AddPetScreen.route){
+                AddPetScreen()
             }
         }
 
