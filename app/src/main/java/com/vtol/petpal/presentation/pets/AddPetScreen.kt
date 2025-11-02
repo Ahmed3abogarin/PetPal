@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
@@ -29,6 +30,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -97,32 +99,49 @@ fun AddPetScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(14.dp))
-                .background(if (imageUri == null) Color.LightGray else Color.Transparent)
-                .clickable { imagePickerLauncher.launch("image/*") },
-            contentAlignment = Alignment.Center
-
-        ) {
-            if (imageUri == null) {
-                Text(text = "Add Image", modifier = Modifier.padding(70.dp))
-            } else {
-                Image(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape),
-                    painter = rememberAsyncImagePainter(imageUri),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = "Pet image"
+        
+        Box(modifier= Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 14.dp)){
+            IconButton(onClick = {}) {
+                Icon(
+                    modifier = Modifier.size(42.dp),
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = ""
                 )
             }
-
+            Text(modifier= Modifier.align(Alignment.Center),text = "Add Pet", style= MaterialTheme.typography.headlineMedium)
         }
+
+        Column(
+            modifier = Modifier
+                .size(142.dp)
+                .clip(CircleShape)
+                .background(Color.Transparent)
+                .clickable { imagePickerLauncher.launch("image/*") }
+        ) {
+
+            if (imageUri == null) {
+                Image(
+                    modifier = Modifier.fillMaxSize().background(Color.LightGray),
+                    painter = painterResource(R.drawable.ic_camera),
+                    contentScale = ContentScale.Inside,
+                    contentDescription = "Pet image"
+                )
+            } else {
+
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = rememberAsyncImagePainter(imageUri),
+                    contentDescription = "Pet image"
+                )
+
+            }
+        }
+        Spacer(modifier= Modifier.height(4.dp))
+        Text(text = "Add photo", color= Color.LightGray, style= MaterialTheme.typography.headlineSmall)
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -219,7 +238,7 @@ fun AddPetScreen() {
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = LightPurple)
         ) {
-            Text(text = "Add Pet")
+            Text(modifier= Modifier.padding(vertical = 2.dp),text = "Add Pet", style = MaterialTheme.typography.headlineSmall)
         }
     }
 }
