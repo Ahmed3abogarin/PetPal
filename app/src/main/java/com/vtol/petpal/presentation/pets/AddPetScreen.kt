@@ -2,6 +2,8 @@ package com.vtol.petpal.presentation.pets
 
 import android.app.DatePickerDialog
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
@@ -21,54 +23,54 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.Timestamp
 import com.vtol.petpal.R
+import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.model.WeightUnit
+import com.vtol.petpal.presentation.home.components.CustomDropdownMenu
+import com.vtol.petpal.presentation.home.components.MyDropDownMenu
+import com.vtol.petpal.presentation.nearby.components.LoadingIndicator
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.LightPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.formatDate
-import java.time.LocalDate
+import java.util.Calendar
 
 @Composable
-fun AddPetScreen() {
+fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
     val context = LocalContext.current
     var petName by remember { mutableStateOf("") }
     var petSpecie by remember { mutableStateOf("") }
     var petWeight by remember { mutableStateOf("") }
     var selectWUnit by remember { mutableStateOf(WeightUnit.KG) }
-    var gender by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf(PetGender.Unknown) }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -80,14 +82,30 @@ fun AddPetScreen() {
 
     var expanded by remember { mutableStateOf(false) }
 
-    var birthDate by remember { mutableStateOf<LocalDate?>(null) }
+    var birthDate by remember { mutableStateOf<Timestamp?>(null) }
+
+    // TODO : what is the difference between the old and the new one
+//    val datePicker = DatePickerDialog(
+//        context,
+//        { _, year, month, day ->
+//            birthDate = LocalDate.of(year, month + 1, day)
+//        },
+//        LocalDate.now().year, LocalDate.now().monthValue - 1, LocalDate.now().dayOfMonth
+//    )
+
+    val calendar = Calendar.getInstance()
 
     val datePicker = DatePickerDialog(
         context,
-        { _, year, month, day ->
-            birthDate = LocalDate.of(year, month + 1, day)
+        { _, year, month, dayOfMonth ->
+            calendar.set(year, month, dayOfMonth)
+            val date = calendar.time
+            val timestamp = Timestamp(date)
+            birthDate = timestamp
         },
-        LocalDate.now().year, LocalDate.now().monthValue - 1, LocalDate.now().dayOfMonth
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
     )
 
     val angle by animateFloatAsState(
@@ -104,7 +122,7 @@ fun AddPetScreen() {
     ) {
         
         Box(modifier= Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 14.dp)){
-            IconButton(onClick = {}) {
+            IconButton(onClick = { navigateUp() }) {
                 Icon(
                     modifier = Modifier.size(42.dp),
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -134,6 +152,7 @@ fun AddPetScreen() {
                 Image(
                     modifier = Modifier.fillMaxSize(),
                     painter = rememberAsyncImagePainter(imageUri),
+                    contentScale = ContentScale.FillBounds,
                     contentDescription = "Pet image"
                 )
 
@@ -163,51 +182,22 @@ fun AddPetScreen() {
 
 
         // Gender
-        Box {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = gender,
-                placeholder = { Text("Choose a gender") },
-                onValueChange = { gender = it },
-                shape = RoundedCornerShape(10.dp),
-                leadingIcon = if (gender.isNotEmpty()) {
-                    {
-                        Image(
-                            painter = painterResource(R.drawable.ic_male),
-                            contentDescription = "gender icon"
-                        )
-                    }
-                } else null,
-                trailingIcon = {
-                    IconButton(
-                        modifier = Modifier
-                            .alpha(0.5f)
-                            .rotate(degrees = angle),
-                        onClick = { expanded = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = null
-                        )
-                    }
-                },
-                colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Color.LightGray),
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                PetGender.entries.forEach { genderName ->
-                    DropdownMenuItem(
-                        text = { Text(genderName.name) },
-                        onClick = {
-                            expanded = false
-                            gender = genderName.name
-                        }
-                    )
-                }
-            }
-        }
+//        CustomDropdownMenu(
+//            selectedOption = "",
+//            onOptionSelected = {},
+//            options = PetGender.entries.map { it.name }
+//        )
+
+        var selectedIndex by remember { mutableIntStateOf(-1) }
+
+        MyDropDownMenu(
+            items = PetGender.entries.map { it.name },
+            selectedIndex = selectedIndex,
+            onItemSelected = { index, _ -> selectedIndex = index},
+            label = "Gender"
+        )
+
+
         // Birth date picker
 
         OutlinedTextField(
@@ -228,13 +218,37 @@ fun AddPetScreen() {
                 )
             }
         )
+      val state by viewModel.state.collectAsState()
+        when(state){
+            is Resource.Loading -> {
+                LoadingIndicator()
+            }
+            is Resource.Success -> {
+                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show()
+
+            }
+            is Resource.Error -> {
+                val error = (state as Resource.Error).message
+                Log.e("sgsdhsd", error)
+            }
+            else -> Unit
+        }
 
         // Add button: float button or regular button
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 14.dp),
-            onClick = {},
+            onClick = {
+                    viewModel.addPet(
+                        Pet(
+                            petName = petName,
+                            birthDate = birthDate,
+                            gender = gender
+                        )
+                    )
+
+            },
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = LightPurple)
         ) {
@@ -243,11 +257,11 @@ fun AddPetScreen() {
     }
 }
 
-@Preview
-@Composable
-fun MyScreenPets() {
-    PetPalTheme {
-        AddPetScreen()
-
-    }
-}
+//@Preview
+//@Composable
+//fun MyScreenPets() {
+//    PetPalTheme {
+//        AddPetScreen(navigateUp = {})
+//
+//    }
+//}

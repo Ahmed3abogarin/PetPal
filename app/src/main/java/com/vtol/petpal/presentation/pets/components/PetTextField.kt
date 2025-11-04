@@ -39,7 +39,9 @@ fun PetTextField(
         shape = RoundedCornerShape(10.dp),
         trailingIcon = {
             trailingIcon?.let {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    onTrailingClicked?.invoke()
+                }) {
                     Text(selectedUnit?.name?.lowercase() ?: "")
                 }
             }
