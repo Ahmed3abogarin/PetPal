@@ -8,6 +8,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.domain.model.WeightUnit
+import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
@@ -33,7 +35,11 @@ fun PetTextField(
             .fillMaxWidth()
             .padding(bottom = 12.dp),
         value = value,
-        colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Color.LightGray),
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedBorderColor = Color.LightGray,
+            focusedBorderColor = MainPurple
+        ),
+        maxLines = 1,
         onValueChange = { onValueChanged(it) },
         placeholder = { Text(text = placeHolder, color = Color.LightGray) },
         shape = RoundedCornerShape(10.dp),
@@ -42,7 +48,7 @@ fun PetTextField(
                 IconButton(onClick = {
                     onTrailingClicked?.invoke()
                 }) {
-                    Text(selectedUnit?.name?.lowercase() ?: "")
+                    Text(selectedUnit?.displayName ?: "")
                 }
             }
 

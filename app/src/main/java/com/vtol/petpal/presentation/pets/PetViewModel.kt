@@ -22,6 +22,7 @@ class PetViewModel @Inject constructor(
 
     fun addPet(pet: Pet){
         viewModelScope.launch {
+            _state.value = Resource.Loading
             _state.value =  appUseCases.addPet(pet)
         }
     }

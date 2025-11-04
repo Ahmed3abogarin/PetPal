@@ -1,16 +1,11 @@
 package com.vtol.petpal.util
 
-import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
-fun LocalDate.formatDate(): String {
-    return this.format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
-}
-
-fun Timestamp.formatDate(): String {
-    val sdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    return sdf.format(this.toDate())
+fun Long.formatDate(): String {
+    val date = Date(this)
+    val formatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    return formatter.format(date)
 }

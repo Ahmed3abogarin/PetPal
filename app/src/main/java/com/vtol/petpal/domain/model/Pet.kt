@@ -6,7 +6,7 @@ data class Pet(
     val id: String = "",
     val petName: String = "",
     val imagePath: String = "",
-    val birthDate: Timestamp? = null,
+    val birthDate: Long? = null,
     val gender: PetGender = PetGender.Unknown,
     val specie: String? = "",
     val weight: Double = 0.0,
