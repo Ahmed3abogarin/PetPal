@@ -52,6 +52,7 @@ fun <T> MyDropDownMenu(
     label: String,
     notSetLabel: String? = null,
     items: List<T>,
+    error: String? = null,
     selectedIndex: Int = -1,
     onItemSelected: (index: Int, item: T) -> Unit,
     selectedItemToString: (T) -> String = { it.toString() },
@@ -86,6 +87,12 @@ fun <T> MyDropDownMenu(
             enabled = enabled,
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier.fillMaxWidth(),
+            isError = error != null,
+            supportingText = {
+                if (error != null){
+                    Text(error)
+                }
+            },
             trailingIcon = {
                 val icon = if (expanded) Icons.Default.ArrowDropUp else Icons.Default.KeyboardArrowDown
                 Icon(icon, "")

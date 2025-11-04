@@ -65,10 +65,22 @@ import com.vtol.petpal.util.formatDate
 fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
     val context = LocalContext.current
     var petName by remember { mutableStateOf("") }
+    var petNameError by remember { mutableStateOf<String?>(null) }
+
     var petSpecie by remember { mutableStateOf("") }
+    var petSpecieError by remember { mutableStateOf<String?>(null) }
+
+
     var petWeight by remember { mutableStateOf("") }
+    var petWeightError by remember { mutableStateOf<String?>(null) }
+
+
     var selectWUnit by remember { mutableStateOf(WeightUnit.KG) }
+
     var gender by remember { mutableStateOf(PetGender.Unknown) }
+    var genderError by remember {mutableStateOf<String?>(null)}
+
+
     var birthDate by remember { mutableStateOf<Long?>(null) }
     var selectedIndex by remember { mutableIntStateOf(-1) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -160,9 +172,9 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
 
-            PetTextField(placeHolder = "Pet Name", value = petName) { petName = it }
+            PetTextField(placeHolder = "Pet Name", value = petName, error = petNameError) { petName = it }
 
-            PetTextField(placeHolder = "Specie", value = petSpecie) { petSpecie = it }
+            PetTextField(placeHolder = "Specie", value = petSpecie, error = petSpecieError) { petSpecie = it }
 
             // TODO: Add a unit in the end of the text field using Row and drop down menu kg/pound/gram
             PetTextField(
@@ -171,6 +183,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                 trailingIcon = Icons.Default.Face,
                 value = petWeight,
                 selectedUnit = selectWUnit,
+                error = petWeightError,
                 onTrailingClicked = {
                     val nextIndex =
                         (WeightUnit.entries.indexOf(selectWUnit) + 1) % WeightUnit.entries.size
@@ -187,6 +200,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                     focusManger.clearFocus()
                     selectedIndex = index
                 },
+                error = genderError,
                 label = "Gender"
             )
 
@@ -233,14 +247,42 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                 enabled = isUiEnabled,
                 onClick = {
                     focusManger.clearFocus()
-                    viewModel.addPet(
-                        Pet(
-                            petName = petName,
-                            birthDate = birthDate,
-                            gender = gender,
-                            weightUnit = selectWUnit
+
+                    // validate the inputs
+                    var isValid = true
+
+                    petNameError = if (petName.isBlank()) {
+                        isValid = false
+                        "This field cannot be empty"
+                    } else null
+
+                    petSpecieError = if (petSpecie.isBlank()) {
+                        isValid = false
+                        "This field cannot be empty"
+                    } else null
+
+                    petWeightError = if (petWeight.isBlank()) {
+                        isValid = false
+                        "This field cannot be empty"
+                    } else null
+
+                    genderError = if (genderError == null) {
+                        isValid = false
+                        "This field cannot be empty"
+                    } else null
+
+                    if (isValid){
+                        viewModel.addPet(
+                            Pet(
+                                petName = petName,
+                                birthDate = birthDate,
+                                gender = gender,
+                                weightUnit = selectWUnit
+                            )
                         )
-                    )
+                    }
+
+
 
                 },
                 shape = RoundedCornerShape(10.dp),

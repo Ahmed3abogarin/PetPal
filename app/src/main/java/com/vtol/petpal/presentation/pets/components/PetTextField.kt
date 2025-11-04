@@ -8,7 +8,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +24,7 @@ fun PetTextField(
     keyboardOptions: KeyboardOptions? = null,
     placeHolder: String,
     value: String,
+    error: String? = null,
     selectedUnit: WeightUnit? = null,
     trailingIcon: ImageVector? = null,
     onTrailingClicked: (() -> Unit)? = null,
@@ -39,6 +39,7 @@ fun PetTextField(
             unfocusedBorderColor = Color.LightGray,
             focusedBorderColor = MainPurple
         ),
+        isError = error != null,
         maxLines = 1,
         onValueChange = { onValueChanged(it) },
         placeholder = { Text(text = placeHolder, color = Color.LightGray) },
@@ -51,7 +52,11 @@ fun PetTextField(
                     Text(selectedUnit?.displayName ?: "")
                 }
             }
-
+        },
+        supportingText = {
+            if (error != null ){
+                Text(text = error)
+            }
         },
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default
     )
