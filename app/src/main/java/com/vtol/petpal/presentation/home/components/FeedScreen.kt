@@ -174,8 +174,8 @@ fun FeedScreen() {
                 selectedOption = selectedRecurrence,
                 onOptionSelected = {
                     selectedRecurrence = it
-                }
-
+                },
+                options = Recurrence.entries.map { it.name }
             )
 
             // Notes

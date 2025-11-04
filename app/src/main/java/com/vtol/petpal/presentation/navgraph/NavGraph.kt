@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,6 +29,7 @@ import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
 import com.vtol.petpal.presentation.nearby.NearByScreen
 import com.vtol.petpal.presentation.pets.AddPetScreen
+import com.vtol.petpal.presentation.pets.PetViewModel
 import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 
@@ -154,7 +156,8 @@ fun AppNavigator() {
 
             // sub screens
             composable(route = Routes.AddPetScreen.route){
-                AddPetScreen()
+                val addPetViewM: PetViewModel = hiltViewModel()
+                AddPetScreen(addPetViewM, navigateUp = {navController.navigateUp()})
             }
         }
 
