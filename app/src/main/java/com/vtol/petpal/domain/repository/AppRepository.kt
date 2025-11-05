@@ -7,4 +7,6 @@ interface AppRepository {
     suspend fun addPet(pet: Pet): Resource<Unit>
 
     suspend fun getPets(): Resource<List<Pet>>
+
+    suspend fun getPet(id: String): Resource<Pet?>
 }

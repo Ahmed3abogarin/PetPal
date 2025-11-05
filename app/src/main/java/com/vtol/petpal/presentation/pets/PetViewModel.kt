@@ -22,6 +22,7 @@ class PetViewModel @Inject constructor(
     private val _state = MutableStateFlow<Resource<List<Pet>>?>(Resource.Loading)
     val state = _state.asStateFlow()
 
+
     init {
         getPets()
     }
@@ -30,6 +31,7 @@ class PetViewModel @Inject constructor(
         viewModelScope.launch {
             _addPetState.value = Resource.Loading
             _addPetState.value =  appUseCases.addPet(pet)
+
         }
     }
 

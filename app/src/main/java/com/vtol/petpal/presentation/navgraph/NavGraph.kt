@@ -1,5 +1,7 @@
 package com.vtol.petpal.presentation.navgraph
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,14 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.Routes
 import com.vtol.petpal.presentation.home.HomeScreen
@@ -30,6 +36,8 @@ import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
 import com.vtol.petpal.presentation.nearby.NearByScreen
 import com.vtol.petpal.presentation.pets.AddPetScreen
+import com.vtol.petpal.presentation.pets.PetDetailsScreen
+import com.vtol.petpal.presentation.pets.PetDetailsViewModel
 import com.vtol.petpal.presentation.pets.PetViewModel
 import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
@@ -42,6 +50,11 @@ fun AppNavigator() {
     val calender = ImageVector.vectorResource(R.drawable.ic_calender)
     val near = ImageVector.vectorResource(R.drawable.ic_nearby)
     val profile = ImageVector.vectorResource(R.drawable.ic_profile)
+
+
+    // create the view models once the app starts to avoid delay when navigate to the screens
+    val petViewModel: PetViewModel = hiltViewModel()
+
 
 
     val bottomItems = remember {
@@ -73,7 +86,7 @@ fun AppNavigator() {
     }
 
     val isBottomNavVisible = remember(backstackState) {
-                backstackState?.destination?.route == Routes.HomeScreen.route ||
+        backstackState?.destination?.route == Routes.HomeScreen.route ||
                 backstackState?.destination?.route == Routes.PetsScreen.route ||
                 backstackState?.destination?.route == Routes.CalenderScreen.route ||
                 backstackState?.destination?.route == Routes.NearbyScreen.route ||
@@ -83,7 +96,7 @@ fun AppNavigator() {
     Scaffold(
         containerColor = Color.Transparent,
         bottomBar = {
-            if (isBottomNavVisible){
+            if (isBottomNavVisible) {
                 AppBottomNavComponent(
                     selectedIndex = selectedItem,
                     bottomItems = bottomItems,
@@ -121,6 +134,8 @@ fun AppNavigator() {
 
         }
     ) { innerPadding ->
+
+
         NavHost(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,15 +143,22 @@ fun AppNavigator() {
                     innerPadding
                 ), startDestination = Routes.HomeScreen.route, navController = navController
         ) {
+
             composable(Routes.HomeScreen.route) {
                 HomeScreen()
             }
             composable(Routes.PetsScreen.route) {
-                val petViewModel: PetViewModel = hiltViewModel()
+
                 PetsScreen(
                     state = petViewModel.state.collectAsState().value,
                     navigateToAddPetScreen = {
                         navController.navigate(Routes.AddPetScreen.route)
+                    },
+                    onScheduleClick = {},
+                    onCardClick = {
+                        navController.navigate(Routes.PetDetailsScreen.createRoute(it)) {
+                            launchSingleTop = false
+                        }
                     }
                 )
 
@@ -151,6 +173,23 @@ fun AppNavigator() {
 //                popExitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
                 route = Routes.NearbyScreen.route
             ) {
+                if (ActivityCompat.checkSelfPermission(
+                        LocalContext.current,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                        LocalContext.current,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return@composable
+                }
                 NearByScreen()
             }
             composable(route = Routes.ProfileScreen.route) {
@@ -158,9 +197,18 @@ fun AppNavigator() {
             }
 
             // sub screens
-            composable(route = Routes.AddPetScreen.route){
+            composable(route = Routes.AddPetScreen.route) {
                 val addPetViewM: PetViewModel = hiltViewModel()
-                AddPetScreen(addPetViewM, navigateUp = {navController.navigateUp()})
+                AddPetScreen(addPetViewM, navigateUp = { navController.navigateUp() })
+            }
+
+            composable(
+                route = Routes.PetDetailsScreen.route,
+                arguments = listOf(navArgument("petId") { type = NavType.StringType })
+            ) {
+                val petDetailsVM: PetDetailsViewModel = hiltViewModel()
+
+                PetDetailsScreen(petViewModel = petDetailsVM)
             }
         }
 

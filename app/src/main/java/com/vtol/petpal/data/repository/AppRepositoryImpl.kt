@@ -44,4 +44,17 @@ class AppRepositoryImpl @Inject constructor(
             Resource.Error(e.message ?: "Unknown error")
         }
     }
+
+    override suspend fun getPet(id: String): Resource<Pet?> {
+        return try {
+            val pet = firestore.collection(USERS_COLLECTION)
+                .document("userId")
+                .collection(PETS_COLLECTION)
+                .document(id)
+                .get().await().toObject(Pet::class.java)
+            Resource.Success(pet)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Unknown error")
+        }
+    }
 }

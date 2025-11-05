@@ -26,7 +26,8 @@ import com.vtol.petpal.util.Resource
 @Composable
 fun PetsScreen(
     state: Resource<List<Pet>>?,
-    navigateToAddPetScreen: () -> Unit
+    navigateToAddPetScreen: () -> Unit,
+    onScheduleClick: (String) -> Unit, onCardClick: (String) -> Unit
 ){
     Scaffold (
         topBar = {
@@ -51,7 +52,7 @@ fun PetsScreen(
                     contentPadding = PaddingValues(horizontal = 12.dp)
                 ){
                     items(state.data){
-                        pet -> PetCard(pet = pet)
+                        pet -> PetCard(pet = pet, onScheduleClick = {onScheduleClick(it)}, onCardClick = {onCardClick(it)})
                     }
                 }
             }
