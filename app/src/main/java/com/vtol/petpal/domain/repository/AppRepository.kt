@@ -5,4 +5,6 @@ import com.vtol.petpal.util.Resource
 
 interface AppRepository {
     suspend fun addPet(pet: Pet): Resource<Unit>
+
+    suspend fun getPets(): Resource<List<Pet>>
 }

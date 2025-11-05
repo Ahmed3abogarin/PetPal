@@ -9,8 +9,9 @@ import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.usecases.AddPet
 import com.vtol.petpal.domain.usecases.AppUseCases
-import com.vtol.petpal.domain.usecases.MapsUseCases
+import com.vtol.petpal.domain.usecases.GetPets
 import com.vtol.petpal.domain.usecases.GetVets
+import com.vtol.petpal.domain.usecases.MapsUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,5 +50,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppUseCases(appRepository: AppRepository) = AppUseCases(addPet = AddPet(appRepository))
+    fun provideAppUseCases(appRepository: AppRepository) =
+        AppUseCases(addPet = AddPet(appRepository), getPets = GetPets(appRepository))
 }

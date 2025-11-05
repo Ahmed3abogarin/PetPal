@@ -67,8 +67,8 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
     var petName by remember { mutableStateOf("") }
     var petNameError by remember { mutableStateOf<String?>(null) }
 
-    var petSpecie by remember { mutableStateOf("") }
-    var petSpecieError by remember { mutableStateOf<String?>(null) }
+    var petBreed by remember { mutableStateOf("") }
+    var petBreedError by remember { mutableStateOf<String?>(null) }
 
 
     var petWeight by remember { mutableStateOf("") }
@@ -79,10 +79,10 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
     var gender by remember { mutableStateOf(PetGender.Unknown) }
     var genderError by remember {mutableStateOf<String?>(null)}
-
+    var selectedIndex by remember { mutableIntStateOf(-1) }
 
     var birthDate by remember { mutableStateOf<Long?>(null) }
-    var selectedIndex by remember { mutableIntStateOf(-1) }
+
     var showDatePicker by remember { mutableStateOf(false) }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -98,7 +98,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
     // to disable the ui when it is loading
     var isUiEnabled by remember { mutableStateOf(true) }
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.addPetState.collectAsState()
     Box {
 
 
@@ -174,7 +174,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
             PetTextField(placeHolder = "Pet Name", value = petName, error = petNameError) { petName = it }
 
-            PetTextField(placeHolder = "Specie", value = petSpecie, error = petSpecieError) { petSpecie = it }
+            PetTextField(placeHolder = "Specie", value = petBreed, error = petBreedError) { petBreed = it }
 
             // TODO: Add a unit in the end of the text field using Row and drop down menu kg/pound/gram
             PetTextField(
@@ -196,9 +196,10 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
             MyDropDownMenu(
                 items = PetGender.entries.map { it },
                 selectedIndex = selectedIndex,
-                onItemSelected = { index, _ ->
+                onItemSelected = { index, selectedGender ->
                     focusManger.clearFocus()
                     selectedIndex = index
+                    gender = selectedGender
                 },
                 error = genderError,
                 label = "Gender"
@@ -256,7 +257,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                         "This field cannot be empty"
                     } else null
 
-                    petSpecieError = if (petSpecie.isBlank()) {
+                    petBreedError = if (petBreed.isBlank()) {
                         isValid = false
                         "This field cannot be empty"
                     } else null
@@ -277,6 +278,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                                 petName = petName,
                                 birthDate = birthDate,
                                 gender = gender,
+                                breed = petBreed,
                                 weightUnit = selectWUnit
                             )
                         )

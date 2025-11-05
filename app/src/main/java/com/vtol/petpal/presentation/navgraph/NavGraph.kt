@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -71,7 +72,7 @@ fun AppNavigator() {
 
     }
 
-    var isBottomNavVisible = remember(backstackState) {
+    val isBottomNavVisible = remember(backstackState) {
                 backstackState?.destination?.route == Routes.HomeScreen.route ||
                 backstackState?.destination?.route == Routes.PetsScreen.route ||
                 backstackState?.destination?.route == Routes.CalenderScreen.route ||
@@ -131,7 +132,9 @@ fun AppNavigator() {
                 HomeScreen()
             }
             composable(Routes.PetsScreen.route) {
+                val petViewModel: PetViewModel = hiltViewModel()
                 PetsScreen(
+                    state = petViewModel.state.collectAsState().value,
                     navigateToAddPetScreen = {
                         navController.navigate(Routes.AddPetScreen.route)
                     }

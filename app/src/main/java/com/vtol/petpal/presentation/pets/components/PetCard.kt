@@ -20,17 +20,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.vtol.petpal.R
+import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.toAgeString
 
 @Composable
-fun PetCard() {
+fun PetCard(pet: Pet) {
+    val context = LocalContext.current
     Card(
         onClick = {},
         colors = CardDefaults.cardColors(containerColor = LightPurple),
@@ -38,19 +44,20 @@ fun PetCard() {
     ) {
         Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp)) {
             Row {
-                Image(
+                AsyncImage(
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape),
-                    painter = painterResource(R.drawable.cat),
+                    model = ImageRequest.Builder(context).data(pet.imagePath).build(),
+                    placeholder = painterResource(R.drawable.cat),
                     contentDescription = "pet photo"
                 )
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column {
-                    Text(text = "Blind Pew", fontWeight = FontWeight.SemiBold)
+                    Text(text = pet.petName, fontWeight = FontWeight.SemiBold)
                     Text(
-                        text = "6 months • British Shorthair",
+                        text ="${pet.birthDate.toAgeString()} • ${pet.breed}",
                         fontSize = 13.sp,
                         color = Color.LightGray
                     )
@@ -101,17 +108,15 @@ fun PetCard() {
                     }
                 }
             }
-
         }
     }
-
 }
 
 @Preview
 @Composable
 fun PetCardPreview() {
     PetPalTheme {
-        PetCard()
+        PetCard(Pet())
     }
 
 }
