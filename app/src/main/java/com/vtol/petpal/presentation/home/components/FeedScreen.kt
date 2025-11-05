@@ -148,7 +148,7 @@ fun FeedScreen() {
 
             // Time
             OutlinedTextField(
-                value = birthDate?.formatDate() ?: "",
+                value = birthDate?.toString()?: "",
                 onValueChange = {},
                 label = { Text("Time") },
                 shape = RoundedCornerShape(10.dp),
@@ -169,14 +169,15 @@ fun FeedScreen() {
             // ******** Recurrence **********
             var selectedRecurrence by remember { mutableStateOf(Recurrence.NONE.name) }
 
-            CustomDropdownMenu(
-                modifier = Modifier.padding(vertical = 14.dp),
-                selectedOption = selectedRecurrence,
-                onOptionSelected = {
-                    selectedRecurrence = it
-                },
-                options = Recurrence.entries.map { it.name }
-            )
+            // TODO: Add the drop down menu
+//            CustomDropdownMenu(
+//                modifier = Modifier.padding(vertical = 14.dp),
+//                selectedOption = selectedRecurrence,
+//                onOptionSelected = {
+//                    selectedRecurrence = it
+//                },
+//                options = Recurrence.entries.map { it.name }
+//            )
 
             // Notes
             TextField(

@@ -11,7 +11,10 @@ sealed class Routes(val route: String) {
     data object ProfileScreen: Routes("profileScreen")
 
     // sub screens
-    data object AddPetScreen: Routes("AddPetScreen")
+    data object AddPetScreen: Routes("addPetScreen")
+    data object PetDetailsScreen : Routes("petDetailsScreen/{petId}") {
+        fun createRoute(petId: String) = "petDetailsScreen/$petId"
+    }
 
 
     // app navigation

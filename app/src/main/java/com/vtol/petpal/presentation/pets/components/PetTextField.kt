@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.domain.model.WeightUnit
+import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
@@ -23,6 +24,7 @@ fun PetTextField(
     keyboardOptions: KeyboardOptions? = null,
     placeHolder: String,
     value: String,
+    error: String? = null,
     selectedUnit: WeightUnit? = null,
     trailingIcon: ImageVector? = null,
     onTrailingClicked: (() -> Unit)? = null,
@@ -33,7 +35,12 @@ fun PetTextField(
             .fillMaxWidth()
             .padding(bottom = 12.dp),
         value = value,
-        colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = Color.LightGray),
+        colors = OutlinedTextFieldDefaults.colors(
+            unfocusedBorderColor = Color.LightGray,
+            focusedBorderColor = MainPurple
+        ),
+        isError = error != null,
+        maxLines = 1,
         onValueChange = { onValueChanged(it) },
         placeholder = { Text(text = placeHolder, color = Color.LightGray) },
         shape = RoundedCornerShape(10.dp),
@@ -42,10 +49,14 @@ fun PetTextField(
                 IconButton(onClick = {
                     onTrailingClicked?.invoke()
                 }) {
-                    Text(selectedUnit?.name?.lowercase() ?: "")
+                    Text(selectedUnit?.displayName ?: "")
                 }
             }
-
+        },
+        supportingText = {
+            if (error != null ){
+                Text(text = error)
+            }
         },
         keyboardOptions = keyboardOptions ?: KeyboardOptions.Default
     )

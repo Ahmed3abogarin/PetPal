@@ -14,7 +14,6 @@ class AppRepositoryImpl @Inject constructor(
 ) : AppRepository {
     override suspend fun addPet(pet: Pet): Resource<Unit> {
         return try {
-//            Resource.Loading
             val petId =  firestore.collection(USERS_COLLECTION)
                 .document("userId")
                 .collection(PETS_COLLECTION)
@@ -26,8 +25,35 @@ class AppRepositoryImpl @Inject constructor(
                 .document(newPet.id)
                 .set(newPet)
                 .await()
-            Resource.Success(Unit)
+           Resource.Success(Unit)
         } catch (e: Exception){
+            Resource.Error(e.message ?: "Unknown error")
+        }
+    }
+
+    override suspend fun getPets(): Resource<List<Pet>> {
+        return try {
+            val pets =firestore.collection(USERS_COLLECTION)
+                .document("userId")
+                .collection(PETS_COLLECTION)
+                .get().await()
+                .toObjects(Pet::class.java)
+            Resource.Success(pets)
+
+        } catch (e: Exception){
+            Resource.Error(e.message ?: "Unknown error")
+        }
+    }
+
+    override suspend fun getPet(id: String): Resource<Pet?> {
+        return try {
+            val pet = firestore.collection(USERS_COLLECTION)
+                .document("userId")
+                .collection(PETS_COLLECTION)
+                .document(id)
+                .get().await().toObject(Pet::class.java)
+            Resource.Success(pet)
+        } catch (e: Exception) {
             Resource.Error(e.message ?: "Unknown error")
         }
     }

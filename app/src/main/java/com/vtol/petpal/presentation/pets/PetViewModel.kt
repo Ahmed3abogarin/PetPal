@@ -16,13 +16,29 @@ class PetViewModel @Inject constructor(
     private val appUseCases: AppUseCases
 ): ViewModel() {
 
-    private val _state = MutableStateFlow<Resource<Unit>?>(null)
+    private val _addPetState = MutableStateFlow<Resource<Unit>?>(null)
+    val addPetState = _addPetState.asStateFlow()
+
+    private val _state = MutableStateFlow<Resource<List<Pet>>?>(Resource.Loading)
     val state = _state.asStateFlow()
 
 
+    init {
+        getPets()
+    }
+
     fun addPet(pet: Pet){
         viewModelScope.launch {
-            _state.value =  appUseCases.addPet(pet)
+            _addPetState.value = Resource.Loading
+            _addPetState.value =  appUseCases.addPet(pet)
+
+        }
+    }
+
+    fun getPets(){
+        viewModelScope.launch {
+            _state.value = Resource.Loading
+            _state.value = appUseCases.getPets()
         }
     }
 }
