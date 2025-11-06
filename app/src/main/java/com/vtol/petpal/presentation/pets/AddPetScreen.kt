@@ -20,13 +20,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -53,6 +51,7 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.model.WeightUnit
+import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.home.components.DatePickerModal
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
 import com.vtol.petpal.presentation.nearby.components.LoadingIndicator
@@ -100,8 +99,6 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
     val state by viewModel.addPetState.collectAsState()
     Box {
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -115,13 +112,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                     .fillMaxWidth()
                     .padding(top = 12.dp, bottom = 14.dp)
             ) {
-                IconButton(onClick = { navigateUp() }) {
-                    Icon(
-                        modifier = Modifier.size(42.dp),
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = ""
-                    )
-                }
+                BackArrow{navigateUp()}
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = "Add Pet",
@@ -267,10 +258,6 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                         "This field cannot be empty"
                     } else null
 
-                    genderError = if (genderError == null) {
-                        isValid = false
-                        "This field cannot be empty"
-                    } else null
 
                     if (isValid){
                         viewModel.addPet(
