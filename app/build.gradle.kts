@@ -82,4 +82,8 @@ dependencies {
     kapt (libs.hilt.compiler)
     implementation (libs.androidx.hilt.navigation.compose)
 
+
+    // Vico library - chart library
+    implementation(libs.compose.m3)
+
 }
