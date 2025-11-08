@@ -29,16 +29,13 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-
-data class WeightRecord(val date: Date, val weight: Double)
-
 
 @Composable
 fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
