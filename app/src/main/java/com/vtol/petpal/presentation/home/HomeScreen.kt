@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.components.ActionsButton
+import com.vtol.petpal.presentation.components.SummeryDashboard
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
@@ -168,89 +169,8 @@ fun HomeScreen() {
 
             Text(text = "Today's summery", fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(Color.White)
-                    .padding(14.dp)
-            ) {
+            SummeryDashboard()
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.size(56.dp).padding(end = 8.dp),
-                            painter = painterResource(R.drawable.ic_walk),
-                            contentDescription = null
-                        )
-                        Text(text = "Walk", fontSize = 22.sp)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically){
-                        Image(
-                            modifier = Modifier.size(32.dp),
-                            painter = painterResource(R.drawable.ic_clock) ,
-                            contentDescription = null
-                        )
-                        Text(text = "07:00AM", fontSize = 18.sp, modifier= Modifier.padding(start = 6.dp))
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.size(52.dp).padding(end = 8.dp),
-                            painter = painterResource(R.drawable.ic_fed),
-                            contentDescription = null
-                        )
-                        Text(text = "Feed", fontSize = 22.sp)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically){
-                        Image(
-                            modifier = Modifier.size(32.dp),
-                            painter = painterResource(R.drawable.ic_clock) ,
-                            contentDescription = null
-                        )
-                        Text(text = "04:00PM", fontSize = 18.sp, modifier= Modifier.padding(start = 6.dp))
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.size(52.dp).padding(end = 8.dp),
-                            painter = painterResource(R.drawable.ic_pill),
-                            contentDescription = null
-                        )
-                        Text(text = "Medicine", fontSize = 22.sp)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically){
-                        Image(
-                            modifier = Modifier.size(32.dp),
-                            painter = painterResource(R.drawable.ic_clock) ,
-                            contentDescription = null
-                        )
-                        Text(text = "06:00PM", fontSize = 18.sp, modifier= Modifier.padding(start = 6.dp))
-                    }
-                }
-            }
             Spacer(modifier = Modifier.height(18.dp))
             Text(text = "Actions", fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
             Row(
