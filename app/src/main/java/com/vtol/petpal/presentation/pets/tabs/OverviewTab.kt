@@ -1,15 +1,41 @@
 package com.vtol.petpal.presentation.pets.tabs
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.vtol.petpal.presentation.components.SummeryDashboard
+import com.vtol.petpal.ui.theme.LightPurple
 
 @Composable
 fun OverviewTab(modifier: Modifier = Modifier) {
-    Box(modifier= Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Overview Tab")
+    Column(modifier = Modifier.fillMaxSize()) {
+        Spacer(modifier = modifier.height(16.dp))
+        Text(text = "Upcoming tasks", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = modifier.height(8.dp))
+        SummeryDashboard()
+        Spacer(modifier = modifier.height(8.dp))
+
+
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp)
+                .background(LightPurple)
+                .padding(10.dp)
+        ) {
+            Text(text = "Upcoming tasks", style = MaterialTheme.typography.headlineMedium)
+
+
+        }
+
     }
 }
