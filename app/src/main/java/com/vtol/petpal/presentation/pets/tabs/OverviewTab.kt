@@ -11,9 +11,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.presentation.components.SummeryDashboard
 import com.vtol.petpal.ui.theme.LightPurple
+import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
 fun OverviewTab(modifier: Modifier = Modifier) {
@@ -32,10 +34,19 @@ fun OverviewTab(modifier: Modifier = Modifier) {
                 .background(LightPurple)
                 .padding(10.dp)
         ) {
-            Text(text = "Upcoming tasks", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Pet", style = MaterialTheme.typography.headlineMedium)
 
 
         }
 
     }
+}
+
+@Preview
+@Composable
+fun OverviewPreview(modifier: Modifier = Modifier) {
+    PetPalTheme {
+        OverviewTab()
+    }
+    
 }
