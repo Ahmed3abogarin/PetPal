@@ -1,6 +1,7 @@
 package com.vtol.petpal.presentation.pets.tabs
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,7 +46,21 @@ fun OverviewTab(modifier: Modifier = Modifier) {
                 Text(text = "Pet Information", style = MaterialTheme.typography.headlineSmall)
                 Text(text = "Last updated: 13 minutes ago", color = Color.LightGray, fontSize = 12.sp)
             }
-
+            Spacer(modifier= Modifier.height(6.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "Text1", color = Color.Black)
+                Text(text = "Text2", color = Color.Black)
+            }
+            Spacer(modifier= Modifier.height(6.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "Text1", color = Color.Black)
+                Text(text = "Text2", color = Color.Black)
+            }
+            Spacer(modifier= Modifier.height(6.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "Text1", color = Color.Black)
+                Text(text = "Text2", color = Color.Black)
+            }
             Spacer(modifier = modifier.height(8.dp))
         }
 
