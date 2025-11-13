@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Devices.PIXEL_7_PRO
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,7 +27,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
 fun OverviewTab(modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
+    Column(modifier = Modifier.background(Color.White)) {
         Spacer(modifier = modifier.height(16.dp))
         Text(text = "Upcoming tasks", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = modifier.height(8.dp))
@@ -47,27 +48,23 @@ fun OverviewTab(modifier: Modifier = Modifier) {
                 Text(text = "Last updated: 13 minutes ago", color = Color.LightGray, fontSize = 12.sp)
             }
             Spacer(modifier= Modifier.height(6.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Text1", color = Color.Black)
-                Text(text = "Text2", color = Color.Black)
-            }
+            InfoItem("Name: Blind Pew","Gender: Male")
             Spacer(modifier= Modifier.height(6.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Text1", color = Color.Black)
-                Text(text = "Text2", color = Color.Black)
-            }
+            InfoItem("Breed: Shiraz Cat","Weight: 750 L")
             Spacer(modifier= Modifier.height(6.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Text1", color = Color.Black)
-                Text(text = "Text2", color = Color.Black)
-            }
+            InfoItem("Birth date: 2022/12/2","Color: Orange")
             Spacer(modifier = modifier.height(8.dp))
         }
-
     }
 }
-
-@Preview
+@Composable
+fun InfoItem(firstTxt: String, secondTxt: String){
+    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = firstTxt, color = Color.Black, fontSize = 14.sp)
+        Text(text = secondTxt, color = Color.Black,fontSize = 14.sp)
+    }
+}
+@Preview(device = PIXEL_7_PRO)
 @Composable
 fun OverviewPreview(modifier: Modifier = Modifier) {
     PetPalTheme {
