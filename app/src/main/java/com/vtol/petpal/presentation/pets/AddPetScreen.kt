@@ -50,6 +50,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
+import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.home.components.DatePickerModal
@@ -266,7 +267,8 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                                 birthDate = birthDate,
                                 gender = gender,
                                 breed = petBreed,
-                                weightUnit = selectWUnit
+                                weightUnit = selectWUnit,
+                                weight = listOf(WeightRecord(weight = petWeight.toDouble()))
                             )
                         )
                     }
