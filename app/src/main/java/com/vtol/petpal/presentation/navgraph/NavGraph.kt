@@ -227,18 +227,6 @@ fun navigateToTab(navController: NavController, route: String) {
     }
 }
 
-//@Preview
-//@Composable
-//fun BottomNavigationPreview() {
-//    val items = mutableListOf(
-//        BottomNavItem("", Icons.Default.Home, Color.Black),
-//        BottomNavItem("", Icons.Default.Home, Color.Black),
-//        BottomNavItem("", Icons.Default.Home, Color.Black),
-//    )
-//    PetPalTheme {
-//        MoviesBottomNav(items, selectedIndex = 0, onItemClicked = {})
-//    }
-//}
 
 
 @Composable
