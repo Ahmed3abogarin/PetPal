@@ -238,8 +238,11 @@ fun NavGraph() {
             startDestination = Routes.OnboardingScreen.route
         ) {
             composable(Routes.OnboardingScreen.route) {
+                /*
+                Add the pager and the page indicator
+                 */
                 Box {
-                    Text("gsgfd;jgfdjgfd;l")
+                    Text("This where will be the on boarding screen")
                 }
             }
 
