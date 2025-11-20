@@ -1,4 +1,4 @@
-package com.vtol.petpal
+package com.vtol.petpal.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,6 @@ import com.vtol.petpal.presentation.navgraph.NavGraph
 import com.vtol.petpal.ui.theme.PetPalTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +18,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PetPalTheme {
-                Box(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.Companion.fillMaxSize()) {
                     NavGraph()
                 }
             }
