@@ -75,7 +75,8 @@ dependencies {
     implementation(libs.places)
 
 
-    implementation("androidx.compose.material:material-icons-extended")
+    // icons
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // Hilt
     implementation (libs.hilt.android)
