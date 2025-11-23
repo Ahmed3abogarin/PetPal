@@ -5,6 +5,8 @@ plugins {
 
     // should use KSP instead of Kapt
     id("kotlin-kapt")
+
+    // Hilt
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.google.gms.google.services)
 }
