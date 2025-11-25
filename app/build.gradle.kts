@@ -8,6 +8,8 @@ plugins {
 
     // Hilt
     id("com.google.dagger.hilt.android")
+
+    // Firebase
     alias(libs.plugins.google.gms.google.services)
 }
 
