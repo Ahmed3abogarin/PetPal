@@ -32,14 +32,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(firestore: FirebaseFirestore): AppRepository =
-        AppRepositoryImpl(firestore)
+    fun provideAppRepository(firestore: FirebaseFirestore): AppRepository = AppRepositoryImpl(firestore)
 
 
     @Provides
     @Singleton
-    fun provideMapsUseCases(repository: MapsRepository) =
-        MapsUseCases(getNearLocations = GetVets(repository))
+    fun provideMapsUseCases(repository: MapsRepository) = MapsUseCases(getNearLocations = GetVets(repository))
 
     @Provides
     @Singleton
