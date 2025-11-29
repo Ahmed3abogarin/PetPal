@@ -43,9 +43,11 @@ object AppModule {
     @Singleton
     fun provideLocation(@ApplicationContext context: Context) = LocationProvider(context)
 
+
     @Provides
     @Singleton
     fun provideFirestore() = FirebaseFirestore.getInstance()
+
 
     @Provides
     @Singleton
