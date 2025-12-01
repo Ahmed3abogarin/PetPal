@@ -60,6 +60,7 @@ import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.formatDate
+import java.util.Date
 
 @Composable
 fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
@@ -260,6 +261,8 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                     } else null
 
 
+
+
                     if (isValid){
                         viewModel.addPet(
                             Pet(
@@ -268,7 +271,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                                 gender = gender,
                                 breed = petBreed,
                                 weightUnit = selectWUnit,
-                                weight = listOf(WeightRecord(weight = petWeight.toDouble()))
+                                weight = listOf(WeightRecord(weight = petWeight.toDouble(), date =   Date(System.currentTimeMillis()) ))
                             )
                         )
                     }
