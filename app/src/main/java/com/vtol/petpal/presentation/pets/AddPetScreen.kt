@@ -245,6 +245,8 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                     // validate the inputs
                     var isValid = true
 
+                    // see if I have to move this validation from the compose function
+
                     petNameError = if (petName.isBlank()) {
                         isValid = false
                         "This field cannot be empty"
