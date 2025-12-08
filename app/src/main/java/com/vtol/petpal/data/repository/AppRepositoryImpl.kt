@@ -19,6 +19,8 @@ class AppRepositoryImpl @Inject constructor(
                 .collection(PETS_COLLECTION)
                 .document().id
             val newPet = pet.copy(id = petId)
+
+
             firestore.collection(USERS_COLLECTION)
                 .document("userId")
                 .collection(PETS_COLLECTION)
@@ -52,6 +54,7 @@ class AppRepositoryImpl @Inject constructor(
                 .collection(PETS_COLLECTION)
                 .document(id)
                 .get().await().toObject(Pet::class.java)
+
             Resource.Success(pet)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Unknown error")

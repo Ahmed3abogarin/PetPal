@@ -42,8 +42,10 @@ class MapsRepositoryImpl(
             .setMaxResultCount(20)
             .setRankPreference(SearchNearbyRequest.RankPreference.POPULARITY)
             .build()
+        
         // Execute the request
         val response: SearchNearbyResponse = placesClient.searchNearby(request).await()
+
 
         // Map the result to domain model
         return response.places.mapNotNull { place ->
