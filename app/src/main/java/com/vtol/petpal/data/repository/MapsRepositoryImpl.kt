@@ -9,7 +9,7 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.net.SearchNearbyRequest
 import com.google.android.libraries.places.api.net.SearchNearbyResponse
 import com.vtol.petpal.domain.model.PlaceCategory
-import com.vtol.petpal.domain.model.Vet
+import com.vtol.petpal.domain.model.VetAddress
 import com.vtol.petpal.domain.repository.MapsRepository
 import kotlinx.coroutines.tasks.await
 
@@ -23,7 +23,7 @@ class MapsRepositoryImpl(
         Places.createClient(context.applicationContext)
     }
 
-    override suspend fun getNearLocations(userLocation: LatLng,category: PlaceCategory): List<Vet> {
+    override suspend fun getNearLocations(userLocation: LatLng,category: PlaceCategory): List<VetAddress> {
         // Define what fields we want back
         val fields = listOf(
             Place.Field.DISPLAY_NAME,
@@ -50,7 +50,7 @@ class MapsRepositoryImpl(
         // Map the result to domain model
         return response.places.mapNotNull { place ->
             place.location?.let { latLng ->
-                Vet(
+                VetAddress(
                     name = place.displayName ?: "Vet",
                     lat = latLng.latitude,
                     lng = latLng.longitude,

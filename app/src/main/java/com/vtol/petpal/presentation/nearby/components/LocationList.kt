@@ -30,12 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.Vet
+import com.vtol.petpal.domain.model.VetAddress
 import com.vtol.petpal.ui.theme.MainPurple
 
 
 @Composable
-fun LocationList(modifier: Modifier,locationList: List<Vet>, pagerState: PagerState) {
+fun LocationList(modifier: Modifier, locationList: List<VetAddress>, pagerState: PagerState) {
 
     HorizontalPager(
         modifier = modifier.fillMaxWidth(),
@@ -48,7 +48,7 @@ fun LocationList(modifier: Modifier,locationList: List<Vet>, pagerState: PagerSt
 }
 
 @Composable
-fun LocationCard(vet: Vet) {
+fun LocationCard(vet: VetAddress) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
