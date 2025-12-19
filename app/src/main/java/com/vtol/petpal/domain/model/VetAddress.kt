@@ -1,6 +1,6 @@
 package com.vtol.petpal.domain.model
 
-data class Vet(
+data class VetAddress(
     val name: String,
     val lat: Double,
     val lng: Double,

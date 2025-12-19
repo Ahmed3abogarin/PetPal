@@ -50,39 +50,138 @@ import com.vtol.petpal.presentation.pets.tabs.HealthTab
 import com.vtol.petpal.presentation.pets.tabs.OverviewTab
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.Resource
+import com.vtol.petpal.util.toAgeString
 
 @Composable
 fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsViewModel) {
-    val state by petViewModel.petState.collectAsState()
+    val state = petViewModel.petState.collectAsState().value
 
-    PetDetailsScreenContent(modifier = modifier, state = state)
+    when (state) {
+        is Resource.Success -> {
+            state.data?.let {
+                PetDetailsScreenContent(pet = it)
+            }
+        }
+
+        is Resource.Error -> {
+                Text(state.message)
+        }
+
+        is Resource.Loading -> {
+            CircularProgressIndicator()
+
+        }
+    }
 }
 
 @Composable
-private fun PetDetailsScreenContent(modifier: Modifier = Modifier, state: Resource<Pet?>) {
-
-    Box(
-        modifier = modifier
+private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet) {
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
-        contentAlignment = Alignment.Center
+            .background(Color.White)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .statusBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when (state) {
-            is Resource.Success -> {
-                Text(text = state.data?.petName ?: "couldn't load pet")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            BackArrow { }
+
+            IconButton(onClick = {}) {
+                Icon(
+                    modifier = Modifier.size(42.dp),
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = ""
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // TODO: Add suitable placeholder image
+        Box {
+            Box(
+                modifier = Modifier
+                    .size(152.dp)
+                    .clip(CircleShape)
+                    .background(Color.LightGray)
+                    .border(2.dp, Color.Gray, CircleShape)
+            )
+            {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    model = ImageRequest.Builder(context).data("").build(),
+                    contentDescription = "pet profile image",
+                    placeholder = painterResource(R.drawable.ic_unknown)
+                )
 
             }
 
-            is Resource.Error -> {
-                Text(state.message)
+            // TODO: displays only if the image is null
+            if (true) {
+                FilledIconButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(2.dp),
+                    shape = CircleShape,
+                    onClick = {}) {
+                    Icon(Icons.Default.Edit, contentDescription = "")
+                }
             }
+        }
 
-            is Resource.Loading -> {
-                CircularProgressIndicator()
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = pet.petName,
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+        )
+        Text(
+            text = pet.breed ?: "Unknown"
+        )
+        Text(
+            text = pet.birthDate.toAgeString()
+        )
+        // TODO: Figure out a way to add the birthday
+//            Text(
+//                text = "Since 12th oct 2025"
+//            )
+
+
+        // ------------------------- Tabs ---------------------------------
+        Spacer(modifier= Modifier.height(20.dp))
+        var selectedTabIndex by rememberSaveable { mutableIntStateOf(1) }
+        val tabs = listOf("Overview", "Health", "Gallery")
+
+        // A column will act as a container for the tabs
+        PrimaryTabRow (modifier = Modifier.fillMaxWidth(),containerColor = Color.White, selectedTabIndex = selectedTabIndex) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = { Text(title) }
+                )
 
             }
         }
+
+        when(selectedTabIndex){
+            0 -> OverviewTab()
+            1 -> HealthTab()
+            2 -> GalleryTab(isPremium = false){}
+
+        }
+
+
+
     }
+
+
 }
 
 @Preview
@@ -90,109 +189,6 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, state: Resour
 fun MyPreview() {
     PetPalTheme {
 
-        val context = LocalContext.current
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .statusBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                BackArrow { }
 
-                IconButton(onClick = {}) {
-                    Icon(
-                        modifier = Modifier.size(42.dp),
-                        imageVector = Icons.Filled.MoreVert,
-                        contentDescription = ""
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // TODO: Add suitable placeholder image
-            Box {
-                Box(
-                    modifier = Modifier
-                        .size(152.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
-                        .border(2.dp, Color.Gray, CircleShape)
-                )
-                {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        model = ImageRequest.Builder(context).data("").build(),
-                        contentDescription = "pet profile image",
-                        placeholder = painterResource(R.drawable.ic_unknown)
-                    )
-
-                }
-
-                // TODO: displays only if the image is null
-                if (true) {
-                    FilledIconButton(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(2.dp),
-                        shape = CircleShape,
-                        onClick = {}) {
-                        Icon(Icons.Default.Edit, contentDescription = "")
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "Blind Pew",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
-            )
-            Text(
-                text = "Shiraz * Cat"
-            )
-            Text(
-                text = "1 year and 3 months"
-            )
-            // TODO: Figure out a way to add the birthday
-//            Text(
-//                text = "Since 12th oct 2025"
-//            )
-
-
-            // ------------------------- Tabs ---------------------------------
-            Spacer(modifier= Modifier.height(20.dp))
-            var selectedTabIndex by rememberSaveable { mutableIntStateOf(1) }
-            val tabs = listOf("Overview", "Health", "Gallery")
-
-            // A column will act as a container for the tabs
-                PrimaryTabRow (modifier = Modifier.fillMaxWidth(),containerColor = Color.White, selectedTabIndex = selectedTabIndex) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            text = { Text(title) }
-                        )
-
-                    }
-                }
-
-                when(selectedTabIndex){
-                    0 -> OverviewTab()
-                    1 -> HealthTab()
-                    2 -> GalleryTab(isPremium = false){}
-
-                }
-
-
-
-        }
     }
 }

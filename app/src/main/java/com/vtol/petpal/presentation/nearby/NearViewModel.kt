@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.model.PlaceCategory
-import com.vtol.petpal.domain.model.Vet
+import com.vtol.petpal.domain.model.VetAddress
 import com.vtol.petpal.domain.usecases.MapsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ class NearViewModel @Inject constructor(
     private val locationProvider: LocationProvider
 ): ViewModel(){
 
-    private val _locations = MutableStateFlow<List<Vet>>(emptyList())
+    private val _locations = MutableStateFlow<List<VetAddress>>(emptyList())
     val locations = _locations.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow(PlaceCategory.VETS)
