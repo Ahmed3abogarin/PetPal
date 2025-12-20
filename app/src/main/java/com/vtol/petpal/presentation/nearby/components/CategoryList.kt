@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vtol.petpal.domain.model.PlaceCategory
+import com.vtol.petpal.domain.model.Map.PlaceCategory
 import com.vtol.petpal.ui.theme.MainPurple
 
 @Composable

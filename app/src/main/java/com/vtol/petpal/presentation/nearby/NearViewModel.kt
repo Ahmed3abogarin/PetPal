@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.vtol.petpal.domain.LocationProvider
-import com.vtol.petpal.domain.model.PlaceCategory
-import com.vtol.petpal.domain.model.VetAddress
+import com.vtol.petpal.domain.model.Map.PlaceCategory
+import com.vtol.petpal.domain.model.Map.VetAddress
 import com.vtol.petpal.domain.usecases.MapsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

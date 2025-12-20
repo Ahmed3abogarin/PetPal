@@ -92,4 +92,8 @@ dependencies {
     // Vico library - chart library
     implementation(libs.compose.m3)
 
+    // Room
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+
 }
