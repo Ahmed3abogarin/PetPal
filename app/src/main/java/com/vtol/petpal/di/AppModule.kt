@@ -1,7 +1,11 @@
 package com.vtol.petpal.di
 
+import android.app.Application
 import android.content.Context
+import androidx.room.Room
 import com.google.firebase.firestore.FirebaseFirestore
+import com.vtol.petpal.data.local.TasksDB
+import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.domain.LocationProvider
@@ -32,12 +36,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(firestore: FirebaseFirestore): AppRepository = AppRepositoryImpl(firestore)
+    fun provideAppRepository(firestore: FirebaseFirestore): AppRepository =
+        AppRepositoryImpl(firestore)
 
 
     @Provides
     @Singleton
-    fun provideMapsUseCases(repository: MapsRepository) = MapsUseCases(getNearLocations = GetVets(repository))
+    fun provideMapsUseCases(repository: MapsRepository) =
+        MapsUseCases(getNearLocations = GetVets(repository))
 
     @Provides
     @Singleton
@@ -57,4 +63,20 @@ object AppModule {
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository)
         )
+
+
+    @Provides
+    @Singleton
+    fun provideTasksDB(application: Application): TasksDB {
+        return Room.databaseBuilder(
+            context = application,
+            klass = TasksDB::class.java,
+            name = "tasks_DB"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDao(tasksDB: TasksDB): TasksDao = tasksDB.tasksDao
+
 }

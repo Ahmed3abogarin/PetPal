@@ -8,8 +8,8 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.net.SearchNearbyRequest
 import com.google.android.libraries.places.api.net.SearchNearbyResponse
-import com.vtol.petpal.domain.model.PlaceCategory
-import com.vtol.petpal.domain.model.VetAddress
+import com.vtol.petpal.domain.model.Map.PlaceCategory
+import com.vtol.petpal.domain.model.Map.VetAddress
 import com.vtol.petpal.domain.repository.MapsRepository
 import kotlinx.coroutines.tasks.await
 

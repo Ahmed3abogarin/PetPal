@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.VetAddress
+import com.vtol.petpal.domain.model.Map.VetAddress
 import com.vtol.petpal.ui.theme.MainPurple
 
 

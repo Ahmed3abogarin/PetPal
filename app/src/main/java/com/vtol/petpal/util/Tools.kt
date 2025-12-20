@@ -1,6 +1,8 @@
 package com.vtol.petpal.util
 
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -26,4 +28,8 @@ fun Long?.toAgeString(): String {
         months > 0 -> "$months month${if (months > 1) "s" else ""}"
         else -> "Less than a month"
     }
+}
+
+fun LocalDate.convertDate(): String{
+    return this.format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy"))
 }

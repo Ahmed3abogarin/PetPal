@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -36,12 +36,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.android.material.color.MaterialColors.ALPHA_DISABLED
 import com.google.android.material.color.MaterialColors.ALPHA_FULL
 import com.vtol.petpal.domain.model.PetGender
+import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 
@@ -67,6 +69,15 @@ fun <T> MyDropDownMenu(
                     icon = item.icon
                 )
             }
+            is TaskType -> {
+                LargeDropdownMenuItem(
+                    text = item.txt,
+                    selected = selected,
+                    enabled = itemEnabled,
+                    onClick = onClick,
+                    icon = item.icon
+                )
+            }
             else -> LargeDropdownMenuItem(
                 text = item.toString(),
                 selected = selected,
@@ -74,9 +85,10 @@ fun <T> MyDropDownMenu(
                 onClick = onClick,
             )
         }
-
     }
 ) {
+    val focusManger = LocalFocusManager.current
+
     var expanded by remember { mutableStateOf(false) }
     val selectedItem  = items.getOrNull(selectedIndex)
 
@@ -94,7 +106,7 @@ fun <T> MyDropDownMenu(
                 }
             },
             trailingIcon = {
-                val icon = if (expanded) Icons.Default.ArrowDropUp else Icons.Default.KeyboardArrowDown
+                val icon = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
                 Icon(icon, "")
             },
             leadingIcon = if (selectedItem is PetGender) {
@@ -154,6 +166,9 @@ fun <T> MyDropDownMenu(
                                 true
                             ) {
                                 onItemSelected(index, item)
+
+                                // to loss the focus
+                                focusManger.clearFocus()
                                 expanded = false
                             }
 
