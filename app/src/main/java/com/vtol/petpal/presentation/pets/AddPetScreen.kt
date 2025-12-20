@@ -190,7 +190,6 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                 items = PetGender.entries.map { it },
                 selectedIndex = selectedIndex,
                 onItemSelected = { index, selectedGender ->
-                    focusManger.clearFocus()
                     selectedIndex = index
                     gender = selectedGender
                 },
