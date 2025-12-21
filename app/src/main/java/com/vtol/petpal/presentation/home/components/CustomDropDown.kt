@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,8 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 @Composable
 fun <T> MyDropDownMenu(
     modifier: Modifier = Modifier,
+    expendedIcon: ImageVector = Icons.Default.KeyboardArrowUp,
+    closedIcon: ImageVector = Icons.Default.KeyboardArrowDown,
     enabled: Boolean = true,
     label: String,
     notSetLabel: String? = null,
@@ -106,7 +109,7 @@ fun <T> MyDropDownMenu(
                 }
             },
             trailingIcon = {
-                val icon = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
+                val icon = if (expanded) expendedIcon else closedIcon
                 Icon(icon, "")
             },
             leadingIcon = if (selectedItem is PetGender) {

@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,11 +43,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.tasks.RepeatInterval
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.PetDropDownMenu
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
@@ -207,7 +214,7 @@ fun AddTaskScreen2(
                         type = selectedType,
                         dateTime = System.currentTimeMillis(), // Replace with DatePicker value
                         details = "jsonDetails",
-                        description = ""
+                        note = ""
                     )
 
                     // 3. Send it up!
@@ -225,7 +232,10 @@ fun AddTaskScreen2(
 fun AddTaskScreen(modifier: Modifier = Modifier) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
 
-    var taskType by remember { mutableStateOf<TaskType?>(null) }
+    var taskType by remember { mutableStateOf<TaskType?>(TaskType.FOOD) }
+
+
+    var recurrence by remember { mutableStateOf<RepeatInterval?>(RepeatInterval.Never) }
 
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -258,6 +268,7 @@ fun AddTaskScreen(modifier: Modifier = Modifier) {
         ) {
             Column(
                 modifier = Modifier
+                    .align(Alignment.TopCenter)
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(text = "For which pet?")
@@ -330,11 +341,164 @@ fun AddTaskScreen(modifier: Modifier = Modifier) {
                 TimePicker(onTimeChanged = {
                     dueTime = it
                 })
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Recurrence
+                Text(text = "Recurrence")
+                Spacer(modifier = Modifier.height(16.dp))
+
+                MyDropDownMenu(
+                    expendedIcon = Icons.Default.Repeat,
+                    closedIcon = Icons.Default.Repeat,
+                    items = RepeatInterval.entries.map { it },
+                    selectedIndex = selectedIndex,
+                    onItemSelected = { index, type ->
+                        // clear the focus
+                        selectedIndex = index
+                        recurrence = type
+                    },
+                    label = "e.g Daily"
+                )
+
 
                 // TODO : don't display the associated fields until the user specify the task type
+
+                // ------------------------ The Dynamic Fields -------------------------------
                 taskType?.let {
                     // display only the associated fields with the task type
 
+                    var food by remember { mutableStateOf("") }
+                    var amount by remember { mutableStateOf("") }
+
+                    // Food fields
+                    AnimatedVisibility(visible = taskType == TaskType.FOOD) {
+                        Column {
+                            AppTextField(
+                                value = food,
+                                placeHolder = "Food",
+                                onValueChanged = { food = it }
+                            )
+                            AppTextField(
+                                value = amount,
+                                placeHolder = "Amount",
+                                onValueChanged = { amount = it }
+                            )
+                        }
+                    }
+
+
+                    // VET fields
+                    var clinic by remember { mutableStateOf("") }
+                    var reason by remember { mutableStateOf("") }
+
+                    AnimatedVisibility(visible = taskType == TaskType.VET) {
+                        Column {
+                            Text(text = "Clinic details")
+                            Spacer(modifier = Modifier.height(16.dp))
+                            AppTextField(
+                                value = clinic,
+                                placeHolder = "Clinic name",
+                                onValueChanged = { clinic = it }
+                            )
+                            AppTextField(
+                                value = reason,
+                                placeHolder = "Why are you visiting the vet?",
+                                onValueChanged = { reason = it }
+                            )
+                        }
+                    }
+
+                    // MED fields
+                    var medicineName by remember { mutableStateOf("") }
+                    var dosage by remember { mutableStateOf("") }
+
+                    AnimatedVisibility(visible = taskType == TaskType.MEDICATION) {
+                        Column {
+                            Text(text = "Medication Details")
+                            Spacer(modifier = Modifier.height(16.dp))
+                            AppTextField(
+                                value = medicineName,
+                                placeHolder = "Medicine Name (e.g. Heartgard)",
+                                onValueChanged = { medicineName = it }
+                            )
+                            AppTextField(
+                                value = dosage,
+                                placeHolder = "Dosage (e.g. 1 pill)",
+                                onValueChanged = { dosage = it }
+                            )
+                        }
+                    }
+
+                    // Walk fields
+                    var duration by remember { mutableStateOf("") }
+                    var location by remember { mutableStateOf("") }
+
+                    AnimatedVisibility(visible = taskType == TaskType.WALK) {
+                        Column {
+                            Text(text = "Medication Details")
+                            Spacer(modifier = Modifier.height(16.dp))
+                            TextField(
+                                value = duration,
+                                onValueChange = { newValue ->
+                                    // Allow digits only
+                                    if (newValue.all { it.isDigit() }) {
+                                        duration = newValue
+                                    }
+                                },
+                                colors = TextFieldDefaults.colors(
+                                    disabledTextColor = Color.Black,
+                                    disabledContainerColor = Color.White,
+                                    focusedContainerColor = Color.White,
+                                    disabledIndicatorColor = Color.Transparent
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                                label = { Text("Duration") },
+                                placeholder = { Text("30") },
+                                suffix = { Text("min") },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                singleLine = true,
+                                modifier = modifier.fillMaxWidth()
+                            )
+                            AppTextField(
+                                value = location,
+                                placeHolder = "Location (e.g. Park)",
+                                onValueChanged = { location = it }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    var showNote by remember { mutableStateOf(false) }
+
+                    var note by remember { mutableStateOf("") }
+
+                    if (showNote) {
+
+                        AppTextField(
+                            value = note,
+                            minLines = 4,
+                            onValueChanged = { note = it},
+                            placeHolder = "Add a note"
+                        )
+
+                    } else {
+                        Row(
+                            modifier = Modifier.clickable { showNote = true },
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                tint = MainPurple
+                            )
+                            Text(text = "Add note", color = MainPurple, fontWeight = FontWeight.Medium)
+
+                        }
+                    }
                 }
             }
 

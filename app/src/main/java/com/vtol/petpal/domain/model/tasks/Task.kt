@@ -8,7 +8,7 @@ data class Task(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val petId: Long,
     val title: String,
-    val description: String?,
+    val note: String?,
     val type: TaskType,
     val dateTime: Long,
     val isCompleted: Boolean = false,
@@ -17,5 +17,5 @@ data class Task(
 )
 
 enum class RepeatInterval {
-    NONE, DAILY, WEEKLY, MONTHLY
+    Never, Daily, Weekly, Monthly
 }
