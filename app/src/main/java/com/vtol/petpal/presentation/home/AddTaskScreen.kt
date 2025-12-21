@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -45,11 +46,15 @@ import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.presentation.components.PetDropDownMenu
+import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
 import com.vtol.petpal.presentation.home.components.TaskDatePicker
+import com.vtol.petpal.presentation.home.components.TimePicker
+import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.convertDate
 import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -220,12 +225,14 @@ fun AddTaskScreen2(
 fun AddTaskScreen(modifier: Modifier = Modifier) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
 
-    var taskType by remember { mutableStateOf(TaskType.UNKNOWN) }
+    var taskType by remember { mutableStateOf<TaskType?>(null) }
 
     var showDatePicker by remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
 
     var dueDate by remember { mutableStateOf<LocalDate>(LocalDate.now()) }
+
+    var dueTime by remember { mutableStateOf(LocalTime.now()) }
+
 
     Scaffold(
         topBar = {
@@ -243,108 +250,104 @@ fun AddTaskScreen(modifier: Modifier = Modifier) {
         }
 
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
+        Box(
+            Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Text(text = "For which pet?")
-            Spacer(modifier = Modifier.height(16.dp))
-            PetDropDownMenu(
-                petsList = listOf(Pet(petName = "Blind Pew"), Pet(petName = "White lady")),
-                onConfirm = {},
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(text = "Select task type")
-            MyDropDownMenu(
-                items = TaskType.entries.map { it },
-                selectedIndex = selectedIndex,
-                onItemSelected = { index, type ->
-                    // clear the focus
-
-                    selectedIndex = index
-                    taskType = type
-
-                },
-                label = "e.g Food"
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(text = "Date & time")
-            Spacer(modifier = Modifier.height(16.dp))
-
-
-            // Date picker dialog
-            TextField(
-                value = dueDate.convertDate(),
-                colors = TextFieldDefaults.colors(
-                    disabledTextColor = Color.Black,
-                    disabledContainerColor = Color.White,
-                    focusedContainerColor = Color.White,
-                    disabledIndicatorColor = Color.Transparent
-                ),
-                onValueChange = {},
-                label = { Text("Due date") },
-                shape = RoundedCornerShape(12.dp),
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-//                        focusManger.clearFocus()
-                        showDatePicker = true
-                    },
-                readOnly = true,
-                enabled = false,
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = null,
-                        tint = Color.Black
-                    )
-                }
-            )
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(text = "For which pet?")
+                Spacer(modifier = Modifier.height(16.dp))
+                PetDropDownMenu(
+                    petsList = listOf(Pet(petName = "Blind Pew"), Pet(petName = "White lady")),
+                    onConfirm = {},
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(text = "Select task type")
+                MyDropDownMenu(
+                    items = TaskType.entries.map { it },
+                    selectedIndex = selectedIndex,
+                    onItemSelected = { index, type ->
+                        // clear the focus
 
-            if (showDatePicker) {
-                TaskDatePicker(
-                    onDateSelected = { date ->
-                        dueDate = date
+                        selectedIndex = index
+                        taskType = type
+
                     },
-                    onDismiss = {}
+                    label = "e.g Food"
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(text = "Date & time")
+                Spacer(modifier = Modifier.height(16.dp))
+
+
+                // Date picker dialog
+                TextField(
+                    value = dueDate.convertDate(),
+                    colors = TextFieldDefaults.colors(
+                        disabledTextColor = Color.Black,
+                        disabledContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    onValueChange = {},
+                    label = { Text("Due date") },
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable {
+//                        focusManger.clearFocus()
+                            showDatePicker = true
+                        },
+                    readOnly = true,
+                    enabled = false,
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = null,
+                            tint = Color.Black
+                        )
+                    }
                 )
 
-            }
-
-            Spacer(modifier= Modifier.height(16.dp))
-
-            // Time picker
-            TextField(
-                value = "",
-                colors = TextFieldDefaults.colors(
-                    disabledTextColor = Color.Black,
-                    disabledContainerColor = Color.White,
-                    focusedContainerColor = Color.White,
-                    disabledIndicatorColor = Color.Transparent
-                ),
-                onValueChange = {},
-                label = { Text("Due time") },
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-//                        focusManger.clearFocus()
-                        showTimePicker = true
-                    },
-                readOnly = true,
-                enabled = false,
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.AccessTime,
-                        contentDescription = null,
-                        tint = Color.Black
+                if (showDatePicker) {
+                    TaskDatePicker(
+                        onDateSelected = { date ->
+                            dueDate = date
+                        },
+                        onDismiss = {}
                     )
                 }
-            )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Time picker
+                TimePicker(onTimeChanged = {
+                    dueTime = it
+                })
+
+                // TODO : don't display the associated fields until the user specify the task type
+                taskType?.let {
+                    // display only the associated fields with the task type
+
+                }
+            }
+
+            // the button should be static in the bottom
+            SaveButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                text = "Save",
+                color = MainPurple
+            ) {
+
+            }
         }
     }
 }

@@ -22,8 +22,8 @@ fun SaveButton(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0XFFFFBC5E)),
+        colors = ButtonDefaults.buttonColors(containerColor = color), // 0XFFFFBC5E
         onClick = { onClick() }) {
-        Text(text = "Save Feed", fontSize = 20.sp)
+        Text(text = text, fontSize = 20.sp)
     }
 }
