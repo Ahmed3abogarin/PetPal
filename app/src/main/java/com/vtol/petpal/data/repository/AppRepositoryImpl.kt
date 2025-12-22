@@ -9,6 +9,7 @@ import com.vtol.petpal.util.Constants.PETS_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
 import com.vtol.petpal.util.Resource
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
 class AppRepositoryImpl @Inject constructor(
@@ -67,4 +68,8 @@ class AppRepositoryImpl @Inject constructor(
     override suspend fun insertTask(task: Task) {
         tasksDao.insertTask(task)
     }
+
+    override fun getAllTasks(): Flow<List<Task>> =
+        tasksDao.getAllTasks()
+
 }

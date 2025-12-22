@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.vtol.petpal.domain.model.tasks.Task
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TasksDao {
@@ -17,4 +19,7 @@ interface TasksDao {
 
     @Delete
     suspend fun deleteTask(task: Task)
+
+    @Query("SELECT * FROM pet_tasks ORDER BY dateTime ASC")
+    fun getAllTasks(): Flow<List<Task>>
 }

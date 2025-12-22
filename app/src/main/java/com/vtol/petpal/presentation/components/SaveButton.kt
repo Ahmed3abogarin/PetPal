@@ -21,7 +21,7 @@ fun SaveButton(
     modifier: Modifier = Modifier,
     text: String,
     color: Color,
-    isLoading: Boolean,
+    isLoading: Boolean = false,
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
@@ -37,7 +37,7 @@ fun SaveButton(
         onClick = { onClick() })
     {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             if (isLoading) {
