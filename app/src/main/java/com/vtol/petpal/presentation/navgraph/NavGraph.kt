@@ -147,9 +147,9 @@ fun AppNavigator() {
         ) {
 
             composable(Routes.HomeScreen.route) {
-                HomeScreen {
+                HomeScreen(viewModel = homeViewModel, navigateToTaskScreen = {
                     navController.navigate(Routes.AddTaskScreen.route)
-                }
+                })
             }
             composable(Routes.PetsScreen.route) {
 

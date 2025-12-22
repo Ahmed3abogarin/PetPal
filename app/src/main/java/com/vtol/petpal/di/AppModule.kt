@@ -17,6 +17,7 @@ import com.vtol.petpal.domain.usecases.GetPet
 import com.vtol.petpal.domain.usecases.GetPets
 import com.vtol.petpal.domain.usecases.GetVets
 import com.vtol.petpal.domain.usecases.MapsUseCases
+import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
 import dagger.Module
 import dagger.Provides
@@ -63,7 +64,8 @@ object AppModule {
             addPet = AddPet(appRepository),
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository),
-            insertTask = InsertTask(appRepository)
+            insertTask = InsertTask(appRepository),
+            getTasks = GetTasks(appRepository)
         )
 
 

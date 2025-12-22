@@ -39,11 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.components.ActionsButton
-import com.vtol.petpal.presentation.components.SummeryDashboard
+import com.vtol.petpal.presentation.components.TasksList
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun HomeScreen(navigateToTaskScreen: () -> Unit) {
+fun HomeScreen(navigateToTaskScreen: () -> Unit, viewModel: HomeViewModel) {
 
 //    Image(
 //        painter = painterResource(R.drawable.header_img),
@@ -169,7 +169,7 @@ fun HomeScreen(navigateToTaskScreen: () -> Unit) {
 
             Text(text = "Today's summery", fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
 
-            SummeryDashboard()
+            TasksList(viewModel = viewModel)
 
             Spacer(modifier = Modifier.height(18.dp))
             Text(text = "Actions", fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
@@ -227,8 +227,6 @@ fun HomeScreen(navigateToTaskScreen: () -> Unit) {
 @Composable
 fun HomePreView() {
     PetPalTheme {
-        HomeScreen{
 
-        }
     }
 }
