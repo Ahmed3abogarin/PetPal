@@ -31,7 +31,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.Routes
+import com.vtol.petpal.presentation.home.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
+import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
 import com.vtol.petpal.presentation.nearby.NearByScreen
@@ -54,7 +56,7 @@ fun AppNavigator() {
 
     // create the view models once the app starts to avoid delay when navigate to the screens
     val petViewModel: PetViewModel = hiltViewModel()
-
+    val homeViewModel: HomeViewModel = hiltViewModel()
 
 
     val bottomItems = remember {
@@ -145,7 +147,9 @@ fun AppNavigator() {
         ) {
 
             composable(Routes.HomeScreen.route) {
-                HomeScreen()
+                HomeScreen {
+                    navController.navigate(Routes.AddTaskScreen.route)
+                }
             }
             composable(Routes.PetsScreen.route) {
 
@@ -210,11 +214,14 @@ fun AppNavigator() {
 
                 PetDetailsScreen(petViewModel = petDetailsVM)
             }
+            composable(Routes.AddTaskScreen.route) {
+                AddTaskScreen(
+                    viewModel = homeViewModel,
+                    navigateUp = { navController.navigateUp() }
+                )
+            }
         }
-
     }
-
-
 }
 
 fun navigateToTab(navController: NavController, route: String) {
@@ -226,7 +233,6 @@ fun navigateToTab(navController: NavController, route: String) {
         launchSingleTop = true
     }
 }
-
 
 
 @Composable

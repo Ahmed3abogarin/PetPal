@@ -1,7 +1,9 @@
 package com.vtol.petpal.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.util.Constants.PETS_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
@@ -11,6 +13,7 @@ import kotlinx.coroutines.tasks.await
 
 class AppRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
+    private val tasksDao: TasksDao
 ) : AppRepository {
     override suspend fun addPet(pet: Pet): Resource<Unit> {
         return try {
@@ -59,5 +62,9 @@ class AppRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Unknown error")
         }
+    }
+
+    override suspend fun insertTask(task: Task) {
+        tasksDao.insertTask(task)
     }
 }

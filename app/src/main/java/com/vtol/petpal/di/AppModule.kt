@@ -17,6 +17,7 @@ import com.vtol.petpal.domain.usecases.GetPet
 import com.vtol.petpal.domain.usecases.GetPets
 import com.vtol.petpal.domain.usecases.GetVets
 import com.vtol.petpal.domain.usecases.MapsUseCases
+import com.vtol.petpal.domain.usecases.tasks.InsertTask
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,8 +37,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(firestore: FirebaseFirestore): AppRepository =
-        AppRepositoryImpl(firestore)
+    fun provideAppRepository(firestore: FirebaseFirestore, tasksDao: TasksDao): AppRepository =
+        AppRepositoryImpl(firestore, tasksDao)
 
 
     @Provides
@@ -61,7 +62,8 @@ object AppModule {
         AppUseCases(
             addPet = AddPet(appRepository),
             getPets = GetPets(appRepository),
-            getPet = GetPet(appRepository)
+            getPet = GetPet(appRepository),
+            insertTask = InsertTask(appRepository)
         )
 
 

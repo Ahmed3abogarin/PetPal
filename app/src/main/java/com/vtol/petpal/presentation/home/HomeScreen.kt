@@ -43,7 +43,7 @@ import com.vtol.petpal.presentation.components.SummeryDashboard
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navigateToTaskScreen: () -> Unit) {
 
 //    Image(
 //        painter = painterResource(R.drawable.header_img),
@@ -180,7 +180,7 @@ fun HomeScreen() {
             ) {
                 ActionsButton(
                     modifier = Modifier.weight(1f),
-                    onClick = {},
+                    onClick = { navigateToTaskScreen() },
                     buttonText = "Add \nFood",
                     buttonIcon =R.drawable.ic_fed
                 )
@@ -227,6 +227,8 @@ fun HomeScreen() {
 @Composable
 fun HomePreView() {
     PetPalTheme {
-        HomeScreen()
+        HomeScreen{
+
+        }
     }
 }
