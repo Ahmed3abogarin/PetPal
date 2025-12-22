@@ -10,7 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.vtol.petpal.ui.theme.PetPalTheme
+
 
 @Composable
 fun AppTextField(
@@ -22,12 +25,7 @@ fun AppTextField(
 ) {
     TextField(
         value = value,
-        colors = TextFieldDefaults.colors(
-            disabledTextColor = Color.Black,
-            disabledContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            disabledIndicatorColor = Color.Transparent
-        ),
+        colors = filledTextFieldColors(),
         minLines = minLines ,
         onValueChange = { onValueChanged(it) },
         label = { Text(placeHolder) },
@@ -38,4 +36,24 @@ fun AppTextField(
             .clip(RoundedCornerShape(10.dp))
 
     )
+}
+
+@Composable
+fun filledTextFieldColors() = TextFieldDefaults.colors(
+    disabledTextColor = Color.Black,
+    disabledContainerColor = Color.White,
+    focusedContainerColor = Color.White,
+    unfocusedContainerColor = Color.White,
+    disabledIndicatorColor = Color.Transparent,
+    focusedIndicatorColor = Color.Transparent,
+    unfocusedIndicatorColor = Color.Transparent
+
+)
+
+@Preview
+@Composable
+fun Ddsg(){
+    PetPalTheme {
+        AppTextField(value = "", placeHolder = "") { }
+    }
 }
