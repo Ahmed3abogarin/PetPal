@@ -56,7 +56,7 @@ fun HomeScreen(navigateToTaskScreen: () -> Unit, viewModel: HomeViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .verticalScroll(rememberScrollState())
+//            .verticalScroll(rememberScrollState())
     ) {
         Column(
             modifier = Modifier
