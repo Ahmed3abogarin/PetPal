@@ -1,7 +1,6 @@
 package com.vtol.petpal.presentation.home
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,7 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,13 +44,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
-import com.vtol.petpal.presentation.components.TasksListTest
+import com.vtol.petpal.presentation.components.TaskCard
 import com.vtol.petpal.presentation.home.components.ProgressCard
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun HomeScreen(onAddTaskClicked: () -> Unit) {
+fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
 
 //    Image(
 //        painter = painterResource(R.drawable.header_img),
@@ -60,28 +60,29 @@ fun HomeScreen(onAddTaskClicked: () -> Unit) {
 //        ).size(200.dp)
 //    )
 
-    Scaffold(floatingActionButton = {
-        Column(
-            Modifier
-                .clip(CircleShape)
-                .background(MainPurple)
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-                .clickable { onAddTaskClicked() },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "",
-                tint = Color.White
-            )
+    Scaffold(
+        floatingActionButton = {
+            Column(
+                Modifier
+                    .clip(CircleShape)
+                    .background(MainPurple)
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+                    .clickable { onAddTaskClicked() },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "",
+                    tint = Color.White
+                )
 
-            Text(text = "Add Task", color = Color.White, fontSize = 8.sp)
-        }
+                Text(text = "Add Task", color = Color.White, fontSize = 8.sp)
+            }
 
-    }) { paddingValues ->
-        Column(
+        }) { paddingValues ->
+        LazyColumn(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(bottom = paddingValues.calculateBottomPadding())
                 .fillMaxSize()
                 .background(Color(0XFFF8F4FF))
 
@@ -90,89 +91,71 @@ fun HomeScreen(onAddTaskClicked: () -> Unit) {
         ) {
 
             // The header
-            AppHomeHeader()
+            item {
+                AppHomeHeader()
+            }
+//            AppHomeHeader()
 
-            Spacer(modifier = Modifier.height(22.dp))
 
+            item {
+                // Pets list
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // Pets list
-            HomePetsList {}
+                HomePetsList {}
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                elevation = CardDefaults.cardElevation(6.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
-
-                    // bg shapes
-                    Image(
-                        modifier = Modifier
-                            .width(112.dp)
-                            .height(80.dp)
-                            .align(Alignment.TopEnd),
-                        painter = painterResource(R.drawable.bg_shapes),
-                        contentDescription = ""
-                    )
-
-                    // Progress image
-                    Image(
-                        modifier = Modifier
-                            .width(112.dp)
-                            .height(80.dp)
-                            .align(Alignment.TopEnd),
-                        painter = painterResource(R.drawable.progress_img),
-                        contentDescription = ""
-                    )
-
-                    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-                        Text(
-                            text = "Today's Progress",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
-                            color = MainPurple
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "8/14 Completed Tasks",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        // Progress card
-                        ProgressCard()
-                    }
-                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = "Today",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
-            )
 
-            // TODO:
-//            TasksList(viewModel = viewModel)
-            TasksListTest()
 
-            Spacer(modifier = Modifier.height(18.dp))
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = "Upcoming",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
-            )
-            TasksListTest()
 
-            Spacer(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .height(4.dp)
-            )
+
+            item {
+                ProgressCard()
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+
+            item {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Today",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                )
+
+            }
+
+
+            // Today's tasks
+            items(viewModel.state.value.todayTasks) {
+                TaskCard(it)
+
+            }
+
+
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Upcoming",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                )
+            }
+
+
+            // Upcoming tasks
+            items(viewModel.state.value.upcomingTasks) {
+                TaskCard(it)
+            }
+
+            item {
+                Spacer(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .height(4.dp)
+                )
+            }
         }
     }
 
@@ -306,7 +289,6 @@ fun HomePetsList(modifier: Modifier = Modifier, onAddPetClicked: () -> Unit) {
 @Composable
 fun HomePreView() {
     PetPalTheme {
-        HomeScreen(onAddTaskClicked = {})
 
     }
 }

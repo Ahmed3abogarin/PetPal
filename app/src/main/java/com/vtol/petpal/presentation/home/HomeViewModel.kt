@@ -9,6 +9,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 
@@ -21,7 +24,7 @@ class HomeViewModel @Inject constructor(
     val state = _state
 
     init {
-        getAllTasks()
+        getTasks()
     }
 
     fun insertTask(task: Task) {
@@ -30,18 +33,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getAllTasks() {
 
+    fun getTasks() {
         appUseCases.getTasks().onEach { tasks ->
-            _state.value = _state.value.copy(tasks = tasks)
+            _state.value = _state.value.copy(todayTasks = todayTasks(tasks))
+            _state.value = _state.value.copy(upcomingTasks = upcomingTasks(tasks))
         }.launchIn(viewModelScope)
+    }
 
 
+    fun todayTasks(tasks: List<Task>) = tasks.filter {
+        val taskDate = Instant.ofEpochMilli(it.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
+        taskDate == LocalDate.now()
+    }
+
+    fun upcomingTasks(tasks: List<Task>) = tasks.filter {
+        val taskDate = Instant.ofEpochMilli(it.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
+        taskDate.isAfter(LocalDate.now())
     }
 
 }
 
 data class HomeState(
-    val tasks: List<Task> = emptyList(),
+    val todayTasks: List<Task> = emptyList(),
+    val upcomingTasks: List<Task> = emptyList(),
     val isLoading: Boolean = false,
 )

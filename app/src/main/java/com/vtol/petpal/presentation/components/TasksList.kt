@@ -134,14 +134,13 @@ fun TasksList2(modifier: Modifier = Modifier, state: HomeState) {
 
 
 @Composable
-fun TasksList(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
+fun TasksList(modifier: Modifier = Modifier, items: List<Task> = emptyList()) {
 
-    val state = viewModel.state.value
     LazyColumn(
         contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(state.tasks) {
+        items(items) {
             TaskCard(it)
         }
 
@@ -186,15 +185,17 @@ fun TaskCard(task: Task) {
     }
 
     Card(
+        modifier = Modifier
+            .padding(horizontal = 16.dp),
         elevation = CardDefaults.elevatedCardElevation(3.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
-                .padding(vertical = 16.dp, horizontal = 12.dp),
+                .padding(vertical = 16.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
 
