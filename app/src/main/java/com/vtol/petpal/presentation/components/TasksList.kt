@@ -138,12 +138,37 @@ fun TasksList(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
 
     val state = viewModel.state.value
     LazyColumn(
-        contentPadding = PaddingValues(vertical = 12.dp),
+        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(state.tasks) {
             TaskCard(it)
         }
+
+    }
+
+
+}
+
+@Composable
+fun TasksListTest(modifier: Modifier = Modifier) {
+
+    LazyColumn(
+        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(2) {
+            val task = Task(
+                5,
+                22,
+                "Blind Pew, Max, Lionel ",
+                "6:00PM",
+                type = TaskType.VET,
+                dateTime = 55
+            )
+            TaskCard(task)
+        }
+
 
     }
 
@@ -174,19 +199,17 @@ fun TaskCard(task: Task) {
             horizontalArrangement = Arrangement.SpaceBetween
 
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    modifier = Modifier
-                        .size(66.dp)
-                        .clip(CircleShape)
-                        .background(Color(0x8BDCC5FF))
-                        .padding(12.dp),
-                    contentScale = ContentScale.Crop,
-                    painter = painterResource(taskImg), contentDescription = "Pet Image"
-                )
-            }
+            Image(
+                modifier = Modifier
+                    .size(66.dp)
+                    .clip(CircleShape)
+                    .background(Color(0x8BDCC5FF))
+                    .padding(12.dp),
+                contentScale = ContentScale.Crop,
+                painter = painterResource(taskImg), contentDescription = "Pet Image"
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.fillMaxWidth().weight(1f)) {
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -203,7 +226,7 @@ fun TaskCard(task: Task) {
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium)
                         )
                         Spacer(modifier = Modifier.width(1.dp))
-                        RadioButton(selected = false, onClick = { /*TODO*/ })
+
                     }
                 }
 
@@ -211,7 +234,7 @@ fun TaskCard(task: Task) {
                     text = "Blind Pew, Max, Lionel",
                 )
             }
-
+            RadioButton(selected = false, onClick = { /*TODO*/ })
 
         }
     }
