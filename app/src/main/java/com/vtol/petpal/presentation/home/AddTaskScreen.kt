@@ -84,7 +84,7 @@ fun AddTaskScreen2(
 ) {
     // === 1. Common State ===
     var title by remember { mutableStateOf("") }
-    var selectedType by remember { mutableStateOf(TaskType.FOOD) }
+    var selectedType by remember { mutableStateOf(TaskType.FEED) }
 
     // === 2. Dynamic State (One var for every possible field) ===
     // Food Fields
@@ -145,7 +145,7 @@ fun AddTaskScreen2(
             // --- SECTION B: The Dynamic Fields ---
 
             // 1. FOOD FIELDS
-            AnimatedVisibility(visible = selectedType == TaskType.FOOD) {
+            AnimatedVisibility(visible = selectedType == TaskType.FEED) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(
                         "Food Details",
@@ -289,7 +289,7 @@ fun AddTaskScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel,naviga
 
             // Dynamic fields validation
             val dynamicFieldsValid = when (selectedType){
-                TaskType.FOOD -> food.isNotBlank() && amount.isNotBlank()
+                TaskType.FEED -> food.isNotBlank() && amount.isNotBlank()
                 TaskType.VET -> clinic.isNotBlank() && reason.isNotBlank()
                 TaskType.MEDICATION -> medicineName.isNotBlank() && dosage.isNotBlank()
                 TaskType.WALK -> duration.isNotBlank() && location.isNotBlank()
@@ -436,7 +436,7 @@ fun AddTaskScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel,naviga
                     // display only the associated fields with the task type
 
                     // Food fields
-                    AnimatedVisibility(visible = selectedType == TaskType.FOOD) {
+                    AnimatedVisibility(visible = selectedType == TaskType.FEED) {
                         Column {
                             AppTextField(
                                 value = food,
@@ -582,7 +582,7 @@ fun AddTaskScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel,naviga
                 isSaving = true
                 val gson = Gson()
                 val jsonDetails = when (selectedType) {
-                    TaskType.FOOD -> gson.toJson(FoodDetails(food, amount))
+                    TaskType.FEED -> gson.toJson(FoodDetails(food, amount))
                     TaskType.VET -> gson.toJson(VetDetails(clinic, reason))
                     TaskType.MEDICATION -> gson.toJson(MedDetails(medicineName, dosage))
                     TaskType.WALK -> gson.toJson(WalkDetails(duration.toIntOrNull() ?: 0, location))
@@ -600,7 +600,7 @@ fun AddTaskScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel,naviga
                 val newTask = Task(
                     petId = 1, // You'll eventually get this from your PetDropDown selection
                     title = selectedType?.name ?: "Task",
-                    type = selectedType ?: TaskType.FOOD,
+                    type = selectedType ?: TaskType.FEED,
                     dateTime = combinedDateTime,
                     details = jsonDetails,
                     note = note,
