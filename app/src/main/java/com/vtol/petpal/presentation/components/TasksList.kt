@@ -149,30 +149,6 @@ fun TasksList(modifier: Modifier = Modifier, items: List<Task> = emptyList()) {
 
 }
 
-@Composable
-fun TasksListTest(modifier: Modifier = Modifier) {
-
-    LazyColumn(
-        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(2) {
-            val task = Task(
-                5,
-                22,
-                "Blind Pew, Max, Lionel ",
-                "6:00PM",
-                type = TaskType.VET,
-                dateTime = 55
-            )
-            TaskCard(task)
-        }
-
-
-    }
-
-
-}
 
 @Composable
 fun TaskCard(task: Task) {

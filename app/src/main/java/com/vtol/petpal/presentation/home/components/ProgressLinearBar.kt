@@ -29,7 +29,7 @@ import com.vtol.petpal.ui.theme.MainPurple
 
 
 @Composable
-fun ProgressCard(modifier: Modifier = Modifier) {
+fun ProgressCard(modifier: Modifier = Modifier, progress: Float, total: Int, completed: Int,percentage:Int) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,13 +67,13 @@ fun ProgressCard(modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "8/14 Completed Tasks",
+                    text = "$completed/$total Completed Tasks",
                     style = MaterialTheme.typography.labelLarge
                 )
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Progress card
-                ProgressLinearBar()
+                ProgressLinearBar(progress = progress, percentage = percentage)
             }
         }
     }
@@ -81,7 +81,7 @@ fun ProgressCard(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun ProgressLinearBar(modifier: Modifier = Modifier) {
+fun ProgressLinearBar(modifier: Modifier = Modifier, progress: Float,percentage:Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -104,7 +104,7 @@ fun ProgressLinearBar(modifier: Modifier = Modifier) {
                 drawRect(
                     color = MainPurple,
                     size = Size(
-                        width = size.width * 0.4f.coerceIn(0f, 1f),
+                        width = size.width * progress.coerceIn(0f, 1f),
                         height = size.height
                     )
                 )
@@ -114,7 +114,7 @@ fun ProgressLinearBar(modifier: Modifier = Modifier) {
 
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = "40%",
+            text = "$percentage%",
             style = MaterialTheme.typography.labelLarge
         )
 

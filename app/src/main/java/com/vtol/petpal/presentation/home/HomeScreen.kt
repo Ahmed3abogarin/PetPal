@@ -34,6 +34,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +52,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
 fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
+    val state = viewModel.state.collectAsState()
 
 //    Image(
 //        painter = painterResource(R.drawable.header_img),
@@ -112,7 +114,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
 
 
             item {
-                ProgressCard()
+                ProgressCard(progress = state.value.progress, total = state.value.total, completed = state.value.completedCount, percentage = state.value.percentage)
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -128,7 +130,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
 
 
             // Today's tasks
-            items(viewModel.state.value.todayTasks) {
+            items(state.value.todayTasks) {
                 TaskCard(it)
 
             }
@@ -145,7 +147,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
 
 
             // Upcoming tasks
-            items(viewModel.state.value.upcomingTasks) {
+            items(state.value.upcomingTasks) {
                 TaskCard(it)
             }
 
