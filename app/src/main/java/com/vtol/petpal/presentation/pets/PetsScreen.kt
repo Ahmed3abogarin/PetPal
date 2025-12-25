@@ -16,19 +16,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vtol.petpal.domain.model.Pet
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vtol.petpal.presentation.pets.components.PetCard
-import com.vtol.petpal.util.Resource
 
 @Composable
 fun PetsScreen(
-    state: Resource<List<Pet>>?,
+    viewModel: PetViewModel,
     navigateToAddPetScreen: () -> Unit,
     onScheduleClick: (String) -> Unit, onCardClick: (String) -> Unit
 ){
+    val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold (
         topBar = {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
@@ -44,25 +45,24 @@ fun PetsScreen(
         }
     ){ innerPadding ->
 
-        when(state){
-            is Resource.Success -> {
+        when{
+            state.isLoading -> {
+                CircularProgressIndicator()
+            }
+            state.error != null -> {
+                Text(text= state.error!!)
+            }
+            else -> {
                 LazyColumn(
                     modifier= Modifier.padding(innerPadding),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp)
                 ){
-                    items(state.data){
-                        pet -> PetCard(pet = pet, onScheduleClick = {onScheduleClick(it)}, onCardClick = {onCardClick(it)})
+                    items(state.pets){
+                            pet -> PetCard(pet = pet, onScheduleClick = {onScheduleClick(it)}, onCardClick = {onCardClick(it)})
                     }
                 }
             }
-            is Resource.Loading -> {
-                CircularProgressIndicator()
-            }
-            is Resource.Error -> {
-                Text(text=state.message)
-            }
-            else -> Unit
 
         }
 
