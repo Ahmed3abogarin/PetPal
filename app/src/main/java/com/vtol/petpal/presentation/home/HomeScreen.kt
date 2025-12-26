@@ -80,8 +80,9 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
                 Modifier
                     .clip(CircleShape)
                     .background(MainPurple)
+                    .clickable { onAddTaskClicked() }
                     .padding(horizontal = 10.dp, vertical = 5.dp)
-                    .clickable { onAddTaskClicked() },
+                    ,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
@@ -135,18 +136,22 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
             }
 
 
-            item {
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "Today",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
-                )
-
+            if (state.value.todayTasks.isNotEmpty()) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = "Today",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
+
 
 
             // Today's tasks
             items(state.value.todayTasks) {
+
                 TaskCard(it)
 
             }
@@ -159,6 +164,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
                     text = "Upcoming",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
 
