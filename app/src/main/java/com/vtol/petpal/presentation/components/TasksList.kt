@@ -210,6 +210,7 @@ fun TaskCard(task: Task) {
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // TODO: Add the task's time
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "6:00PM",

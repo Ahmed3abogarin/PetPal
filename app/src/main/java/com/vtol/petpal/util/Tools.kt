@@ -1,7 +1,9 @@
 package com.vtol.petpal.util
 
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -33,3 +35,8 @@ fun Long?.toAgeString(): String {
 fun LocalDate.convertDate(): String{
     return this.format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy"))
 }
+
+fun Long.toLocalDate(): LocalDate =
+    Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
