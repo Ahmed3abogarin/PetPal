@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,21 +41,56 @@ fun CalenderScreen(modifier: Modifier = Modifier, viewModel: CalenderViewModel =
     val calendarTasks by viewModel.calendarTasks.collectAsState()
 
 
-
     val calendarState = rememberCalendarState(
         firstDayOfWeek = DayOfWeek.SUNDAY,
-        startMonth = YearMonth.now().minusMonths(3),
+        startMonth = YearMonth.now(),
         endMonth = YearMonth.now().plusMonths(3)
     )
 
-    Column {
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .statusBarsPadding()) {
+
+
+        // Weekday Header
+
+
+        // calendar days
         HorizontalCalendar(
-            dayContent = {
-                    day ->
+            dayContent = { day ->
                 CalendarDayCell(
                     day = day,
                     tasks = calendarTasks[day.date].orEmpty()
                 )
+            },
+            monthHeader = { month ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp)
+                ) {
+                    Text(
+                        text = month.yearMonth.month.name,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        // week days
+                        val weekDays = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+
+                        weekDays.forEach { day ->
+                            Text(
+                                text = day,
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                            )
+                        }
+                    }
+                }
             },
             state = calendarState
 
@@ -63,7 +101,7 @@ fun CalenderScreen(modifier: Modifier = Modifier, viewModel: CalenderViewModel =
 @Composable
 fun CalendarDayCell(
     day: CalendarDay,
-    tasks: List<Task>
+    tasks: List<Task>,
 ) {
     Column(
         modifier = Modifier
