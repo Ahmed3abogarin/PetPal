@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface AppRepository {
     suspend fun addPet(pet: Pet): Resource<Unit>
 
-    suspend fun getPets(): Resource<List<Pet>>
+    fun getPets(): Flow<List<Pet>>
 
     suspend fun getPet(id: String): Resource<Pet?>
 

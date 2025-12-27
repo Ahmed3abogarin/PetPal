@@ -1,14 +1,12 @@
 package com.vtol.petpal.presentation.home
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,17 +25,21 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,13 +47,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
-import com.vtol.petpal.presentation.components.TasksListTest
+import com.vtol.petpal.presentation.components.TaskCard
+import com.vtol.petpal.presentation.home.components.HomePetsList
 import com.vtol.petpal.presentation.home.components.ProgressCard
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun HomeScreen(onAddTaskClicked: () -> Unit) {
+fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
+    val state = viewModel.state.collectAsState()
+
+    val scaffoldState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.value.error) {
+        state.value.error?.let {
+            scaffoldState.showSnackbar(it)
+        }
+    }
 
 //    Image(
 //        painter = painterResource(R.drawable.header_img),
@@ -60,28 +73,30 @@ fun HomeScreen(onAddTaskClicked: () -> Unit) {
 //        ).size(200.dp)
 //    )
 
-    Scaffold(floatingActionButton = {
-        Column(
-            Modifier
-                .clip(CircleShape)
-                .background(MainPurple)
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-                .clickable { onAddTaskClicked() },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "",
-                tint = Color.White
-            )
-
-            Text(text = "Add Task", color = Color.White, fontSize = 8.sp)
+    Scaffold(
+        snackbarHost = { SnackbarHost(scaffoldState) },
+        floatingActionButton = {
+            Column(
+                Modifier
+                    .clip(CircleShape)
+                    .background(MainPurple)
+                    .clickable { onAddTaskClicked() }
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+                    ,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "",
+                    tint = Color.White
+                )
+                Text(text = "Add Task", color = Color.White, fontSize = 8.sp)
+            }
         }
-
-    }) { paddingValues ->
-        Column(
+    ) { paddingValues ->
+        LazyColumn(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(bottom = paddingValues.calculateBottomPadding())
                 .fillMaxSize()
                 .background(Color(0XFFF8F4FF))
 
@@ -90,90 +105,94 @@ fun HomeScreen(onAddTaskClicked: () -> Unit) {
         ) {
 
             // The header
-            AppHomeHeader()
+            item {
+                AppHomeHeader()
+            }
+//            AppHomeHeader()
 
-            Spacer(modifier = Modifier.height(22.dp))
+
+            item {
+                // Pets list
+                Spacer(modifier = Modifier.height(16.dp))
+
+                HomePetsList(pets = state.value.petsList, onAddPetClicked = {})
+                Spacer(modifier = Modifier.height(16.dp))
+
+            }
 
 
-            // Pets list
-            HomePetsList {}
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                elevation = CardDefaults.cardElevation(6.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
 
-                    // bg shapes
-                    Image(
-                        modifier = Modifier
-                            .width(112.dp)
-                            .height(80.dp)
-                            .align(Alignment.TopEnd),
-                        painter = painterResource(R.drawable.bg_shapes),
-                        contentDescription = ""
+
+            item {
+                ProgressCard(
+                    progress = state.value.progress,
+                    total = state.value.total,
+                    completed = state.value.completedCount,
+                    percentage = state.value.percentage
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+
+            if (state.value.todayTasks.isNotEmpty()) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = "Today",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
                     )
-
-                    // Progress image
-                    Image(
-                        modifier = Modifier
-                            .width(112.dp)
-                            .height(80.dp)
-                            .align(Alignment.TopEnd),
-                        painter = painterResource(R.drawable.progress_img),
-                        contentDescription = ""
-                    )
-
-                    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-                        Text(
-                            text = "Today's Progress",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
-                            color = MainPurple
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "8/14 Completed Tasks",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        // Progress card
-                        ProgressCard()
-                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = "Today",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
-            )
 
-            // TODO:
-//            TasksList(viewModel = viewModel)
-            TasksListTest()
+            // Today's tasks
+            items(state.value.todayTasks) {
 
-            Spacer(modifier = Modifier.height(18.dp))
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = "Upcoming",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
-            )
-            TasksListTest()
+                TaskCard(it)
 
-            Spacer(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .height(4.dp)
-            )
+            }
+
+
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Upcoming",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+
+            // Upcoming tasks
+            items(state.value.upcomingTasks) {
+                TaskCard(it)
+            }
+
+            item {
+                Spacer(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .height(4.dp)
+                )
+            }
         }
+
+        if (state.value.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
     }
 
 }
@@ -264,49 +283,11 @@ fun AppHomeHeader(modifier: Modifier = Modifier) {
 
 }
 
-@Composable
-fun HomePetsList(modifier: Modifier = Modifier, onAddPetClicked: () -> Unit) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(horizontal = 24.dp)
-    ) {
-        items(2) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape),
-                    painter = painterResource(R.drawable.cat),
-                    contentDescription = ""
-                )
-                Text(text = "Blind Pew")
-            }
-        }
-        item {
-            Box(
-                modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .background(MainPurple), contentAlignment = Alignment.Center
-            ) {
-                IconButton(onClick = { onAddPetClicked() }) {
-                    Icon(
-                        modifier = Modifier.size(32.dp),
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "",
-                        tint = Color.White
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Preview
 @Composable
 fun HomePreView() {
     PetPalTheme {
-        HomeScreen(onAddTaskClicked = {})
 
     }
 }

@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,7 +37,6 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.presentation.home.HomeState
-import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
@@ -134,14 +135,13 @@ fun TasksList2(modifier: Modifier = Modifier, state: HomeState) {
 
 
 @Composable
-fun TasksList(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
+fun TasksList(modifier: Modifier = Modifier, items: List<Task> = emptyList()) {
 
-    val state = viewModel.state.value
     LazyColumn(
         contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(state.tasks) {
+        items(items) {
             TaskCard(it)
         }
 
@@ -150,30 +150,6 @@ fun TasksList(modifier: Modifier = Modifier, viewModel: HomeViewModel) {
 
 }
 
-@Composable
-fun TasksListTest(modifier: Modifier = Modifier) {
-
-    LazyColumn(
-        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(2) {
-            val task = Task(
-                5,
-                22,
-                "Blind Pew, Max, Lionel ",
-                "6:00PM",
-                type = TaskType.VET,
-                dateTime = 55
-            )
-            TaskCard(task)
-        }
-
-
-    }
-
-
-}
 
 @Composable
 fun TaskCard(task: Task) {
@@ -186,55 +162,67 @@ fun TaskCard(task: Task) {
     }
 
     Card(
+        modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(3.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
-                .padding(vertical = 16.dp, horizontal = 12.dp),
+                .padding(16.dp)
+                ,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-
         ) {
-            Image(
-                modifier = Modifier
-                    .size(66.dp)
-                    .clip(CircleShape)
-                    .background(Color(0x8BDCC5FF))
-                    .padding(12.dp),
-                contentScale = ContentScale.Crop,
-                painter = painterResource(taskImg), contentDescription = "Pet Image"
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(modifier = Modifier.fillMaxWidth().weight(1f)) {
+            Row (verticalAlignment = Alignment.CenterVertically){
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Surface(
+                    shape = CircleShape,
+                    color =Color(0x8BDCC5FF),
+                    modifier = Modifier.size(66.dp)
                 ) {
+                    Image(
+                        modifier = Modifier.padding(12.dp),
+                        contentScale = ContentScale.Crop,
+                        painter = painterResource(taskImg), contentDescription = "Pet Image"
+                    )
+                }
+
+
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+
                     Text(
                         text = taskType,
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium)
                     )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "6:00PM",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium)
-                        )
-                        Spacer(modifier = Modifier.width(1.dp))
 
-                    }
+
+                    Text(
+                        text = "Blind Pew, Max, Lionel",
+                        fontSize = 10.sp
+                    )
                 }
 
-                Text(
-                    text = "Blind Pew, Max, Lionel",
-                )
+
             }
-            RadioButton(selected = false, onClick = { /*TODO*/ })
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // TODO: Add the task's time
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "6:00PM",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(modifier = Modifier.size(24.dp)) {
+                    RadioButton(selected = false, onClick = { /*TODO*/ })
+                }
+
+            }
+
 
         }
     }

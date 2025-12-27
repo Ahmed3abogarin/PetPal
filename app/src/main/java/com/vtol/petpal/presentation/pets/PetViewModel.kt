@@ -8,6 +8,11 @@ import com.vtol.petpal.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +24,7 @@ class PetViewModel @Inject constructor(
     private val _addPetState = MutableStateFlow<Resource<Unit>?>(null)
     val addPetState = _addPetState.asStateFlow()
 
-    private val _state = MutableStateFlow<Resource<List<Pet>>?>(Resource.Loading)
+    private val _state = MutableStateFlow(PetsState())
     val state = _state.asStateFlow()
 
 
@@ -36,9 +41,31 @@ class PetViewModel @Inject constructor(
     }
 
     fun getPets(){
-        viewModelScope.launch {
-            _state.value = Resource.Loading
-            _state.value = appUseCases.getPets()
-        }
+        appUseCases.getPets()
+            .map { pets ->
+                PetsState(
+                    pets = pets,
+                    isLoading = false
+                )
+            }
+            .onStart {
+                emit(PetsState(isLoading = true))
+            }
+            .catch { e ->
+                emit(
+                    PetsState(
+                        isLoading = false,
+                        error = e.message ?: "Failed to load pets"
+                    )
+                )
+            }
+            .onEach { _state.value = it }
+            .launchIn(viewModelScope)
     }
 }
+
+data class PetsState(
+    val pets: List<Pet> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
+)

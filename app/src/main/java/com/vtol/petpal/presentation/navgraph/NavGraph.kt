@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.Routes
+import com.vtol.petpal.presentation.calender.CalenderScreen
 import com.vtol.petpal.presentation.home.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
@@ -149,12 +148,12 @@ fun AppNavigator() {
             composable(Routes.HomeScreen.route) {
                 HomeScreen(onAddTaskClicked = {
                     navController.navigate(Routes.AddTaskScreen.route)
-                })
+                }, viewModel = homeViewModel)
             }
             composable(Routes.PetsScreen.route) {
 
                 PetsScreen(
-                    state = petViewModel.state.collectAsState().value,
+                    viewModel = petViewModel,
                     navigateToAddPetScreen = {
                         navController.navigate(Routes.AddPetScreen.route)
                     },
@@ -168,9 +167,7 @@ fun AppNavigator() {
 
             }
             composable(Routes.CalenderScreen.route) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Calender Screen")
-                }
+                CalenderScreen()
             }
             composable(
 //                enterTransition = { slideInHorizontally(animationSpec = tween(400)) },

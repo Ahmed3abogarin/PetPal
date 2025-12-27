@@ -96,4 +96,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
 
+    // Calendar
+    implementation("com.kizitonwose.calendar:compose:2.9.0")
+
 }
