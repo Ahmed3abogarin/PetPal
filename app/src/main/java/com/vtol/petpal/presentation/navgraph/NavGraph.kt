@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -167,7 +168,8 @@ fun AppNavigator() {
 
             }
             composable(Routes.CalenderScreen.route) {
-                CalenderScreen()
+                val map = petViewModel.petMap.collectAsState()
+                CalenderScreen(petMap = map.value)
             }
             composable(
 //                enterTransition = { slideInHorizontally(animationSpec = tween(400)) },
@@ -212,8 +214,10 @@ fun AppNavigator() {
                 PetDetailsScreen(petViewModel = petDetailsVM)
             }
             composable(Routes.AddTaskScreen.route) {
+                val pets = petViewModel.state.collectAsState()
                 AddTaskScreen(
                     viewModel = homeViewModel,
+                    petsList = pets.value.pets,
                     navigateUp = { navController.navigateUp() }
                 )
             }

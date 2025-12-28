@@ -27,6 +27,8 @@ class PetViewModel @Inject constructor(
     private val _state = MutableStateFlow(PetsState())
     val state = _state.asStateFlow()
 
+    private val _petMap = MutableStateFlow<Map<String, String>>(emptyMap())
+    val petMap = _petMap.asStateFlow()
 
     init {
         getPets()
@@ -59,7 +61,10 @@ class PetViewModel @Inject constructor(
                     )
                 )
             }
-            .onEach { _state.value = it }
+            .onEach {
+                _state.value = it
+                _petMap.value = it.pets.associate {pet -> pet.id to pet.petName}
+            }
             .launchIn(viewModelScope)
     }
 }

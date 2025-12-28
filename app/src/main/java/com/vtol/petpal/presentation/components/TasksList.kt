@@ -244,7 +244,7 @@ fun MyPreview() {
         TaskCard(
             Task(
                 5,
-                22,
+                "22",
                 "Blind Pew, Max, Lionel ",
                 "6:00PM",
                 type = TaskType.VET,

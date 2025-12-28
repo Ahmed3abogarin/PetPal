@@ -18,6 +18,7 @@ class AppRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val tasksDao: TasksDao,
 ) : AppRepository {
+
     override suspend fun addPet(pet: Pet): Resource<Unit> {
         return try {
             val petId = firestore.collection(USERS_COLLECTION)
