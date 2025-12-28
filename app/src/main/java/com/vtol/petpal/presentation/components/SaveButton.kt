@@ -47,7 +47,7 @@ fun SaveButton(
             Text(
                 text = text,
                 fontSize = 20.sp,
-                color = if (isLoading) Color.White else Color.Transparent
+                color = if (isLoading) Color.Transparent else Color.White
             )
         }
     }

@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.home
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -224,7 +223,7 @@ fun AddTaskScreen2(
 
                     // 2. Create the Task Entity
                     val newTask = Task(
-                        petId = 123, // Replace with real Pet ID
+                        petId = "123", // Replace with real Pet ID
                         title = title,
                         type = selectedType,
                         dateTime = System.currentTimeMillis(), // Replace with DatePicker value
@@ -244,13 +243,15 @@ fun AddTaskScreen2(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTaskScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel,navigateUp: () -> Unit) {
+fun AddTaskScreen(modifier: Modifier = Modifier, petsList: List<Pet>, viewModel: HomeViewModel, navigateUp: () -> Unit) {
 
     var typeIndex by remember { mutableIntStateOf(-1) }
 
     var recurrenceIndex by remember { mutableIntStateOf(-1) }
 
     var selectedType by remember { mutableStateOf<TaskType?>(null) }
+
+    var selectedPet by remember { mutableStateOf(petsList[0]) }
 
 
     var recurrence by remember { mutableStateOf<RepeatInterval?>(RepeatInterval.Never) }
@@ -333,13 +334,13 @@ fun AddTaskScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel,naviga
             ) {
                 Text(text = "For which pet?")
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // TODO: GET THE PETS FROM FIREBASE
                 PetDropDownMenu(
-                    petsList = listOf(Pet(petName = "Blind Pew"), Pet(petName = "White lady")),
+                    petsList = petsList,
+                    selectedPet = selectedPet,
                     onConfirm = {
-                        Log.v("Pets", "List size is${it.size}")
-                        it.forEachIndexed { index, pet ->
-                            Log.v("Pets", "index: $index \n pet: $pet")
-                        }
+                        selectedPet = it
 
                     },
                 )
@@ -598,11 +599,12 @@ fun AddTaskScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel,naviga
 
                 // 3. Construct the Final Task Object
                 val newTask = Task(
-                    petId = 1, // You'll eventually get this from your PetDropDown selection
+                    petId = selectedPet.id, // You'll eventually get this from your PetDropDown selection
                     title = selectedType?.name ?: "Task",
                     type = selectedType ?: TaskType.FEED,
                     dateTime = combinedDateTime,
                     details = jsonDetails,
+                    repeatInterval = recurrence,
                     note = note,
                     isCompleted = false
                 )

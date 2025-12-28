@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.vtol.petpal.Converters
 import com.vtol.petpal.domain.model.tasks.Task
 
-@Database(entities = [Task::class], version = 1, exportSchema = true)
+@Database(entities = [Task::class], version = 2, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class TasksDB: RoomDatabase() {
     abstract val tasksDao: TasksDao

@@ -40,3 +40,10 @@ fun Long.toLocalDate(): LocalDate =
     Instant.ofEpochMilli(this)
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
+
+fun Long.toTimeString(): String {
+    val time = Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalTime()
+    return time.format(DateTimeFormatter.ofPattern("h:mm a"))
+}

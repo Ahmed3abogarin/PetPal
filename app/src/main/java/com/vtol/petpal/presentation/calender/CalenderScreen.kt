@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,12 +48,17 @@ import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.convertDate
+import com.vtol.petpal.util.toTimeString
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
 @Composable
-fun CalenderScreen(modifier: Modifier = Modifier, viewModel: CalenderViewModel = hiltViewModel()) {
+fun CalenderScreen(
+    modifier: Modifier = Modifier,
+    petMap: Map<String, String>,
+    viewModel: CalenderViewModel = hiltViewModel(),
+) {
 
     val calendarTasks by viewModel.calendarTasks.collectAsState()
 
@@ -77,7 +83,10 @@ fun CalenderScreen(modifier: Modifier = Modifier, viewModel: CalenderViewModel =
                 CalendarDayCell(
                     day = day,
                     selectedDate = selectedDate,
-                    tasks = calendarTasks[day.date].orEmpty()
+                    tasks = calendarTasks[day.date].orEmpty(),
+                    onDateClicked = { date ->
+                        selectedDate = date
+                    }
                 )
             },
             monthHeader = { month ->
@@ -112,6 +121,14 @@ fun CalenderScreen(modifier: Modifier = Modifier, viewModel: CalenderViewModel =
             state = calendarState
 
         )
+
+        // Highlight card for the selected date
+        HighlightCard(
+            tasks = calendarTasks[selectedDate].orEmpty(),
+            date = selectedDate,
+            petMap = petMap
+        )
+
     }
 }
 
@@ -120,6 +137,7 @@ fun CalendarDayCell(
     day: CalendarDay,
     selectedDate: LocalDate,
     tasks: List<Task>,
+    onDateClicked: (LocalDate) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -129,7 +147,7 @@ fun CalendarDayCell(
             .background(color = if (day.date == selectedDate) LightPurple else Color.Transparent)
             .clickable {
                 // show day's tasks highlight
-
+                onDateClicked(day.date)
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -158,7 +176,11 @@ fun CalendarDayCell(
 }
 
 @Composable
-fun HighlightCard(tasks: List<Task>, date: LocalDate){
+fun HighlightCard(tasks: List<Task>, date: LocalDate, petMap: Map<String, String>) {
+
+    val groupedTasks = tasks.groupBy { it.title }
+
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(3.dp),
@@ -179,15 +201,18 @@ fun HighlightCard(tasks: List<Task>, date: LocalDate){
 
             // Right content
             Column {
-                Text(modifier = Modifier
-                    .padding(start = 10.dp),
-                    text = date.convertDate(), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    modifier = Modifier
+                        .padding(start = 10.dp),
+                    text = date.convertDate(), style = MaterialTheme.typography.titleMedium
+                )
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
 
                     // Day's tasks list
 
-                    tasks.sortedBy { it.dateTime }.take(3).forEach {
+                    groupedTasks.forEach { (taskTitle, taskList) ->
+
                         Row {
                             Image(
                                 modifier = Modifier
@@ -198,20 +223,32 @@ fun HighlightCard(tasks: List<Task>, date: LocalDate){
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Column {
-                                Text(text = "")
+
+                                val petNames = taskList.map { petMap[it.petId.toString()] ?: "Unknown" }
+
+                                // Pets names
+                                Text(
+                                    text = petNames.joinToString(", "),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Feed", style = MaterialTheme.typography.labelMedium)
+                                Text(text = taskTitle, style = MaterialTheme.typography.labelMedium)
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "8:00 AM")
 
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    val earliestTime = tasks.minOfOrNull { it.dateTime }?.toTimeString() ?: ""
+                    if (earliestTime.isNotEmpty()) {
+                        Text(text = earliestTime)
+                    }
                 }
             }
         }
-
     }
 }
 

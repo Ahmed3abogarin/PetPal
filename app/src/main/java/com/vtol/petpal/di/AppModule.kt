@@ -76,7 +76,8 @@ object AppModule {
             context = application,
             klass = TasksDB::class.java,
             name = "tasks_DB"
-        ).build()
+        ).fallbackToDestructiveMigration(true)
+            .build()
     }
 
     @Provides
