@@ -213,29 +213,33 @@ fun HighlightCard(tasks: List<Task>, date: LocalDate, petMap: Map<String, String
 
                     groupedTasks.forEach { (taskTitle, taskList) ->
 
-                        Row {
-                            Image(
-                                modifier = Modifier
-                                    .size(42.dp)
-                                    .padding(8.dp),
-                                painter = painterResource(R.drawable.ic_unknown),
-                                contentDescription = ""
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Column {
-
-                                val petNames = taskList.map { petMap[it.petId.toString()] ?: "Unknown" }
-
-                                // Pets names
-                                Text(
-                                    text = petNames.joinToString(", "),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                        Column {
+                            Row {
+                                Image(
+                                    modifier = Modifier
+                                        .size(42.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(R.drawable.ic_unknown),
+                                    contentDescription = ""
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = taskTitle, style = MaterialTheme.typography.labelMedium)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Column {
+
+                                    val petNames = taskList.map { petMap[it.petId] ?: "Unknown" }
+
+                                    // Pets names
+                                    Text(
+                                        text = petNames.joinToString(", "),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(text = taskTitle, style = MaterialTheme.typography.labelMedium)
+                                }
                             }
                         }
+
+
                     }
 
 

@@ -170,7 +170,7 @@ fun PetDropDownMenu(
 
 
 @Composable
-fun PetDropDownMenuV2(
+fun PetDropDownMenuV2MultiSelection(
     petsList: List<Pet>,
     onConfirm: (Set<Pet>) -> Unit,
 ) {
