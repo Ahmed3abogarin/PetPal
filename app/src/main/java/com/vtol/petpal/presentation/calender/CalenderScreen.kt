@@ -56,7 +56,7 @@ import java.time.YearMonth
 @Composable
 fun CalenderScreen(
     modifier: Modifier = Modifier,
-    petMap: Map<String, String>,
+    state: CalendarState,
     viewModel: CalenderViewModel = hiltViewModel(),
 ) {
 
@@ -126,7 +126,7 @@ fun CalenderScreen(
         HighlightCard(
             tasks = calendarTasks[selectedDate].orEmpty(),
             date = selectedDate,
-            petMap = petMap
+            petMap = state.petMap
         )
 
     }

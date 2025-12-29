@@ -115,7 +115,7 @@ fun HomeScreen(
                 // Pets list
                 Spacer(modifier = Modifier.height(16.dp))
 
-                HomePetsList(pets = state.value.petsList, onAddPetClicked = {})
+                HomePetsList(pets = state.value.petsList, onAddPetClicked = { onAddPetClicked() })
                 Spacer(modifier = Modifier.height(16.dp))
 
             }

@@ -27,39 +27,50 @@ import com.vtol.petpal.presentation.pets.components.PetCard
 fun PetsScreen(
     viewModel: PetViewModel,
     navigateToAddPetScreen: () -> Unit,
-    onScheduleClick: (String) -> Unit, onCardClick: (String) -> Unit
-){
+    onScheduleClick: (String) -> Unit, onCardClick: (String) -> Unit,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    Scaffold (
+    Scaffold(
         topBar = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 // text in the top middle
-                Text(modifier = Modifier.padding(vertical = 12.dp), text = "My Pets", style = MaterialTheme.typography.displaySmall)
+                Text(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    text = "My Pets",
+                    style = MaterialTheme.typography.displaySmall
+                )
             }
 
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {navigateToAddPetScreen()}){
+            FloatingActionButton(onClick = { navigateToAddPetScreen() }) {
                 Icon(Icons.Default.Add, contentDescription = "add pet button")
             }
         }
-    ){ innerPadding ->
+    ) { innerPadding ->
 
-        when{
+        when {
             state.isLoading -> {
                 CircularProgressIndicator()
             }
+
             state.error != null -> {
-                Text(text= state.error!!)
+                Text(text = state.error!!)
             }
+
             else -> {
                 LazyColumn(
-                    modifier= Modifier.padding(innerPadding),
+                    modifier = Modifier.padding(innerPadding),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp)
-                ){
-                    items(state.pets){
-                            pet -> PetCard(pet = pet, onScheduleClick = {onScheduleClick(it)}, onCardClick = {onCardClick(it)})
+                ) {
+                    items(state.pets) { pet ->
+                        PetCard(
+                            pet = pet,
+                            onScheduleClick = { onScheduleClick(it) },
+                            onCardClick = { onCardClick(it) },
+                            task = state.firstTasks[pet.id]?.minByOrNull { it.dateTime }
+                        )
                     }
                 }
             }
@@ -67,10 +78,7 @@ fun PetsScreen(
         }
 
 
-
-
     }
-
 
 
 }

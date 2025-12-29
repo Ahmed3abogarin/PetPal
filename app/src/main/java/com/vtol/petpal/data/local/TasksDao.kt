@@ -22,4 +22,9 @@ interface TasksDao {
 
     @Query("SELECT * FROM pet_tasks ORDER BY dateTime ASC")
     fun getAllTasks(): Flow<List<Task>>
+
+    @Query("SELECT * FROM pet_tasks WHERE petId = :petId ORDER BY dateTime ASC")
+    fun getTask(petId: String): Flow<List<Task>>
+
+    //  @Query("SELECT * FROM pet_tasks WHERE petId = :petId ORDER BY dateTime ASC")
 }

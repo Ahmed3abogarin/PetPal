@@ -95,4 +95,7 @@ class AppRepositoryImpl @Inject constructor(
     override fun getAllTasks(): Flow<List<Task>> =
         tasksDao.getAllTasks()
 
+    override fun getTask(petId: String): Flow<List<Task>> =
+        tasksDao.getTask(petId)
+
 }

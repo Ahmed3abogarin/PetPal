@@ -31,6 +31,7 @@ import androidx.navigation.navArgument
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.Routes
 import com.vtol.petpal.presentation.calender.CalenderScreen
+import com.vtol.petpal.presentation.calender.CalenderViewModel
 import com.vtol.petpal.presentation.home.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
@@ -56,6 +57,7 @@ fun AppNavigator() {
 
     // create the view models once the app starts to avoid delay when navigate to the screens
     val petViewModel: PetViewModel = hiltViewModel()
+    val calendarViewModel: CalenderViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
 
 
@@ -173,8 +175,8 @@ fun AppNavigator() {
                 )
             }
             composable(Routes.CalenderScreen.route) {
-                val map = petViewModel.petMap.collectAsState()
-                CalenderScreen(petMap = map.value)
+                val state = calendarViewModel.state.collectAsState()
+                CalenderScreen(state = state.value)
             }
             composable(
 //                enterTransition = { slideInHorizontally(animationSpec = tween(400)) },

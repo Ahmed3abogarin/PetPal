@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Devices.PIXEL_7_PRO
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vtol.petpal.presentation.components.TasksList
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 

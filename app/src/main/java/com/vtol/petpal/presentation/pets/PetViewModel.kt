@@ -3,16 +3,14 @@ package com.vtol.petpal.presentation.pets
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,8 +25,6 @@ class PetViewModel @Inject constructor(
     private val _state = MutableStateFlow(PetsState())
     val state = _state.asStateFlow()
 
-    private val _petMap = MutableStateFlow<Map<String, String>>(emptyMap())
-    val petMap = _petMap.asStateFlow()
 
     init {
         getPets()
@@ -42,35 +38,70 @@ class PetViewModel @Inject constructor(
         }
     }
 
-    fun getPets(){
-        appUseCases.getPets()
-            .map { pets ->
-                PetsState(
+//    fun getPetsV2(){
+//        appUseCases.getPets()
+//            .map { pets ->
+//                PetsState(
+//                    pets = pets,
+//                    isLoading = false
+//                )
+//            }
+//            .onStart {
+//                emit(PetsState(isLoading = true))
+//            }
+//            .catch { e ->
+//                emit(
+//                    PetsState(
+//                        isLoading = false,
+//                        error = e.message ?: "Failed to load pets"
+//                    )
+//                )
+//            }
+//            .onEach {
+//                _state.value = it
+//                appUseCases.getTasks(it.pets.forEach { it.id })
+//                _petMap.value = it.pets.associate { pet -> pet.id to pet.petName }
+//            }
+//            .launchIn(viewModelScope)
+//    }
+
+    private fun getPets() {
+        viewModelScope.launch {
+            try {
+                _state.value = PetsState(isLoading = true)
+
+                // Fetch pets
+                val pets = appUseCases.getPets().first() // or suspend function
+
+                // Fetch first task for each pet concurrently
+                val firstTasksMap = pets.associate { pet ->
+                    val firstTask = appUseCases.getTasksById(pet.id).firstOrNull()
+                    pet.id to firstTask
+                }
+
+                // Update state
+                _state.value = PetsState(
                     pets = pets,
+                    firstTasks = firstTasksMap,
                     isLoading = false
                 )
-            }
-            .onStart {
-                emit(PetsState(isLoading = true))
-            }
-            .catch { e ->
-                emit(
-                    PetsState(
-                        isLoading = false,
-                        error = e.message ?: "Failed to load pets"
-                    )
+
+            } catch (e: Exception) {
+                _state.value = PetsState(
+                    isLoading = false,
+                    error = e.message ?: "Failed to load pets"
                 )
             }
-            .onEach {
-                _state.value = it
-                _petMap.value = it.pets.associate {pet -> pet.id to pet.petName}
-            }
-            .launchIn(viewModelScope)
+        }
     }
 }
+
+
+
 
 data class PetsState(
     val pets: List<Pet> = emptyList(),
     val isLoading: Boolean = false,
+    val firstTasks: Map<String, List<Task>?> = emptyMap(),
     val error: String? = null
 )

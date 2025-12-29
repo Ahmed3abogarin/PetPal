@@ -15,4 +15,6 @@ interface AppRepository {
     suspend fun insertTask(task: Task)
 
     fun getAllTasks(): Flow<List<Task>>
+
+    fun getTask(petId: String): Flow<List<Task>>
 }
