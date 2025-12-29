@@ -54,7 +54,11 @@ import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
+fun HomeScreen(
+    onAddTaskClicked: () -> Unit,
+    onAddPetClicked: () -> Unit,
+    viewModel: HomeViewModel,
+) {
     val state = viewModel.state.collectAsState()
 
     val scaffoldState = remember { SnackbarHostState() }
@@ -73,7 +77,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
 //        ).size(200.dp)
 //    )
 
-    Scaffold (
+    Scaffold(
         snackbarHost = { SnackbarHost(scaffoldState) },
         floatingActionButton = {
             Column(

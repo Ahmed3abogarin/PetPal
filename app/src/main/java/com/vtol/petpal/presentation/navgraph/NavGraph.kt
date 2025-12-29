@@ -147,9 +147,15 @@ fun AppNavigator() {
         ) {
 
             composable(Routes.HomeScreen.route) {
-                HomeScreen(onAddTaskClicked = {
-                    navController.navigate(Routes.AddTaskScreen.route)
-                }, viewModel = homeViewModel)
+                HomeScreen(
+                    onAddTaskClicked = {
+                        navController.navigate(Routes.AddTaskScreen.route)
+                    },
+                    onAddPetClicked = {
+                        navController.navigate(Routes.AddPetScreen.route)
+                    },
+                    viewModel = homeViewModel
+                )
             }
             composable(Routes.PetsScreen.route) {
 
@@ -165,7 +171,6 @@ fun AppNavigator() {
                         }
                     }
                 )
-
             }
             composable(Routes.CalenderScreen.route) {
                 val map = petViewModel.petMap.collectAsState()
