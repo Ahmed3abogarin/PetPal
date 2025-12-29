@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -73,7 +73,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
 //        ).size(200.dp)
 //    )
 
-    Scaffold(
+    Scaffold (
         snackbarHost = { SnackbarHost(scaffoldState) },
         floatingActionButton = {
             Column(
@@ -81,8 +81,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
                     .clip(CircleShape)
                     .background(MainPurple)
                     .clickable { onAddTaskClicked() }
-                    .padding(horizontal = 10.dp, vertical = 5.dp)
-                    ,
+                    .padding(horizontal = 10.dp, vertical = 5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
@@ -99,9 +98,6 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
                 .padding(bottom = paddingValues.calculateBottomPadding())
                 .fillMaxSize()
                 .background(Color(0XFFF8F4FF))
-
-
-//            .verticalScroll(rememberScrollState())
         ) {
 
             // The header
@@ -121,10 +117,6 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
             }
 
 
-
-
-
-
             item {
                 ProgressCard(
                     progress = state.value.progress,
@@ -136,47 +128,81 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
             }
 
 
-            if (state.value.todayTasks.isNotEmpty()) {
+            // check if both lists are empty
+            if (state.value.todayTasks.isEmpty() && state.value.upcomingTasks.isEmpty()) {
                 item {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        text = "Today",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.empty_state_image),
+                            contentDescription = "No tasks",
+                            modifier = Modifier.size(200.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No tasks yet!\nAdd a task to get started.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
                 }
-            }
+
+            } else {
+                if (state.value.todayTasks.isNotEmpty()) {
+
+                    // Today's tasks
+                    // the header
+                    item {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            text = "Today",
+                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // The tasks list (today)
+                    items(state.value.todayTasks) {
+                        TaskCard(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            task = it
+                        )
+                    }
+                }
+
+                // Upcoming tasks
+                if (state.value.upcomingTasks.isNotEmpty()) {
+                    // The header
+                    item {
+                        Spacer(modifier = Modifier.height(18.dp))
+                        Text(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            text = "Upcoming",
+                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
 
 
-
-            // Today's tasks
-            items(state.value.todayTasks) {
-
-                TaskCard(it)
-
-            }
-
-
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "Upcoming",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-
-            // Upcoming tasks
-            items(state.value.upcomingTasks) {
-                TaskCard(it)
+                // the list of tasks
+                items(state.value.upcomingTasks) {
+                    TaskCard(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        task = it
+                    )
+                }
             }
 
             item {
                 Spacer(
                     modifier = Modifier
-                        .statusBarsPadding()
+                        .navigationBarsPadding()
                         .height(4.dp)
                 )
             }
@@ -192,9 +218,7 @@ fun HomeScreen(onAddTaskClicked: () -> Unit, viewModel: HomeViewModel) {
                 CircularProgressIndicator()
             }
         }
-
     }
-
 }
 
 

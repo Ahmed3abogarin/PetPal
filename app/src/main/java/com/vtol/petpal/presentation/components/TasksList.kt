@@ -5,15 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -38,6 +35,7 @@ import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.presentation.home.HomeState
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.toTimeString
 
 @Composable
 fun TasksList2(modifier: Modifier = Modifier, state: HomeState) {
@@ -134,25 +132,9 @@ fun TasksList2(modifier: Modifier = Modifier, state: HomeState) {
 }
 
 
-@Composable
-fun TasksList(modifier: Modifier = Modifier, items: List<Task> = emptyList()) {
-
-    LazyColumn(
-        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(items) {
-            TaskCard(it)
-        }
-
-    }
-
-
-}
-
 
 @Composable
-fun TaskCard(task: Task) {
+fun TaskCard(modifier: Modifier = Modifier,task: Task) {
 
     val (taskType, taskImg) = when (task.type) {
         TaskType.VET -> "Vet" to R.drawable.ic_vet
@@ -162,7 +144,7 @@ fun TaskCard(task: Task) {
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.elevatedCardElevation(3.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -171,8 +153,7 @@ fun TaskCard(task: Task) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                ,
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row (verticalAlignment = Alignment.CenterVertically){
@@ -210,10 +191,9 @@ fun TaskCard(task: Task) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // TODO: Add the task's time
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "6:00PM",
+                    text = task.dateTime.toTimeString(),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -242,7 +222,7 @@ fun MyPreview() {
      */
     PetPalTheme {
         TaskCard(
-            Task(
+            task = Task(
                 5,
                 "22",
                 "Blind Pew, Max, Lionel ",
