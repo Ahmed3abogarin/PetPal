@@ -44,6 +44,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.PetGender
+import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
@@ -56,15 +58,17 @@ import com.vtol.petpal.util.toAgeString
 fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsViewModel) {
     val state = petViewModel.petState.collectAsState().value
 
+    val task = petViewModel.state.collectAsState().value
+
     when (state) {
         is Resource.Success -> {
             state.data?.let {
-                PetDetailsScreenContent(pet = it)
+                PetDetailsScreenContent(modifier, pet = it,task)
             }
         }
 
         is Resource.Error -> {
-                Text(state.message)
+            Text(state.message)
         }
 
         is Resource.Loading -> {
@@ -75,10 +79,10 @@ fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsView
 }
 
 @Composable
-private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet) {
+private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, task: DetailsState) {
     val context = LocalContext.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color.White)
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -141,12 +145,9 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet) {
             text = pet.petName,
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
         )
-        Text(
-            text = pet.breed ?: "Unknown"
-        )
-        Text(
-            text = pet.birthDate.toAgeString()
-        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(text = pet.birthDate.toAgeString())
+        
         // TODO: Figure out a way to add the birthday
 //            Text(
 //                text = "Since 12th oct 2025"
@@ -154,41 +155,46 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet) {
 
 
         // ------------------------- Tabs ---------------------------------
-        Spacer(modifier= Modifier.height(20.dp))
-        var selectedTabIndex by rememberSaveable { mutableIntStateOf(1) }
+        Spacer(modifier = Modifier.height(20.dp))
+        var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
         val tabs = listOf("Overview", "Health", "Gallery")
 
         // A column will act as a container for the tabs
-        PrimaryTabRow (modifier = Modifier.fillMaxWidth(),containerColor = Color.White, selectedTabIndex = selectedTabIndex) {
+        PrimaryTabRow(
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = Color.White,
+            selectedTabIndex = selectedTabIndex
+        ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index },
                     text = { Text(title) }
                 )
-
             }
         }
 
-        when(selectedTabIndex){
-            0 -> OverviewTab()
+        when (selectedTabIndex) {
+            0 -> OverviewTab(state = task)
             1 -> HealthTab()
-            2 -> GalleryTab(isPremium = false){}
-
+            2 -> GalleryTab(isPremium = false) {}
         }
-
-
-
     }
-
-
 }
 
 @Preview
 @Composable
 fun MyPreview() {
     PetPalTheme {
-
-
+        PetDetailsScreenContent(
+            pet = Pet(
+                petName = "Lionel Messi",
+                weight = listOf(WeightRecord(weight = 20.0), WeightRecord(weight = 30.0)),
+                breed = "Shirazi",
+                birthDate = 123456789,
+                gender = PetGender.Male
+            ),
+            task = DetailsState()
+        )
     }
 }

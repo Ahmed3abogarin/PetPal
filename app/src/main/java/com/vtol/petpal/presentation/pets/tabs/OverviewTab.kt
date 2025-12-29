@@ -1,72 +1,121 @@
 package com.vtol.petpal.presentation.pets.tabs
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_7_PRO
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.vtol.petpal.presentation.components.TaskCard
+import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun OverviewTab(modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.background(Color.White)) {
+fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
         Spacer(modifier = modifier.height(16.dp))
-        Text(text = "Upcoming tasks", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = modifier.height(8.dp))
-//        TasksList()
-        Spacer(modifier = modifier.height(8.dp))
-
-
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(LightPurple)
-                .padding(10.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Pet Information", style = MaterialTheme.typography.headlineSmall)
-                Text(text = "Last updated: 13 minutes ago", color = Color.LightGray, fontSize = 12.sp)
-            }
-            Spacer(modifier= Modifier.height(6.dp))
-            InfoItem("Name: Blind Pew","Gender: Male")
-            Spacer(modifier= Modifier.height(6.dp))
-            InfoItem("Breed: Shiraz Cat","Weight: 750 L")
-            Spacer(modifier= Modifier.height(6.dp))
-            InfoItem("Birth date: 2022/12/2","Color: Orange")
-            Spacer(modifier = modifier.height(8.dp))
+        Row {
+            InfoItem(modifier = Modifier.weight(1f), title = "Breed", subTitle = "Shirazi")
+            Spacer(modifier = Modifier.width(16.dp))
+            InfoItem(modifier = Modifier.weight(1f), title = "Weight", subTitle = "20 kg")
         }
+        Spacer(modifier = modifier.height(16.dp))
+
+        Row {
+            InfoItem(modifier = Modifier.weight(1f), title = "Gender", subTitle = "Male")
+            Spacer(modifier = Modifier.width(16.dp))
+            InfoItem(modifier = Modifier.weight(1f), title = "Birth date", subTitle = "02.12.2025")
+        }
+
+        Spacer(modifier = modifier.height(16.dp))
+
+        // next task
+        Text(text = "Next action", style = MaterialTheme.typography.headlineMedium)
+
+
+        state.nextTask?.let {
+            TaskCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp), task = it)
+        }
+
+
+        // empty state
+        if (state.nextTask == null){
+            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Next action",
+                    style = MaterialTheme.typography.titleMedium.copy(color = Color.Gray)
+                )
+            }
+
+        }
+
+
+
+        // loading state
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.4f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+
+            }
+        }
+
+
     }
 }
+
 @Composable
-fun InfoItem(firstTxt: String, secondTxt: String){
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = firstTxt, color = Color.Black, fontSize = 14.sp)
-        Text(text = secondTxt, color = Color.Black,fontSize = 14.sp)
+fun InfoItem(modifier: Modifier = Modifier, title: String, subTitle: String) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = LightPurple)
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp)) {
+            Text(text = title, style = MaterialTheme.typography.bodyLarge, color = Color.Gray)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = subTitle,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+            )
+
+        }
+
     }
 }
+
 @Preview(device = PIXEL_7_PRO)
 @Composable
-fun OverviewPreview(modifier: Modifier = Modifier) {
+fun OverviewPreview() {
     PetPalTheme {
-        OverviewTab()
+        OverviewTab(state = DetailsState())
     }
-    
+
 }
