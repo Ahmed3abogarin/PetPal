@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.calender
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -9,6 +10,11 @@ import com.vtol.petpal.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -23,8 +29,35 @@ class CalenderViewModel @Inject constructor(
         MutableStateFlow<Map<LocalDate, List<Task>>>(emptyMap())
     val calendarTasks: StateFlow<Map<LocalDate, List<Task>>> = _calendarTasks
 
+    private val _state = MutableStateFlow(CalendarState())
+    val state = _state.asStateFlow()
+
     init {
         getCalendarTasks()
+        getPets()
+    }
+
+    fun getPets() {
+        appUseCases.getPets()
+            .onStart {
+                _state.value = _state.value.copy(isLoading = true, error = null)
+            }
+            .catch { e ->
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error = e.message ?: "Failed to load pets"
+                )
+            }
+            .onEach { pets ->
+                val petMap = pets.associate { pet -> pet.id to pet.petName }
+                _state.value = _state.value.copy(
+                    pets = pets,
+                    petMap = petMap,
+                    isLoading = false,
+                    error = null
+                )
+            }
+            .launchIn(viewModelScope)
     }
 
     fun getCalendarTasks(){
@@ -88,3 +121,10 @@ class CalenderViewModel @Inject constructor(
     }
 
 }
+
+data class CalendarState(
+    val pets: List<Pet> = emptyList(),
+    val isLoading: Boolean = false,
+    val petMap: Map<String, String> = emptyMap(),
+    val error: String? = null
+)

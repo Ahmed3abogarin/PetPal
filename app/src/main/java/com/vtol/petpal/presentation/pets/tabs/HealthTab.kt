@@ -22,13 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.domain.model.WeightRecord
+import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.pets.components.AppChart
 import com.vtol.petpal.presentation.pets.components.VetsList
-import java.util.Date
 
 @Composable
-fun HealthTab(modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.fillMaxSize()) {
+fun HealthTab(modifier: Modifier = Modifier, weightList: List<WeightRecord>) {
+    Column(modifier = modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -36,29 +36,25 @@ fun HealthTab(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Weight", style = MaterialTheme.typography.headlineMedium)
-            FilledIconButton(onClick = {}, shape = CircleShape) {
+            FilledIconButton(onClick = {
+
+            }, shape = CircleShape) {
                 Icon(Icons.Default.Add, contentDescription = null)
             }
         }
-        Spacer(modifier = Modifier.height(6.dp))
         Text(
-            modifier = Modifier.padding(horizontal = 12.dp),
             text = "Last updated: 13 minutes ago",
             color = Color.LightGray,
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.height(8.dp))
-        AppChart(
-            records = listOf(
-                WeightRecord(Date(), 5.0),
-                WeightRecord(Date(), 6.0),
-                WeightRecord(Date(), 1.4),
-                WeightRecord(Date(), 1.4),
-                WeightRecord(Date(), 2.0),
-                WeightRecord(Date(), 1.4)
-            )
-        )
-        Spacer(modifier = Modifier.height(12.dp))
+
+        /* the weights represent the Y axis (vertical line)
+           the dates represent the X axis (horizontal line)
+         */
+
+        AppChart(records = weightList.sortedBy { it.timestamp }.take(7))
+        Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Vet Visits", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(8.dp))
         VetsList()
@@ -66,9 +62,16 @@ fun HealthTab(modifier: Modifier = Modifier) {
 }
 
 
-
 @Preview
 @Composable
 fun HealthTabPreview() {
-    HealthTab()
+    HealthTab(weightList = listOf(
+        WeightRecord(weight = 2.5, unit = WeightUnit.KG, timestamp = 1000000000000),
+        WeightRecord(weight = 3.0, unit = WeightUnit.KG, timestamp = 1700003600000),
+        WeightRecord(weight = 2.8, unit = WeightUnit.KG, timestamp = 1700007200000),
+        WeightRecord(weight = 3.2, unit = WeightUnit.KG, timestamp = 1700010800000),
+        WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
+        WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
+        WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
+    ))
 }

@@ -1,5 +1,7 @@
 package com.vtol.petpal.util
 
+import android.content.Context
+import android.widget.Toast
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -46,4 +48,9 @@ fun Long.toTimeString(): String {
         .atZone(ZoneId.systemDefault())
         .toLocalTime()
     return time.format(DateTimeFormatter.ofPattern("h:mm a"))
+}
+
+fun Context.showToast() {
+    Toast.makeText(this, "Not available yet", Toast.LENGTH_SHORT).show()
+
 }

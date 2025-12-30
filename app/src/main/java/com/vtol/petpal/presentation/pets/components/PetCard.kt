@@ -30,14 +30,29 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.ui.theme.ButtonLightGray
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.toAgeString
 
 @Composable
-fun PetCard(pet: Pet, onScheduleClick: (String) -> Unit, onCardClick: (String) -> Unit) {
+fun PetCard(
+    pet: Pet,
+    onScheduleClick: (String) -> Unit,
+    onCardClick: (String) -> Unit,
+    task: Task?,
+) {
     val context = LocalContext.current
+
+    val taskTxt = when (task?.type) {
+        TaskType.FEED -> "🍽️ needs feeding today"
+        TaskType.VET -> "🏥 has a vet appointment"
+        TaskType.MEDICATION -> "💊 needs meds today"
+        TaskType.WALK -> "🚶‍♂️ needs a walk today"
+        else -> "has a task today"
+    }
     Card(
         onClick = { onCardClick(pet.id) },
         colors = CardDefaults.cardColors(containerColor = LightPurple),
@@ -51,7 +66,7 @@ fun PetCard(pet: Pet, onScheduleClick: (String) -> Unit, onCardClick: (String) -
                         .clip(CircleShape),
                     model = ImageRequest.Builder(context).data(pet.imagePath).build(),
                     placeholder = painterResource(R.drawable.cat),
-                    error = painterResource(R.drawable.cat) ,
+                    error = painterResource(R.drawable.cat),
                     contentDescription = "pet photo"
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -63,7 +78,11 @@ fun PetCard(pet: Pet, onScheduleClick: (String) -> Unit, onCardClick: (String) -
                         fontSize = 13.sp,
                         color = Color.LightGray
                     )
-                    Text(text = "\uD83D\uDC8A Needs meds today")
+
+                    task?.let {
+                        Text(text = taskTxt)
+                    }
+
                 }
             }
 
@@ -102,7 +121,7 @@ fun PetCard(pet: Pet, onScheduleClick: (String) -> Unit, onCardClick: (String) -
 @Composable
 fun PetCardPreview() {
     PetPalTheme {
-        PetCard(Pet(), onCardClick = {}, onScheduleClick = {})
+//        PetCard(Pet(), onCardClick = {}, onScheduleClick = {}, task = Task())
     }
 
 }

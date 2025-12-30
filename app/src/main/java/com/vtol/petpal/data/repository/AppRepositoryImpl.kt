@@ -3,10 +3,12 @@ package com.vtol.petpal.data.repository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.util.Constants.PETS_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
+import com.vtol.petpal.util.Constants.WEIGHT_COLLECTION
 import com.vtol.petpal.util.Resource
 import jakarta.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
@@ -19,21 +21,26 @@ class AppRepositoryImpl @Inject constructor(
     private val tasksDao: TasksDao,
 ) : AppRepository {
 
-    override suspend fun addPet(pet: Pet): Resource<Unit> {
+    override suspend fun addPet(pet: Pet, weight: WeightRecord): Resource<Unit> {
         return try {
-            val petId = firestore.collection(USERS_COLLECTION)
+
+            val petRef = firestore.collection(USERS_COLLECTION)
                 .document("userId")
                 .collection(PETS_COLLECTION)
-                .document().id
-            val newPet = pet.copy(id = petId)
+                .document()
+
+            val newPet = pet.copy(id = petRef.id)
+
+            // save pet
+            petRef.set(newPet).await()
 
 
-            firestore.collection(USERS_COLLECTION)
-                .document("userId")
-                .collection(PETS_COLLECTION)
-                .document(newPet.id)
-                .set(newPet)
+            // save weight
+            petRef.collection(WEIGHT_COLLECTION)
+                .add(weight)
                 .await()
+
+
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Unknown error")
@@ -74,18 +81,15 @@ class AppRepositoryImpl @Inject constructor(
 //        }
 
 
-    override suspend fun getPet(id: String): Resource<Pet?> {
-        return try {
+    override suspend fun getPet(id: String): Pet {
             val pet = firestore.collection(USERS_COLLECTION)
                 .document("userId")
                 .collection(PETS_COLLECTION)
                 .document(id)
                 .get().await().toObject(Pet::class.java)
 
-            Resource.Success(pet)
-        } catch (e: Exception) {
-            Resource.Error(e.message ?: "Unknown error")
-        }
+        return pet ?: throw Exception("Pet not found")
+
     }
 
     override suspend fun insertTask(task: Task) {
@@ -94,5 +98,41 @@ class AppRepositoryImpl @Inject constructor(
 
     override fun getAllTasks(): Flow<List<Task>> =
         tasksDao.getAllTasks()
+
+    override fun getTask(petId: String): Flow<List<Task>> =
+        tasksDao.getTask(petId)
+
+    override suspend fun addWeight(petId: String,weightRecord: WeightRecord) {
+
+        firestore.collection("pets")
+            .document(petId)
+            .collection("weights")
+            .add(weightRecord)
+            .await()
+
+    }
+    override fun getWeightList(petId: String): Flow<List<WeightRecord>> = callbackFlow {
+        val listener = firestore
+            .collection(USERS_COLLECTION)
+            .document("userId")
+            .collection(PETS_COLLECTION)
+            .document(petId)
+            .collection(WEIGHT_COLLECTION)
+            .orderBy("timestamp")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val weights = snapshot?.toObjects(WeightRecord::class.java)
+                    ?: emptyList()
+
+                trySend(weights)
+            }
+
+        awaitClose { listener.remove() }
+    }
+
 
 }
