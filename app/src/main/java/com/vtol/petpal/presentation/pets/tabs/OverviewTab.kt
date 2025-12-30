@@ -34,7 +34,6 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
     ) {
         Spacer(modifier = modifier.height(16.dp))
         Row {
@@ -63,9 +62,9 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
 
         // empty state
         if (state.nextTask == null){
-            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Next action",
+                    text = "No data",
                     style = MaterialTheme.typography.titleMedium.copy(color = Color.Gray)
                 )
             }
