@@ -12,10 +12,12 @@ import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.usecases.AddPet
+import com.vtol.petpal.domain.usecases.AddWeight
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.GetPet
 import com.vtol.petpal.domain.usecases.GetPets
 import com.vtol.petpal.domain.usecases.GetVets
+import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
@@ -67,7 +69,9 @@ object AppModule {
             getPet = GetPet(appRepository),
             insertTask = InsertTask(appRepository),
             getTasks = GetTasks(appRepository),
-            getTasksById = GetTasksById(appRepository)
+            getTasksById = GetTasksById(appRepository),
+            addWeight = AddWeight(appRepository),
+            getWeights = GetWeights(appRepository)
         )
 
 

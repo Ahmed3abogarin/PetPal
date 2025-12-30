@@ -99,7 +99,6 @@ fun HomeScreen(
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
-                .padding(bottom = paddingValues.calculateBottomPadding())
                 .fillMaxSize()
                 .background(Color(0XFFF8F4FF))
         ) {
@@ -207,7 +206,7 @@ fun HomeScreen(
                 Spacer(
                     modifier = Modifier
                         .navigationBarsPadding()
-                        .height(4.dp)
+                        .height(paddingValues.calculateBottomPadding())
                 )
             }
         }

@@ -28,6 +28,7 @@ import com.vtol.petpal.presentation.components.TaskCard
 import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.formatDate
 
 @Composable
 fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
@@ -36,28 +37,37 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
             .fillMaxWidth()
     ) {
         Spacer(modifier = modifier.height(16.dp))
-        Row {
-            InfoItem(modifier = Modifier.weight(1f), title = "Breed", subTitle = "Shirazi")
-            Spacer(modifier = Modifier.width(16.dp))
-            InfoItem(modifier = Modifier.weight(1f), title = "Weight", subTitle = "20 kg")
+        state.pet?.let{ pet ->
+            Row {
+                InfoItem(modifier = Modifier.weight(1f), title = "Breed", subTitle = pet.breed ?: "Unknown")
+                Spacer(modifier = Modifier.width(16.dp))
+
+                val weight = if (state.lastWeight.isNotEmpty()) state.lastWeight.last().weight.toString() else "Unknown"
+                InfoItem(modifier = Modifier.weight(1f), title = "Weight", subTitle = weight)
+            }
+            Spacer(modifier = modifier.height(16.dp))
+
+            Row {
+                InfoItem(modifier = Modifier.weight(1f), title = "Gender", subTitle = pet.gender.genderTxt)
+                Spacer(modifier = Modifier.width(16.dp))
+
+                val date = if (pet.birthDate != null) pet.birthDate.formatDate() else "Unknown"
+                InfoItem(modifier = Modifier.weight(1f), title = "Birth date", subTitle = date)
+            }
+
+            Spacer(modifier = modifier.height(16.dp))
+
+            // next task
+            Text(text = "Next action", style = MaterialTheme.typography.headlineMedium)
+
+
+            state.nextTask?.let {
+                TaskCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp), task = it)
+            }
+
+
         }
-        Spacer(modifier = modifier.height(16.dp))
 
-        Row {
-            InfoItem(modifier = Modifier.weight(1f), title = "Gender", subTitle = "Male")
-            Spacer(modifier = Modifier.width(16.dp))
-            InfoItem(modifier = Modifier.weight(1f), title = "Birth date", subTitle = "02.12.2025")
-        }
-
-        Spacer(modifier = modifier.height(16.dp))
-
-        // next task
-        Text(text = "Next action", style = MaterialTheme.typography.headlineMedium)
-
-
-        state.nextTask?.let {
-            TaskCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp), task = it)
-        }
 
 
         // empty state

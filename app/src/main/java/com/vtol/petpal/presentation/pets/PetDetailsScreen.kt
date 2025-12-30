@@ -46,62 +46,65 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.model.WeightRecord
+import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
 import com.vtol.petpal.presentation.pets.tabs.OverviewTab
 import com.vtol.petpal.ui.theme.PetPalTheme
-import com.vtol.petpal.util.Resource
+import com.vtol.petpal.util.showToast
 import com.vtol.petpal.util.toAgeString
 
 @Composable
-fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsViewModel) {
-    val state = petViewModel.petState.collectAsState().value
+fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsViewModel,navigateUp: () -> Unit) {
+    val state = petViewModel.state.collectAsState().value
 
-    val task = petViewModel.state.collectAsState().value
 
-    when (state) {
-        is Resource.Success -> {
-            state.data?.let {
-                PetDetailsScreenContent(modifier, pet = it,task)
-            }
-        }
+    state.pet?.let {
+        PetDetailsScreenContent(
+            modifier = modifier,
+            pet = it,
+            task = state,
+            navigateUp = navigateUp
+        )
 
-        is Resource.Error -> {
-            Text(state.message)
-        }
-
-        is Resource.Loading -> {
-            CircularProgressIndicator()
-
-        }
     }
+
+    if (state.isLoading) CircularProgressIndicator()
+    if (state.error != null) Text(text = state.error)
 }
 
 @Composable
-private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, task: DetailsState) {
-    val context = LocalContext.current
+private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, task: DetailsState, navigateUp: () -> Unit) {
     Scaffold(
         containerColor = Color(0XFFF8F4FF),
-        floatingActionButton = { FloatingActionButton(onClick = {}, shape = CircleShape){
-            Icon(Icons.Default.Edit, contentDescription = null)
-        } }
+        floatingActionButton = {
+            FloatingActionButton(onClick = {}, shape = CircleShape) {
+                Icon(Icons.Default.Edit, contentDescription = null)
+            }
+        }
     ) { paddingValues ->
-        
+
+        val context = LocalContext.current
+
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                BackArrow { }
+                BackArrow {
+                    navigateUp()
+                }
 
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    context.showToast()
+                }) {
                     Icon(
                         modifier = Modifier.size(42.dp),
                         imageVector = Icons.Filled.Share,
@@ -110,41 +113,30 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, tas
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // TODO: Add suitable placeholder image
-            Box {
-                Box(
+
+            Box(
+                modifier = Modifier
+                    .size(152.dp)
+                    .clip(CircleShape)
+                    .background(Color.LightGray)
+                    .border(2.dp, Color.Gray, CircleShape)
+            ) {
+                AsyncImage(
                     modifier = Modifier
-                        .size(152.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
-                        .border(2.dp, Color.Gray, CircleShape)
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    model = ImageRequest.Builder(context).data("").build(),
+                    contentDescription = "pet profile image",
+                    placeholder = painterResource(R.drawable.ic_unknown)
                 )
-                {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        model = ImageRequest.Builder(context).data("").build(),
-                        contentDescription = "pet profile image",
-                        placeholder = painterResource(R.drawable.ic_unknown)
-                    )
 
-                }
-
-//                // TODO: displays only if the image is null
-//                if (true) {
-//                    FilledIconButton(
-//                        modifier = Modifier
-//                            .align(Alignment.BottomEnd)
-//                            .padding(2.dp),
-//                        shape = CircleShape,
-//                        onClick = {}) {
-//                        Icon(Icons.Default.Edit, contentDescription = "")
-//                    }
-//                }
             }
+
+//
+
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(
@@ -182,7 +174,18 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, tas
 
             when (selectedTabIndex) {
                 0 -> OverviewTab(state = task)
-                1 -> HealthTab()
+                1 -> HealthTab(
+                    weightList = listOf(
+                        WeightRecord(weight = 2.5, unit = WeightUnit.KG, timestamp = 1000000000000),
+                        WeightRecord(weight = 3.0, unit = WeightUnit.KG, timestamp = 1700003600000),
+                        WeightRecord(weight = 2.8, unit = WeightUnit.KG, timestamp = 1700007200000),
+                        WeightRecord(weight = 3.2, unit = WeightUnit.KG, timestamp = 1700010800000),
+                        WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
+                        WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
+                        WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
+                    )
+                )
+
                 2 -> GalleryTab(isPremium = false) {}
             }
         }
@@ -196,12 +199,12 @@ fun MyPreview() {
         PetDetailsScreenContent(
             pet = Pet(
                 petName = "Lionel Messi",
-                weight = listOf(WeightRecord(weight = 20.0), WeightRecord(weight = 30.0)),
                 breed = "Shirazi",
                 birthDate = 123456789,
                 gender = PetGender.Male
             ),
-            task = DetailsState()
+            task = DetailsState(),
+            navigateUp = {}
         )
     }
 }

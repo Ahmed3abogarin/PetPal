@@ -218,7 +218,7 @@ fun AppNavigator() {
             ) {
                 val petDetailsVM: PetDetailsViewModel = hiltViewModel()
 
-                PetDetailsScreen(petViewModel = petDetailsVM)
+                PetDetailsScreen(petViewModel = petDetailsVM){navController.navigateUp()}
             }
             composable(Routes.AddTaskScreen.route) {
                 val pets = petViewModel.state.collectAsState()

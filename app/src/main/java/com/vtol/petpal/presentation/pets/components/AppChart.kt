@@ -2,7 +2,6 @@ package com.vtol.petpal.presentation.pets.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,16 +29,16 @@ import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.vtol.petpal.domain.model.WeightRecord
+import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 @Composable
 fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
-    val sorted = records.sortedBy { it.date }
+    val sorted = records.sortedBy { it.timestamp }
     val xValues = sorted.mapIndexed { index, _ -> index.toFloat() }
     val yValues = sorted.map { it.weight.toFloat() }
 
@@ -106,7 +105,7 @@ fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
                     val index = value.toInt()
                     if (index in sorted.indices) {
                         SimpleDateFormat("MMM d", Locale.getDefault())
-                            .format(sorted[index].date)
+                            .format(sorted[index].timestamp)
                     } else ""
                 }
             ),
@@ -115,7 +114,7 @@ fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
         modifier = modifier
             .fillMaxWidth()
             .height(220.dp)
-            .padding(16.dp)
+//            .aspectRatio(1.7f)
     )
 }
 
@@ -124,15 +123,17 @@ fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
 @Composable
 fun MyPreview2() {
     PetPalTheme {
+        val testWeights = listOf(
+            WeightRecord(weight = 2.5, unit = WeightUnit.KG, timestamp = 1000000000000),
+            WeightRecord(weight = 3.0, unit = WeightUnit.KG, timestamp = 1700003600000),
+            WeightRecord(weight = 2.8, unit = WeightUnit.KG, timestamp = 1700007200000),
+            WeightRecord(weight = 3.2, unit = WeightUnit.KG, timestamp = 1700010800000),
+            WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
+            WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
+            WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
+        )
         AppChart(
-            records = listOf(
-                WeightRecord(Date(), 5.0),
-                WeightRecord(Date(), 6.0),
-                WeightRecord(Date(), 1.4),
-                WeightRecord(Date(), 1.4),
-                WeightRecord(Date(), 2.0),
-                WeightRecord(Date(), 1.4)
-            )
+            records = testWeights
         )
 
     }
