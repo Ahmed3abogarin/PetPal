@@ -129,6 +129,7 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, tas
                         .fillMaxSize()
                         .padding(8.dp),
                     model = ImageRequest.Builder(context).data("").build(),
+                    error = painterResource(R.drawable.ic_unknown),
                     contentDescription = "pet profile image",
                     placeholder = painterResource(R.drawable.ic_unknown)
                 )
