@@ -16,6 +16,8 @@ val VeryLightPurple = Color(0xFFF2EBFE)
 
 val MainPurple2 = Color(0xFF8638FE)
 val MainPurple = Color(0xFF8638FE) //
+val Gold = Color(0xFFFEBC2F)
+val DarkGold = Color(0xFFD79200)
 
 val ButtonLightGray = Color(0xFFEAEAEA)
 
