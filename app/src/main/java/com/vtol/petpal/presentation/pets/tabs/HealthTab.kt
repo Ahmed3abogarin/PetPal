@@ -16,6 +16,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,11 +27,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.WeightUnit
+import com.vtol.petpal.presentation.pets.components.AddWeightBottomSheet
 import com.vtol.petpal.presentation.pets.components.AppChart
 import com.vtol.petpal.presentation.pets.components.VetsList
 
 @Composable
-fun HealthTab(modifier: Modifier = Modifier, weightList: List<WeightRecord>) {
+fun HealthTab(modifier: Modifier = Modifier, weightList: List<WeightRecord>, onAddWeightClicked: (WeightRecord) -> Unit) {
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     Column(modifier = modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -36,9 +44,10 @@ fun HealthTab(modifier: Modifier = Modifier, weightList: List<WeightRecord>) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Weight", style = MaterialTheme.typography.headlineMedium)
-            FilledIconButton(onClick = {
-
-            }, shape = CircleShape) {
+            FilledIconButton(
+                onClick = {
+                    showBottomSheet = true
+                }, shape = CircleShape) {
                 Icon(Icons.Default.Add, contentDescription = null)
             }
         }
@@ -59,6 +68,16 @@ fun HealthTab(modifier: Modifier = Modifier, weightList: List<WeightRecord>) {
         Spacer(modifier = Modifier.height(8.dp))
         VetsList()
     }
+
+    // The bottom sheet
+    if (showBottomSheet){
+        AddWeightBottomSheet(
+            onDismiss = { showBottomSheet = false },
+            onSave = {
+                onAddWeightClicked(it)
+            }
+        )
+    }
 }
 
 
@@ -73,5 +92,5 @@ fun HealthTabPreview() {
         WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
         WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
         WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
-    ))
+    )){}
 }
