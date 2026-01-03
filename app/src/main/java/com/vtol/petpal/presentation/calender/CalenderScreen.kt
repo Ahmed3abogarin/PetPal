@@ -78,7 +78,7 @@ fun CalenderScreen(
     ) {
 
         // calendar days
-        HorizontalCalendar(
+        HorizontalCalendar(modifier = Modifier.weight(1f),
             dayContent = { day ->
                 CalendarDayCell(
                     day = day,
@@ -124,6 +124,7 @@ fun CalenderScreen(
 
         // Highlight card for the selected date
         HighlightCard(
+            modifier = Modifier.weight(1f),
             tasks = calendarTasks[selectedDate].orEmpty(),
             date = selectedDate,
             petMap = state.petMap
@@ -176,17 +177,19 @@ fun CalendarDayCell(
 }
 
 @Composable
-fun HighlightCard(tasks: List<Task>, date: LocalDate, petMap: Map<String, String>) {
+fun HighlightCard(modifier: Modifier = Modifier, tasks: List<Task>, date: LocalDate, petMap: Map<String, String>) {
 
     val groupedTasks = tasks.groupBy { it.title }
 
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(3.dp),
         colors = CardDefaults.cardColors(containerColor = LightPurple)
     ) {
         Row(modifier = Modifier.padding(12.dp)) {
+
+            // Left content (the pet icon)
             Surface(modifier = Modifier.size(82.dp), shape = CircleShape) {
                 Image(
                     modifier = Modifier
@@ -207,13 +210,12 @@ fun HighlightCard(tasks: List<Task>, date: LocalDate, petMap: Map<String, String
                     text = date.convertDate(), style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Row {
+                Column {
 
                     // Day's tasks list
 
                     groupedTasks.forEach { (taskTitle, taskList) ->
 
-                        Column {
                             Row {
                                 Image(
                                     modifier = Modifier
@@ -237,14 +239,14 @@ fun HighlightCard(tasks: List<Task>, date: LocalDate, petMap: Map<String, String
                                     Text(text = taskTitle, style = MaterialTheme.typography.labelMedium)
                                 }
                             }
-                        }
+
 
 
                     }
 
 
 
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     val earliestTime = tasks.minOfOrNull { it.dateTime }?.toTimeString() ?: ""
                     if (earliestTime.isNotEmpty()) {

@@ -37,18 +37,28 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
             .fillMaxWidth()
     ) {
         Spacer(modifier = modifier.height(16.dp))
-        state.pet?.let{ pet ->
+        state.pet?.let { pet ->
+
             Row {
-                InfoItem(modifier = Modifier.weight(1f), title = "Breed", subTitle = pet.breed ?: "Unknown")
+                InfoItem(
+                    modifier = Modifier.weight(1f),
+                    title = "Breed",
+                    subTitle = pet.breed ?: "Unknown"
+                )
                 Spacer(modifier = Modifier.width(16.dp))
 
-                val weight = if (state.lastWeight.isNotEmpty()) state.lastWeight.last().weight.toString() else "Unknown"
+                val weight =
+                    if (state.lastWeight.isNotEmpty()) state.lastWeight.last().weight.toString() else "Unknown"
                 InfoItem(modifier = Modifier.weight(1f), title = "Weight", subTitle = weight)
             }
             Spacer(modifier = modifier.height(16.dp))
 
             Row {
-                InfoItem(modifier = Modifier.weight(1f), title = "Gender", subTitle = pet.gender.genderTxt)
+                InfoItem(
+                    modifier = Modifier.weight(1f),
+                    title = "Gender",
+                    subTitle = pet.gender.genderTxt
+                )
                 Spacer(modifier = Modifier.width(16.dp))
 
                 val date = if (pet.birthDate != null) pet.birthDate.formatDate() else "Unknown"
@@ -61,18 +71,24 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
             Text(text = "Next action", style = MaterialTheme.typography.headlineMedium)
 
 
-            state.nextTask?.let {
-                TaskCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp), task = it)
+            if (state.tasks.isNotEmpty()) {
+                TaskCard(
+                    task = state.tasks[0]
+                )
             }
 
 
         }
 
 
-
         // empty state
-        if (state.nextTask == null){
-            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        if (state.tasks.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = "No data",
                     style = MaterialTheme.typography.titleMedium.copy(color = Color.Gray)
@@ -80,7 +96,6 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
             }
 
         }
-
 
 
         // loading state

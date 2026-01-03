@@ -56,7 +56,11 @@ import com.vtol.petpal.util.showToast
 import com.vtol.petpal.util.toAgeString
 
 @Composable
-fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsViewModel,navigateUp: () -> Unit) {
+fun PetDetailsScreen(
+    modifier: Modifier = Modifier,
+    petViewModel: PetDetailsViewModel,
+    navigateUp: () -> Unit,
+) {
     val state = petViewModel.state.collectAsState().value
 
 
@@ -65,7 +69,10 @@ fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsView
             modifier = modifier,
             pet = it,
             task = state,
-            navigateUp = navigateUp
+            navigateUp = navigateUp,
+            onAddWeight = { petId, weight ->
+                petViewModel.addWeight(petId,weight)
+            }
         )
 
     }
@@ -75,7 +82,13 @@ fun PetDetailsScreen(modifier: Modifier = Modifier, petViewModel: PetDetailsView
 }
 
 @Composable
-private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, task: DetailsState, navigateUp: () -> Unit) {
+private fun PetDetailsScreenContent(
+    modifier: Modifier = Modifier,
+    pet: Pet,
+    task: DetailsState,
+    navigateUp: () -> Unit,
+    onAddWeight: (petId: String,weight:WeightRecord) -> Unit,
+) {
     Scaffold(
         containerColor = Color(0XFFF8F4FF),
         floatingActionButton = {
@@ -176,6 +189,9 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, tas
             when (selectedTabIndex) {
                 0 -> OverviewTab(state = task)
                 1 -> HealthTab(
+                    onAddWeightClicked = {
+                        onAddWeight(pet.id, it)
+                    },
                     weightList = listOf(
                         WeightRecord(weight = 2.5, unit = WeightUnit.KG, timestamp = 1000000000000),
                         WeightRecord(weight = 3.0, unit = WeightUnit.KG, timestamp = 1700003600000),
@@ -184,7 +200,8 @@ private fun PetDetailsScreenContent(modifier: Modifier = Modifier, pet: Pet, tas
                         WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
                         WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
                         WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
-                    )
+                    ),
+                    state = task
                 )
 
                 2 -> GalleryTab(isPremium = false) {}
@@ -205,7 +222,8 @@ fun MyPreview() {
                 gender = PetGender.Male
             ),
             task = DetailsState(),
-            navigateUp = {}
+            navigateUp = {},
+            onAddWeight = { _, _ -> }
         )
     }
 }

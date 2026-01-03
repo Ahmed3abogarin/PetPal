@@ -103,6 +103,7 @@ fun HomeScreen(
                 .background(Color(0XFFF8F4FF))
         ) {
 
+
             // The header
             item {
                 AppHomeHeader()
@@ -173,7 +174,8 @@ fun HomeScreen(
                     items(state.value.todayTasks) {
                         TaskCard(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            task = it
+                            task = it,
+                            petName = state.value.petMap[it.petId] ?: "Unknown"
                         )
                     }
                 }
@@ -197,7 +199,8 @@ fun HomeScreen(
                 items(state.value.upcomingTasks) {
                     TaskCard(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        task = it
+                        task = it,
+                        petName = state.value.petMap[it.petId] ?: "Unknown"
                     )
                 }
             }
