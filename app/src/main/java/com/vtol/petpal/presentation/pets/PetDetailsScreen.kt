@@ -200,7 +200,8 @@ private fun PetDetailsScreenContent(
                         WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
                         WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
                         WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
-                    )
+                    ),
+                    state = task
                 )
 
                 2 -> GalleryTab(isPremium = false) {}

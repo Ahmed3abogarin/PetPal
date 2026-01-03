@@ -49,9 +49,12 @@ class HomeViewModel @Inject constructor(
 
             val progress = if (total > 0) completed.toFloat() / total else 0f
 
+            val petMap = pets.associate { pet -> pet.id to pet.petName }
+
             HomeState(
                 todayTasks = todayTasks(tasks),
                 petsList = pets,
+                petMap = petMap,
                 upcomingTasks = upcomingTasks(tasks),
                 completedCount = completed,
                 progress = progress,
@@ -69,8 +72,9 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-            .onEach { newState -> _state.value = newState }
-            .launchIn(viewModelScope)
+            .onEach { newState ->
+                _state.value = newState
+            }.launchIn(viewModelScope)
     }
 
 
@@ -93,7 +97,7 @@ data class HomeState(
     val upcomingTasks: List<Task> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-
+    val petMap: Map<String, String> = emptyMap(),
     val petsList: List<Pet> = emptyList(),
 
     val completedCount: Int = 0,

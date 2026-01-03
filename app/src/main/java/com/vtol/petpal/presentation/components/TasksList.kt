@@ -134,7 +134,7 @@ fun TasksList2(modifier: Modifier = Modifier, state: HomeState) {
 
 
 @Composable
-fun TaskCard(modifier: Modifier = Modifier,task: Task) {
+fun TaskCard(modifier: Modifier = Modifier,task: Task, petName: String? = null) {
 
     val (taskType, taskImg) = when (task.type) {
         TaskType.VET -> "Vet" to R.drawable.ic_vet
@@ -180,10 +180,14 @@ fun TaskCard(modifier: Modifier = Modifier,task: Task) {
                     )
 
 
-                    Text(
-                        text = "Blind Pew, Max, Lionel",
-                        fontSize = 10.sp
-                    )
+                    // TODO: get the pets names associate with the task
+                    petName?.let {
+                        Text(
+                            text = it,
+                            fontSize = 10.sp
+                        )
+                    }
+
                 }
 
 
@@ -222,6 +226,7 @@ fun MyPreview() {
      */
     PetPalTheme {
         TaskCard(
+            petName = "Blind Pew",
             task = Task(
                 5,
                 "22",
