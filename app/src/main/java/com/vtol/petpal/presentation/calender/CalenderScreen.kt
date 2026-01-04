@@ -1,27 +1,14 @@
 package com.vtol.petpal.presentation.calender
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,26 +16,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
-import com.kizitonwose.calendar.core.CalendarDay
-import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.tasks.Task
-import com.vtol.petpal.ui.theme.LightPurple
-import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.presentation.calender.components.CalendarDayCell
+import com.vtol.petpal.presentation.calender.components.HighlightCard
 import com.vtol.petpal.ui.theme.PetPalTheme
-import com.vtol.petpal.util.convertDate
-import com.vtol.petpal.util.toTimeString
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -74,57 +52,62 @@ fun CalenderScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
             .statusBarsPadding()
     ) {
 
         // calendar days
-        HorizontalCalendar(modifier = Modifier.weight(1f),
-            dayContent = { day ->
-                CalendarDayCell(
-                    day = day,
-                    selectedDate = selectedDate,
-                    tasks = calendarTasks[day.date].orEmpty(),
-                    onDateClicked = { date ->
-                        selectedDate = date
-                    }
-                )
-            },
-            monthHeader = { month ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 18.dp)
-                ) {
-                    Text(
-                        text = month.yearMonth.month.name,
-                        style = MaterialTheme.typography.titleLarge
+        Column (modifier = Modifier.weight(0.5f)){
+            HorizontalCalendar(
+                dayContent = { day ->
+                    CalendarDayCell(
+                        day = day,
+                        selectedDate = selectedDate,
+                        tasks = calendarTasks[day.date].orEmpty(),
+                        onDateClicked = { date ->
+                            selectedDate = date
+                        }
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(
+                },
+                monthHeader = { month ->
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp)
                     ) {
-                        // week days
-                        val weekDays = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+                        Text(
+                            text = month.yearMonth.month.name,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            // week days
+                            val weekDays = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 
-                        weekDays.forEach { day ->
-                            Text(
-                                text = day,
-                                fontSize = 12.sp,
-                                color = Color.Gray,
-                            )
+                            weekDays.forEach { day ->
+                                Text(
+                                    text = day,
+                                    fontSize = 12.sp,
+                                    color = Color.Gray,
+                                )
+                            }
                         }
                     }
-                }
-            },
-            state = calendarState
+                },
+                state = calendarState
 
-        )
+            )
+        }
+
+        Spacer(modifier = modifier.height(16.dp))
+
 
         // Highlight card for the selected date
         HighlightCard(
-            modifier = Modifier.weight(1f),
             tasks = calendarTasks[selectedDate].orEmpty(),
             date = selectedDate,
             petMap = state.petMap
@@ -133,130 +116,6 @@ fun CalenderScreen(
     }
 }
 
-@Composable
-fun CalendarDayCell(
-    day: CalendarDay,
-    selectedDate: LocalDate,
-    tasks: List<Task>,
-    onDateClicked: (LocalDate) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .padding(4.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(color = if (day.date == selectedDate) LightPurple else Color.Transparent)
-            .clickable {
-                // show day's tasks highlight
-                onDateClicked(day.date)
-            },
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = day.date.dayOfMonth.toString(),
-            fontSize = 14.sp
-        )
-
-        if (tasks.isNotEmpty()) {
-            Spacer(Modifier.height(4.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                repeat(minOf(tasks.size, 3)) {
-                    Box(
-                        Modifier
-                            .size(6.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (tasks.any { it.isCompleted }) Color.Gray
-                                else MainPurple
-                            )
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun HighlightCard(modifier: Modifier = Modifier, tasks: List<Task>, date: LocalDate, petMap: Map<String, String>) {
-
-    val groupedTasks = tasks.groupBy { it.title }
-
-
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(3.dp),
-        colors = CardDefaults.cardColors(containerColor = LightPurple)
-    ) {
-        Row(modifier = Modifier.padding(12.dp)) {
-
-            // Left content (the pet icon)
-            Surface(modifier = Modifier.size(82.dp), shape = CircleShape) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp),
-                    painter = painterResource(R.drawable.ic_unknown),
-                    contentDescription = ""
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-
-
-            // Right content
-            Column {
-                Text(
-                    modifier = Modifier
-                        .padding(start = 10.dp),
-                    text = date.convertDate(), style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Column {
-
-                    // Day's tasks list
-
-                    groupedTasks.forEach { (taskTitle, taskList) ->
-
-                            Row {
-                                Image(
-                                    modifier = Modifier
-                                        .size(42.dp)
-                                        .padding(8.dp),
-                                    painter = painterResource(R.drawable.ic_unknown),
-                                    contentDescription = ""
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Column {
-
-                                    val petNames = taskList.map { petMap[it.petId] ?: "Unknown" }
-
-                                    // Pets names
-                                    Text(
-                                        text = petNames.joinToString(", "),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(text = taskTitle, style = MaterialTheme.typography.labelMedium)
-                                }
-                            }
-
-
-
-                    }
-
-
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    val earliestTime = tasks.minOfOrNull { it.dateTime }?.toTimeString() ?: ""
-                    if (earliestTime.isNotEmpty()) {
-                        Text(text = earliestTime)
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Preview
 @Composable

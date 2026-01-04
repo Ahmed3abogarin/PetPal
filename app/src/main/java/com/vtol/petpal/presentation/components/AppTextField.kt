@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,12 +21,13 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     value: String,
     minLines: Int = 1,
+    colors: TextFieldColors = filledTextFieldColors(),
     placeHolder: String,
     onValueChanged: (String) -> Unit,
 ) {
     TextField(
         value = value,
-        colors = filledTextFieldColors(),
+        colors = colors,
         minLines = minLines ,
         onValueChange = { onValueChanged(it) },
         label = { Text(placeHolder) },
@@ -49,6 +51,8 @@ fun filledTextFieldColors() = TextFieldDefaults.colors(
     unfocusedIndicatorColor = Color.Transparent
 
 )
+
+
 
 @Preview
 @Composable
