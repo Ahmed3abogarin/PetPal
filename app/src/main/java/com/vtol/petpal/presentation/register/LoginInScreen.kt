@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +27,9 @@ import androidx.compose.ui.unit.dp
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.ui.theme.SemiTransparentPurple
 
 @Composable
-fun SignUpScreen(navigateToLogin: () -> Unit) {
-    var name by remember { mutableStateOf("") }
+fun LoginScreen(navigateToSignUp: () -> Unit) {
 
     var email by remember { mutableStateOf("") }
 
@@ -52,7 +49,7 @@ fun SignUpScreen(navigateToLogin: () -> Unit) {
         ) {
 
             Text(
-                "Create Account",
+                "Log in",
                 color = MainPurple,
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.SemiBold)
             )
@@ -60,7 +57,7 @@ fun SignUpScreen(navigateToLogin: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                "Create an account to continue and manage your pet’s care easily",
+                "Welcome back! Continue managing your pet’s care",
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
@@ -68,12 +65,6 @@ fun SignUpScreen(navigateToLogin: () -> Unit) {
 
             Spacer(modifier = Modifier.height(36.dp))
 
-            AppTextField(
-                value = name,
-                colors = secondFilledTextFieldColors(),
-                placeHolder = "Name",
-                onValueChanged = { name = it }
-            )
 
             AppTextField(
                 value = email,
@@ -92,37 +83,27 @@ fun SignUpScreen(navigateToLogin: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             SaveButton(
-                text = "Sign Up",
+                text = "Sign in",
                 color = MainPurple,
-            ) { }
+            ) {
+
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Row(horizontalArrangement = Arrangement.Center) {
-                Text("Already have an account? ", fontWeight = FontWeight.Medium)
+                Text("Don't have an account? ", fontWeight = FontWeight.Medium)
                 Text(
-                    modifier = Modifier.clickable { navigateToLogin()},
-                    text = "Sign In", color = MainPurple, fontWeight = FontWeight.SemiBold)
+                    modifier = Modifier.clickable { navigateToSignUp() },
+                    text = "Create account", color = MainPurple, fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }
 }
 
-
-@Composable
-fun secondFilledTextFieldColors() = TextFieldDefaults.colors(
-    disabledTextColor = Color.Black,
-    disabledContainerColor = SemiTransparentPurple,
-    focusedContainerColor = SemiTransparentPurple,
-    unfocusedContainerColor = SemiTransparentPurple,
-    disabledIndicatorColor = Color.Transparent,
-    focusedIndicatorColor = Color.Transparent,
-    unfocusedIndicatorColor = Color.Transparent
-
-)
-
 @Preview
 @Composable
-fun SignUpScreenPreview() {
-    SignUpScreen{}
+fun LoginScreenPreview() {
+    LoginScreen{}
 }
