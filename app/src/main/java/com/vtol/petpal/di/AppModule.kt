@@ -3,6 +3,7 @@ package com.vtol.petpal.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
@@ -58,6 +59,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirestore() = FirebaseFirestore.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth() = FirebaseAuth.getInstance()
 
 
     @Provides
