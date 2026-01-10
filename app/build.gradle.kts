@@ -99,4 +99,8 @@ dependencies {
     // Calendar
     implementation("com.kizitonwose.calendar:compose:2.9.0")
 
+
+    // firebase auth
+    implementation(libs.firebase.auth.ktx)
+
 }
