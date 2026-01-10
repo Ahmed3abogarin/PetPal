@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.pets.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -50,7 +51,7 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
         state.tasks.filter { it.type == TaskType.VET }
     }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize()) {
 
 
         when {
@@ -63,21 +64,16 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
 
             }
 
-            vetTasks.isEmpty() -> {
-                Text(text = "No vet tasks")
-
-            }
-
             else -> {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
 
                     item {
+                        Spacer(modifier= Modifier.height(12.dp))
 
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 12.dp),
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(text = "Weight", style = MaterialTheme.typography.headlineMedium)
@@ -100,14 +96,19 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
                            the dates represent the X axis (horizontal line)
                          */
 
-                        AppChart(records = weightList.sortedBy { it.timestamp }.take(7))
+                        AppChart(records = weightList.sortedBy { it.timestamp })
+                        Log.v("klmoe", weightList.size.toString())
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "Vet Visits", style = MaterialTheme.typography.headlineMedium)
                         Spacer(modifier = Modifier.height(8.dp))
 
 
+                        if (vetTasks.isEmpty()) {
+                            Text(modifier = Modifier.align(Alignment.Center), text = "No vet tasks")
 
+                        }
                     }
+
 
 
 

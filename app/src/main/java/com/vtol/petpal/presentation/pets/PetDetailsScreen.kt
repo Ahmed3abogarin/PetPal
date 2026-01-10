@@ -77,7 +77,14 @@ fun PetDetailsScreen(
 
     }
 
-    if (state.isLoading) CircularProgressIndicator()
+    if (state.isLoading){
+        Box(modifier= Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            CircularProgressIndicator()
+
+        }
+
+    }
+
     if (state.error != null) Text(text = state.error)
 }
 
@@ -168,7 +175,7 @@ private fun PetDetailsScreenContent(
 
             // ------------------------- Tabs ---------------------------------
             Spacer(modifier = Modifier.height(20.dp))
-            var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+            var selectedTabIndex by rememberSaveable { mutableIntStateOf(1) }
             val tabs = listOf("Overview", "Health", "Gallery")
 
             // A column will act as a container for the tabs
@@ -192,15 +199,7 @@ private fun PetDetailsScreenContent(
                     onAddWeightClicked = {
                         onAddWeight(pet.id, it)
                     },
-                    weightList = listOf(
-                        WeightRecord(weight = 2.5, unit = WeightUnit.KG, timestamp = 1000000000000),
-                        WeightRecord(weight = 3.0, unit = WeightUnit.KG, timestamp = 1700003600000),
-                        WeightRecord(weight = 2.8, unit = WeightUnit.KG, timestamp = 1700007200000),
-                        WeightRecord(weight = 3.2, unit = WeightUnit.KG, timestamp = 1700010800000),
-                        WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
-                        WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
-                        WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
-                    ),
+                    weightList = task.lastWeight,
                     state = task
                 )
 

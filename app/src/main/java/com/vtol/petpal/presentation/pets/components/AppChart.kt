@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.pets.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
@@ -39,8 +40,13 @@ import java.util.Locale
 @Composable
 fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
     val sorted = records.sortedBy { it.timestamp }
+    Log.v("Chart2",sorted.size.toString())
+    Log.v("Chart2","records: ${records.size}")
     val xValues = sorted.mapIndexed { index, _ -> index.toFloat() }
     val yValues = sorted.map { it.weight.toFloat() }
+
+    Log.v("Chart2",xValues.size.toString())
+    Log.v("Chart2",yValues.size.toString())
 
     val modelProducer = remember { CartesianChartModelProducer() }
 
@@ -124,13 +130,7 @@ fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
 fun MyPreview2() {
     PetPalTheme {
         val testWeights = listOf(
-            WeightRecord(weight = 2.5, unit = WeightUnit.KG, timestamp = 1000000000000),
-            WeightRecord(weight = 3.0, unit = WeightUnit.KG, timestamp = 1700003600000),
-            WeightRecord(weight = 2.8, unit = WeightUnit.KG, timestamp = 1700007200000),
             WeightRecord(weight = 3.2, unit = WeightUnit.KG, timestamp = 1700010800000),
-            WeightRecord(weight = 3.5, unit = WeightUnit.KG, timestamp = 1700014400000),
-            WeightRecord(weight = 3.1, unit = WeightUnit.KG, timestamp = 1700018000000),
-            WeightRecord(weight = 3.4, unit = WeightUnit.KG, timestamp = 1700021600000)
         )
         AppChart(
             records = testWeights

@@ -23,9 +23,12 @@ fun HealthTab(
 
 
 
-    VetsList(state = state,weightList = weightList, onAddWeightClicked = {
-        showBottomSheet = true
-    })
+    VetsList(
+        state = state, weightList = weightList,
+        onAddWeightClicked = {
+            showBottomSheet = true
+        }
+    )
 
     // The bottom sheet
     if (showBottomSheet) {
