@@ -94,7 +94,9 @@ fun SignUpScreen(navigateToLogin: () -> Unit) {
             SaveButton(
                 text = "Sign Up",
                 color = MainPurple,
-            ) { }
+            ) {
+
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

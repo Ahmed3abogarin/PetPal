@@ -87,6 +87,7 @@ fun LoginScreen(navigateToSignUp: () -> Unit) {
                 color = MainPurple,
             ) {
 
+
             }
 
             Spacer(modifier = Modifier.height(24.dp))

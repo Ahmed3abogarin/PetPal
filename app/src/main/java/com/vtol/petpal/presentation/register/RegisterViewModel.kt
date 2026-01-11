@@ -3,7 +3,6 @@ package com.vtol.petpal.presentation.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
-import com.vtol.petpal.domain.usecases.register.GetAuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

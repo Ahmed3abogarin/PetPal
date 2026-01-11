@@ -47,7 +47,7 @@ import com.vtol.petpal.presentation.profile.ProfileScreen
 
 
 @Composable
-fun AppNavigator() {
+fun MainNavGraph() {
     val home = ImageVector.vectorResource(R.drawable.ic_home)
     val pets = ImageVector.vectorResource(R.drawable.ic_pets)
     val calender = ImageVector.vectorResource(R.drawable.ic_calender)
@@ -266,7 +266,7 @@ fun NavGraph() {
             startDestination = Routes.ScreensNavigation.route
         ) {
             composable(Routes.ScreensNavigation.route) {
-                AppNavigator()
+                MainNavGraph()
             }
         }
     }

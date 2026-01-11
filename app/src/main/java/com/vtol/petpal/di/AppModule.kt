@@ -8,6 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.repository.AppRepositoryImpl
+import com.vtol.petpal.data.repository.AuthRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
@@ -51,6 +52,11 @@ object AppModule {
     fun provideAppRepository(firestore: FirebaseFirestore, tasksDao: TasksDao): AppRepository =
         AppRepositoryImpl(firestore, tasksDao)
 
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(auth: FirebaseAuth): AuthRepository =
+        AuthRepositoryImpl(auth)
 
     @Provides
     @Singleton
