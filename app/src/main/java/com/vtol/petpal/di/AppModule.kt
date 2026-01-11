@@ -11,6 +11,7 @@ import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
+import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.usecases.AddPet
 import com.vtol.petpal.domain.usecases.AddWeight
@@ -20,6 +21,11 @@ import com.vtol.petpal.domain.usecases.GetPets
 import com.vtol.petpal.domain.usecases.GetVets
 import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
+import com.vtol.petpal.domain.usecases.register.AuthUseCases
+import com.vtol.petpal.domain.usecases.register.GetAuthState
+import com.vtol.petpal.domain.usecases.register.Logout
+import com.vtol.petpal.domain.usecases.register.Register
+import com.vtol.petpal.domain.usecases.register.SignIn
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
@@ -77,6 +83,16 @@ object AppModule {
             getTasksById = GetTasksById(appRepository),
             addWeight = AddWeight(appRepository),
             getWeights = GetWeights(appRepository)
+        )
+
+    @Provides
+    @Singleton
+    fun provideAuthUseCases(repository: AuthRepository) =
+        AuthUseCases(
+            signIn = SignIn(repository),
+            signUp = Register(repository),
+            logout = Logout(repository),
+            getAuthState = GetAuthState(repository)
         )
 
 

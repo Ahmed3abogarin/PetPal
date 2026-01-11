@@ -1,6 +1,7 @@
 package com.vtol.petpal.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.presentation.register.AuthState
@@ -37,7 +38,7 @@ class AuthRepositoryImpl @Inject constructor(
         auth.signOut()
     }
 
-    override suspend fun authState(): Flow<AuthState> = callbackFlow {
+    override fun authState(): Flow<AuthState> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener {
             val user = it.currentUser
 
@@ -51,7 +52,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     }
 
-    override fun createUserInfo(user: User) {
-        val currentUser = auth.currentUser?.uid
-    }
+    override fun createUserInfo(): User? =
+       auth.currentUser?.toUserSession()
+
+
+    fun FirebaseUser.toUserSession(): User = User(
+        uid = uid,
+        email = email,
+        name = displayName
+    )
+
 }
