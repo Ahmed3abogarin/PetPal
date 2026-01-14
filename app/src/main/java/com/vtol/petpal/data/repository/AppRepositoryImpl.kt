@@ -23,7 +23,6 @@ class AppRepositoryImpl @Inject constructor(
 
     override suspend fun addPet(pet: Pet, weight: WeightRecord): Resource<Unit> {
         return try {
-
             val petRef = firestore.collection(USERS_COLLECTION)
                 .document("userId")
                 .collection(PETS_COLLECTION)

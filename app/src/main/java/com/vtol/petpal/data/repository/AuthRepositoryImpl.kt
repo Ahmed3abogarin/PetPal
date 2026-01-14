@@ -2,17 +2,20 @@ package com.vtol.petpal.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.presentation.register.AuthState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : AuthRepository {
 
 
@@ -20,10 +23,17 @@ class AuthRepositoryImpl @Inject constructor(
 
 
     override suspend fun register(
-        email: String,
+        user: User,
         password: String,
     ): Result<Unit> {
-        return runCatching { auth.createUserWithEmailAndPassword(email, password) }
+        return runCatching {
+            auth.createUserWithEmailAndPassword(user.email, password)
+
+            firestore.collection("users")
+                .document(user.uid)
+                .set(user)
+                .await()
+        }
     }
 
     override suspend fun login(
@@ -51,15 +61,5 @@ class AuthRepositoryImpl @Inject constructor(
         awaitClose { auth.removeAuthStateListener(listener) }
 
     }
-
-    override fun createUserInfo(): User? =
-       auth.currentUser?.toUserSession()
-
-
-    fun FirebaseUser.toUserSession(): User = User(
-        uid = uid,
-        email = email,
-        name = displayName
-    )
 
 }
