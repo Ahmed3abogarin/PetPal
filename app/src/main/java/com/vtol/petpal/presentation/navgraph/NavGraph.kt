@@ -29,7 +29,6 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.vtol.petpal.R
-import com.vtol.petpal.presentation.Routes
 import com.vtol.petpal.presentation.calender.CalenderScreen
 import com.vtol.petpal.presentation.calender.CalenderViewModel
 import com.vtol.petpal.presentation.home.AddTaskScreen
@@ -47,7 +46,7 @@ import com.vtol.petpal.presentation.profile.ProfileScreen
 
 
 @Composable
-fun AppNavigator() {
+fun MainNavGraph() {
     val home = ImageVector.vectorResource(R.drawable.ic_home)
     val pets = ImageVector.vectorResource(R.drawable.ic_pets)
     val calender = ImageVector.vectorResource(R.drawable.ic_calender)
@@ -156,7 +155,12 @@ fun AppNavigator() {
                     onAddPetClicked = {
                         navController.navigate(Routes.AddPetScreen.route)
                     },
-                    viewModel = homeViewModel
+                    viewModel = homeViewModel,
+                    onPetClicked = {
+                        navController.navigate(Routes.PetDetailsScreen.createRoute(it)){
+                            launchSingleTop = false
+                        }
+                    }
                 )
             }
             composable(Routes.PetsScreen.route) {
@@ -166,7 +170,9 @@ fun AppNavigator() {
                     navigateToAddPetScreen = {
                         navController.navigate(Routes.AddPetScreen.route)
                     },
-                    onScheduleClick = {},
+                    onScheduleClick = {
+                        navController.navigate(Routes.AddTaskScreen.route)
+                    },
                     onCardClick = {
                         navController.navigate(Routes.PetDetailsScreen.createRoute(it)) {
                             launchSingleTop = false
@@ -266,7 +272,7 @@ fun NavGraph() {
             startDestination = Routes.ScreensNavigation.route
         ) {
             composable(Routes.ScreensNavigation.route) {
-                AppNavigator()
+                MainNavGraph()
             }
         }
     }

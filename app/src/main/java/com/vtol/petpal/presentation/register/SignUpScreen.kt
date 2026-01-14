@@ -14,10 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,13 +29,16 @@ import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.SemiTransparentPurple
 
 @Composable
-fun SignUpScreen(navigateToLogin: () -> Unit) {
-    var name by remember { mutableStateOf("") }
+fun SignUpScreen(
+    viewModel: RegisterViewModel,
+    navigateToLogin: () -> Unit
+) {
 
-    var email by remember { mutableStateOf("") }
+    val state by viewModel.uiState.collectAsState()
 
 
-    var password by remember { mutableStateOf("") }
+
+
 
 
     Box(
@@ -69,24 +70,24 @@ fun SignUpScreen(navigateToLogin: () -> Unit) {
             Spacer(modifier = Modifier.height(36.dp))
 
             AppTextField(
-                value = name,
+                value = state.user.name,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Name",
-                onValueChanged = { name = it }
+                onValueChanged = { viewModel.onEvent(AuthEvent.NameChanged(it)) }
             )
 
             AppTextField(
-                value = email,
+                value = state.user.email,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Email",
-                onValueChanged = { email = it }
+                onValueChanged = { viewModel.onEvent(AuthEvent.EmailChanged(it)) }
             )
 
             AppTextField(
-                value = password,
+                value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
-                onValueChanged = { password = it }
+                onValueChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -94,15 +95,20 @@ fun SignUpScreen(navigateToLogin: () -> Unit) {
             SaveButton(
                 text = "Sign Up",
                 color = MainPurple,
-            ) { }
+            ) {
+                // handle the sign up click
+                viewModel.onEvent(AuthEvent.RegisterClicked)
+
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Row(horizontalArrangement = Arrangement.Center) {
                 Text("Already have an account? ", fontWeight = FontWeight.Medium)
                 Text(
-                    modifier = Modifier.clickable { navigateToLogin()},
-                    text = "Sign In", color = MainPurple, fontWeight = FontWeight.SemiBold)
+                    modifier = Modifier.clickable { navigateToLogin() },
+                    text = "Sign In", color = MainPurple, fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }
@@ -124,5 +130,5 @@ fun secondFilledTextFieldColors() = TextFieldDefaults.colors(
 @Preview
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen{}
+//    SignUpScreen {}
 }

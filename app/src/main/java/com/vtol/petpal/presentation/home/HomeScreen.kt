@@ -57,6 +57,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 fun HomeScreen(
     onAddTaskClicked: () -> Unit,
     onAddPetClicked: () -> Unit,
+    onPetClicked: (String) -> Unit,
     viewModel: HomeViewModel,
 ) {
     val state = viewModel.state.collectAsState()
@@ -115,7 +116,7 @@ fun HomeScreen(
                 // Pets list
                 Spacer(modifier = Modifier.height(16.dp))
 
-                HomePetsList(pets = state.value.petsList, onAddPetClicked = { onAddPetClicked() })
+                HomePetsList(pets = state.value.petsList, onPetClicked = { onPetClicked(it) }, onAddPetClicked = { onAddPetClicked() })
                 Spacer(modifier = Modifier.height(16.dp))
 
             }

@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,12 @@ import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.ui.theme.MainPurple
 
 @Composable
-fun HomePetsList(modifier: Modifier = Modifier, pets: List<Pet>, onAddPetClicked: () -> Unit) {
+fun HomePetsList(
+    modifier: Modifier = Modifier,
+    pets: List<Pet>,
+    onPetClicked: (String) -> Unit,
+    onAddPetClicked: () -> Unit
+) {
     val context = LocalContext.current
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -44,7 +50,8 @@ fun HomePetsList(modifier: Modifier = Modifier, pets: List<Pet>, onAddPetClicked
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .border(2.dp, Color.Gray, CircleShape),
+                        .border(2.dp, Color.Gray, CircleShape)
+                        .clickable { onPetClicked(it.id) },
                     model = ImageRequest.Builder(context).data(it.imagePath).build(),
                     placeholder = painterResource(R.drawable.cat),
                     error = painterResource(R.drawable.cat),

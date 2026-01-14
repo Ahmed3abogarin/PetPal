@@ -35,14 +35,14 @@ class PetDetailsViewModel @Inject constructor(
         observePetInfo()
     }
 
-    fun addWeight(petId: String, weightRecord: WeightRecord){
+    fun addWeight(petId: String, weightRecord: WeightRecord) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
             try {
                 appUseCases.addWeight(petId, weightRecord)
                 _state.update { it.copy(isLoading = false) }
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, error = e.message) }
             }
         }

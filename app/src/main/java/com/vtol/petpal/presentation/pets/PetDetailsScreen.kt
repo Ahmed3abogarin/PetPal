@@ -46,7 +46,6 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.model.WeightRecord
-import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
@@ -96,16 +95,17 @@ private fun PetDetailsScreenContent(
     navigateUp: () -> Unit,
     onAddWeight: (petId: String,weight:WeightRecord) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         containerColor = Color(0XFFF8F4FF),
         floatingActionButton = {
-            FloatingActionButton(onClick = {}, shape = CircleShape) {
+            FloatingActionButton(onClick = { context.showToast()}, shape = CircleShape) {
                 Icon(Icons.Default.Edit, contentDescription = null)
             }
         }
     ) { paddingValues ->
 
-        val context = LocalContext.current
 
         Column(
             modifier = modifier
@@ -203,7 +203,7 @@ private fun PetDetailsScreenContent(
                     state = task
                 )
 
-                2 -> GalleryTab(isPremium = false) {}
+                2 -> GalleryTab(isPremium = false) { context.showToast() }
             }
         }
     }
