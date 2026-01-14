@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation
+package com.vtol.petpal.presentation.navgraph
 
 sealed class Routes(val route: String) {
 

@@ -129,7 +129,8 @@ fun PetDropDownMenu(
                             .fillMaxWidth()
                             .padding(horizontal = 4.dp)
                             .clickable {
-                                onConfirm(selectedPet)
+                                onConfirm(pet)
+                                expanded = false
                             }
                             .padding(8.dp)
                     ) {

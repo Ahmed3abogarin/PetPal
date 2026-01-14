@@ -341,7 +341,6 @@ fun AddTaskScreen(modifier: Modifier = Modifier, petsList: List<Pet>, viewModel:
                     selectedPet = selectedPet,
                     onConfirm = {
                         selectedPet = it
-
                     },
                 )
                 Spacer(modifier = Modifier.height(32.dp))

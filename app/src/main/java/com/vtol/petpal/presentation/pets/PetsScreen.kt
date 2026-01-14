@@ -27,7 +27,8 @@ import com.vtol.petpal.presentation.pets.components.PetCard
 fun PetsScreen(
     viewModel: PetViewModel,
     navigateToAddPetScreen: () -> Unit,
-    onScheduleClick: (String) -> Unit, onCardClick: (String) -> Unit,
+    onScheduleClick: (String) -> Unit,
+    onCardClick: (String) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold(
