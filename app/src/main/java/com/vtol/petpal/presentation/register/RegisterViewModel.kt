@@ -47,8 +47,11 @@ class RegisterViewModel @Inject constructor(
     }
 
 
-
     fun login() = viewModelScope.launch {
+        if (uiState.value.user.email.isEmpty() || uiState.value.password.isEmpty()) {
+            _uiState.update { it.copy(error = "Fields cannot be empty") }
+            return@launch
+        }
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         useCases.signIn(_uiState.value.user.email, _uiState.value.password)
@@ -57,7 +60,13 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun register() = viewModelScope.launch {
+
+        if (uiState.value.user.email.isEmpty() || uiState.value.user.name.isEmpty() || uiState.value.password.isEmpty()) {
+            _uiState.update { it.copy(error = "Fields cannot be empty") }
+            return@launch
+        }
         _uiState.update { it.copy(isLoading = true, error = null) }
+
 
         useCases.signUp(_uiState.value.user, _uiState.value.password)
             .onSuccess { _uiState.update { it.copy(isLoading = false) } }

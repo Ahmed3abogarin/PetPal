@@ -27,14 +27,26 @@ class AuthRepositoryImpl @Inject constructor(
         password: String,
     ): Result<Unit> {
         return runCatching {
-            auth.createUserWithEmailAndPassword(user.email, password)
 
-            firestore.collection("users")
-                .document(user.uid)
-                .set(user)
+            //  Create user in Firebase Auth (WAIT for result)
+            val authResult = auth
+                .createUserWithEmailAndPassword(user.email, password)
+                .await()
+
+            val uid = authResult.user?.uid
+                ?: throw IllegalStateException("User UID is null")
+
+            // Create user object with correct UID
+            val userWithUid = user.copy(uid = uid)
+
+            // Save user in Firestore
+            firestore.collection("Users")
+                .document(uid)
+                .set(userWithUid)
                 .await()
         }
     }
+
 
     override suspend fun login(
         email: String,

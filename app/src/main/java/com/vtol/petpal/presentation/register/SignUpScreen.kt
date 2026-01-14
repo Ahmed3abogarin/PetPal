@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.register
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,13 +16,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,17 +31,14 @@ import com.vtol.petpal.ui.theme.SemiTransparentPurple
 @Composable
 fun SignUpScreen(
     viewModel: RegisterViewModel,
-    navigateToLogin: () -> Unit) {
+    navigateToLogin: () -> Unit
+) {
 
     val state by viewModel.uiState.collectAsState()
-    var name by remember { mutableStateOf("") }
-
-    var email by remember { mutableStateOf("") }
 
 
-    var password by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
+
 
 
     Box(
@@ -104,14 +96,8 @@ fun SignUpScreen(
                 text = "Sign Up",
                 color = MainPurple,
             ) {
-
-                if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
-                } else {
-                    // handle the sign up click
-                    viewModel.onEvent(AuthEvent.RegisterClicked)
-
-                }
+                // handle the sign up click
+                viewModel.onEvent(AuthEvent.RegisterClicked)
 
             }
 
@@ -120,8 +106,9 @@ fun SignUpScreen(
             Row(horizontalArrangement = Arrangement.Center) {
                 Text("Already have an account? ", fontWeight = FontWeight.Medium)
                 Text(
-                    modifier = Modifier.clickable { navigateToLogin()},
-                    text = "Sign In", color = MainPurple, fontWeight = FontWeight.SemiBold)
+                    modifier = Modifier.clickable { navigateToLogin() },
+                    text = "Sign In", color = MainPurple, fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }

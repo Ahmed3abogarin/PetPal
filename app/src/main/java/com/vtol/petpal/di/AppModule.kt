@@ -49,8 +49,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(firestore: FirebaseFirestore, tasksDao: TasksDao): AppRepository =
-        AppRepositoryImpl(firestore, tasksDao)
+    fun provideAppRepository(firestore: FirebaseFirestore, tasksDao: TasksDao, auth: FirebaseAuth): AppRepository =
+        AppRepositoryImpl(firestore, tasksDao, auth)
 
 
     @Provides

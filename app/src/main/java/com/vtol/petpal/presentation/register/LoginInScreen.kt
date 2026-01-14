@@ -13,29 +13,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.ui.theme.MainPurple
 
 @Composable
-fun LoginScreen(navigateToSignUp: () -> Unit) {
+fun LoginScreen(
+    viewModel: RegisterViewModel,
+    navigateToSignUp: () -> Unit
+) {
 
-    var email by remember { mutableStateOf("") }
-
-
-    var password by remember { mutableStateOf("") }
-
+    val state by viewModel.uiState.collectAsState()
 
     Box(
         modifier = Modifier
@@ -67,17 +63,17 @@ fun LoginScreen(navigateToSignUp: () -> Unit) {
 
 
             AppTextField(
-                value = email,
+                value = state.user.email,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Email",
-                onValueChanged = { email = it }
+                onValueChanged = { viewModel.onEvent(AuthEvent.EmailChanged(it)) }
             )
 
             AppTextField(
-                value = password,
+                value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
-                onValueChanged = { password = it }
+                onValueChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -86,6 +82,7 @@ fun LoginScreen(navigateToSignUp: () -> Unit) {
                 text = "Sign in",
                 color = MainPurple,
             ) {
+
 
 
             }
@@ -103,8 +100,8 @@ fun LoginScreen(navigateToSignUp: () -> Unit) {
     }
 }
 
-@Preview
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen{}
-}
+//@Preview
+//@Composable
+//fun LoginScreenPreview() {
+//    LoginScreen{}
+//}
