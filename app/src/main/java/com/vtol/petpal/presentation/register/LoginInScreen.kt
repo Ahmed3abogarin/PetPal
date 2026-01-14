@@ -83,6 +83,7 @@ fun LoginScreen(
                 color = MainPurple,
             ) {
 
+                viewModel.onEvent(AuthEvent.LoginClicked)
 
 
             }

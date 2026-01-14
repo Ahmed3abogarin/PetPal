@@ -68,7 +68,7 @@ fun PetsScreen(
                         PetCard(
                             pet = pet,
                             onScheduleClick = { onScheduleClick(it) },
-                            onCardClick = { onCardClick(it) },
+                            onCardClick = { onCardClick(pet.id) },
                             task = state.firstTasks[pet.id]
                         )
                     }

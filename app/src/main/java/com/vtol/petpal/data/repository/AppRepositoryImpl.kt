@@ -96,13 +96,17 @@ class AppRepositoryImpl @Inject constructor(
 
 
     override suspend fun getPet(id: String): Pet {
-        val pet = firestore.collection(USERS_COLLECTION)
-            .document("userId")
-            .collection(PETS_COLLECTION)
-            .document(id)
-            .get().await().toObject(Pet::class.java)
+        currentUid?.let {
+            val pet = firestore.collection(USERS_COLLECTION)
+                .document(currentUid)
+                .collection(PETS_COLLECTION)
+                .document(id)
+                .get().await().toObject(Pet::class.java)
 
-        return pet ?: throw Exception("Pet not found")
+
+            return pet ?: throw Exception("Pet not found")
+        }
+        return Pet()
 
     }
 
