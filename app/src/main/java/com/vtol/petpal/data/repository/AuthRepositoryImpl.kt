@@ -1,7 +1,9 @@
 package com.vtol.petpal.data.repository
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.AuthRepository
@@ -9,13 +11,15 @@ import com.vtol.petpal.presentation.register.AuthState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val dataStore: DataStore<Preferences>
 ) : AuthRepository {
 
 
@@ -73,5 +77,17 @@ class AuthRepositoryImpl @Inject constructor(
         awaitClose { auth.removeAuthStateListener(listener) }
 
     }
+
+    override fun isCompleted(): Flow<Boolean> =
+        dataStore.data.map {
+            it[OnboardingPrefs.COMPLETED] ?: false
+        }
+
+    override suspend fun setCompleted() {
+        dataStore.edit {
+            it[OnboardingPrefs.COMPLETED] = true
+        }
+    }
+
 
 }

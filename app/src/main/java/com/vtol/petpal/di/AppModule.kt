@@ -2,6 +2,10 @@ package com.vtol.petpal.di
 
 import android.app.Application
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,7 +29,9 @@ import com.vtol.petpal.domain.usecases.MapsUseCases
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import com.vtol.petpal.domain.usecases.register.GetAuthState
 import com.vtol.petpal.domain.usecases.register.Logout
+import com.vtol.petpal.domain.usecases.register.ReadAppEntry
 import com.vtol.petpal.domain.usecases.register.Register
+import com.vtol.petpal.domain.usecases.register.SaveAppEntry
 import com.vtol.petpal.domain.usecases.register.SignIn
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
@@ -55,8 +61,21 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(auth: FirebaseAuth,firestore: FirebaseFirestore): AuthRepository =
-        AuthRepositoryImpl(auth, firestore)
+    fun provideAuthRepository(auth: FirebaseAuth,firestore: FirebaseFirestore, datastore: DataStore<Preferences>): AuthRepository =
+        AuthRepositoryImpl(auth, firestore,datastore)
+
+
+    @Provides
+    @Singleton
+    fun provideDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = {
+                context.preferencesDataStoreFile("app_prefs")
+            }
+        )
+    }
 
     @Provides
     @Singleton
@@ -98,7 +117,9 @@ object AppModule {
             signIn = SignIn(repository),
             signUp = Register(repository),
             logout = Logout(repository),
-            getAuthState = GetAuthState(repository)
+            getAuthState = GetAuthState(repository),
+            readAppEntry = ReadAppEntry(repository),
+            saveAppEntry = SaveAppEntry(repository)
         )
 
 

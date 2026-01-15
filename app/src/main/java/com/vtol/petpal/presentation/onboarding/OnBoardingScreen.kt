@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 fun OnboardingScreen(onFinish: () -> Unit) {
     val pagerState = rememberPagerState { onBoardingPages.size }
 
+    val coroutine = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -49,9 +50,10 @@ fun OnboardingScreen(onFinish: () -> Unit) {
             .padding(top = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PagerIndicators(currentPage = 0)
+        PagerIndicators(currentPage = pagerState.currentPage)
 
-        Spacer(modifier = Modifier.height(64.dp))
+//        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.weight(0.5f))
 
 
         // Scrollable horizontal image and texts
@@ -60,7 +62,6 @@ fun OnboardingScreen(onFinish: () -> Unit) {
         ) { index ->
             val page = onBoardingPages[index]
 
-            val coroutine = rememberCoroutineScope()
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,44 +92,45 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                     textAlign = TextAlign.Center
                 )
 
-                // Bottom content
-                Spacer(modifier = Modifier.weight(1f))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(modifier = Modifier.clickable { onFinish() }, text = "Skip")
-
-                    Button(
-                        colors = ButtonDefaults.buttonColors(containerColor = MainPurple),
-                        onClick = {
-                            if (pagerState.currentPage == onBoardingPages.lastIndex) {
-                                // navigate to Home screen
-                                onFinish()
-                            } else {
-                                coroutine.launch {
-                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                }
-                            }
-                        }
-                    ) {
-                        Text(
-                            text =
-                                if (pagerState.currentPage == onBoardingPages.lastIndex) {
-                                    "Get Started"
-                                } else {
-                                    "Next"
-                                }
-                        )
-                    }
-                }
-
 
             }
 
 
+        }
+
+        // Bottom content
+        Spacer(modifier = Modifier.weight(1f))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(modifier = Modifier.clickable { onFinish() }, text = "Skip")
+
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = MainPurple),
+                onClick = {
+                    if (pagerState.currentPage == onBoardingPages.lastIndex) {
+                        // navigate to Home screen
+                        onFinish()
+                    } else {
+                        coroutine.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
+                }
+            ) {
+                Text(
+                    text =
+                        if (pagerState.currentPage == onBoardingPages.lastIndex) {
+                            "Get Started"
+                        } else {
+                            "Next"
+                        }
+                )
+            }
         }
     }
 

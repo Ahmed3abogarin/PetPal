@@ -1,7 +1,6 @@
 package com.vtol.petpal.presentation.nearby
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -228,7 +227,6 @@ fun NearByScreen() {
 }
 
 
-@SuppressLint("MissingPermission")
 @Preview
 @Composable
 fun NearByScreenPreview() {

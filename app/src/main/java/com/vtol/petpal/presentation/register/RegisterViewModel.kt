@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -18,11 +19,21 @@ class RegisterViewModel @Inject constructor(
     private val useCases: AuthUseCases
 ) : ViewModel() {
 
-    val authState: StateFlow<AuthState> = useCases.getAuthState().stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        AuthState.Loading
-    )
+    val authState: StateFlow<AuthState> =
+        combine(
+            useCases.getAuthState(),
+            useCases.readAppEntry()
+        ) { authState, onboardingCompleted ->
+            if (!onboardingCompleted) {
+                AuthState.OnBoarding
+            } else {
+                authState
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            AuthState.Loading
+        )
 
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -43,6 +54,12 @@ class RegisterViewModel @Inject constructor(
             AuthEvent.LoginClicked -> login()
             AuthEvent.RegisterClicked -> register()
 
+        }
+    }
+
+    fun completeOnBoarding() {
+        viewModelScope.launch {
+            useCases.saveAppEntry()
         }
     }
 
