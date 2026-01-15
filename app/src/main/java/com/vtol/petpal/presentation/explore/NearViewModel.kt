@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.nearby
+package com.vtol.petpal.presentation.explore
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

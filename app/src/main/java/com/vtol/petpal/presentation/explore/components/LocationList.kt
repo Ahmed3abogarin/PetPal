@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.nearby.components
+package com.vtol.petpal.presentation.explore.components
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

@@ -32,7 +32,7 @@ import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
-import com.vtol.petpal.presentation.nearby.NearByScreen
+import com.vtol.petpal.presentation.explore.NearByScreen
 import com.vtol.petpal.presentation.pets.AddPetScreen
 import com.vtol.petpal.presentation.pets.PetDetailsScreen
 import com.vtol.petpal.presentation.pets.PetDetailsViewModel

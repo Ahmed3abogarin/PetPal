@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.nearby
+package com.vtol.petpal.presentation.explore
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -44,9 +44,9 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.vtol.petpal.R
-import com.vtol.petpal.presentation.nearby.components.CategoryList
-import com.vtol.petpal.presentation.nearby.components.LoadingIndicator
-import com.vtol.petpal.presentation.nearby.components.LocationList
+import com.vtol.petpal.presentation.explore.components.CategoryList
+import com.vtol.petpal.presentation.explore.components.LoadingIndicator
+import com.vtol.petpal.presentation.explore.components.LocationList
 import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.launch
 
