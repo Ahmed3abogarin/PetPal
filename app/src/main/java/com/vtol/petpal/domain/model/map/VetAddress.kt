@@ -1,4 +1,4 @@
-package com.vtol.petpal.domain.model.Map
+package com.vtol.petpal.domain.model.map
 
 data class VetAddress(
     val name: String,
