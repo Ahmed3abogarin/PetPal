@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.nearby.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +21,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -37,15 +39,17 @@ fun CategoryList(
     onCategoryClicked: (PlaceCategory) -> Unit,
 ) {
     Column(modifier = modifier) {
+
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(elevation = 3.dp, shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp))
+                .clip(shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp))
                 .background(Color.White)
                 .padding(start = 6.dp, bottom = 12.dp, top = 6.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Nearby", style = MaterialTheme.typography.displaySmall)
+            Text(text = "Explore", style = MaterialTheme.typography.displaySmall)
         }
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow(
@@ -53,6 +57,9 @@ fun CategoryList(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             items(PlaceCategory.entries) {
+                val textColor by animateColorAsState(
+                    targetValue =  if (selectCategory == it) Color.White else Color.Black
+                )
 //            FilterChip()
                 Card(
                     onClick = { onCategoryClicked(it) },
@@ -72,6 +79,7 @@ fun CategoryList(
                         )
                         Text(
                             text = it.displayName,
+                            color = textColor,
                             fontSize = 18.sp
                         )
                     }
