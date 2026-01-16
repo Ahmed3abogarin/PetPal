@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -146,11 +147,11 @@ private fun PetDetailsScreenContent(
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp),
-                    model = ImageRequest.Builder(context).data("").build(),
+                        .fillMaxSize(),
+                    model = ImageRequest.Builder(context).data(pet.imagePath).build(),
                     error = painterResource(R.drawable.ic_unknown),
                     contentDescription = "pet profile image",
+                    contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.ic_unknown)
                 )
 

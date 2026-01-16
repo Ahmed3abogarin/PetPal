@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.pets.tabs
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +20,9 @@ fun HealthTab(
     state: DetailsState,
 ) {
 
+    weightList.forEach {
+        Log.v("WeightList", it.weight.toString())
+    }
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
