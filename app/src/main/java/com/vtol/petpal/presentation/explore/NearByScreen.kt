@@ -1,9 +1,8 @@
-package com.vtol.petpal.presentation.nearby
+package com.vtol.petpal.presentation.explore
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -30,8 +29,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -43,9 +44,9 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.vtol.petpal.R
-import com.vtol.petpal.presentation.nearby.components.CategoryList
-import com.vtol.petpal.presentation.nearby.components.LoadingIndicator
-import com.vtol.petpal.presentation.nearby.components.LocationList
+import com.vtol.petpal.presentation.explore.components.CategoryList
+import com.vtol.petpal.presentation.explore.components.LoadingIndicator
+import com.vtol.petpal.presentation.explore.components.LocationList
 import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.launch
 
@@ -117,14 +118,13 @@ fun NearByScreenContent() {
 
                     // then shows the near selected locations
 
-                        Marker(state = MarkerState(LatLng(vet.lat, vet.lng)), onClick = {
-                            selectedVet = index
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                            true
-                        })
-
+                    Marker(state = MarkerState(LatLng(vet.lat, vet.lng)), onClick = {
+                        selectedVet = index
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                        true
+                    })
 
 
                 }
@@ -173,45 +173,60 @@ fun vectorToBitmapDescriptor(@DrawableRes resId: Int): BitmapDescriptor {
 }
 
 
-@RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 @Composable
 fun NearByScreen() {
     val context = LocalContext.current
 
-    var hasLocationPermission by remember { mutableStateOf(false) }
-
-    // Permission launcher
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { permissions ->
-            hasLocationPermission = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-
-            if (!hasLocationPermission) {
-                Toast.makeText(context, "Location permission denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-    )
-
-    // Request permission when the composable enters the composition
-    LaunchedEffect(Unit) {
-        permissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
+    var hasLocationPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
         )
     }
 
-    if (hasLocationPermission) {
-        NearByScreenContent()
-    } else {
-        Text("Please grant location permission to see nearby places")
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        hasLocationPermission =
+            permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+    }
+
+    LaunchedEffect(true) {
+        if (!hasLocationPermission) {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    when {
+        hasLocationPermission -> {
+            NearByScreenContent()
+        }
+
+        else -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    textAlign = TextAlign.Center,
+                    text = "Please grant location permission to see nearby places"
+                )
+            }
+        }
     }
 }
 
 
-@SuppressLint("MissingPermission")
 @Preview
 @Composable
 fun NearByScreenPreview() {

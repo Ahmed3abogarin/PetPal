@@ -55,7 +55,7 @@ import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.home.components.DatePickerModal
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
-import com.vtol.petpal.presentation.nearby.components.LoadingIndicator
+import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.util.Resource
@@ -273,7 +273,9 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 //                                weightUnit = selectWUnit,
 //                                weight = listOf(WeightRecord(weight = petWeight.toDouble(), date =   Date(System.currentTimeMillis()) ))
                             ),
-                            weight = WeightRecord(weight = petWeight.toDouble(), unit = selectWUnit)
+                            imageUri = imageUri,
+                            weight = WeightRecord(weight = petWeight.toDouble(), unit = selectWUnit),
+
                         )
                     }
 

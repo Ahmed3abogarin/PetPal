@@ -36,7 +36,7 @@ fun PetsScreen(
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 // text in the top middle
                 Text(
-                    modifier = Modifier.padding(vertical = 12.dp),
+                    modifier = Modifier.padding(top = 6.dp, bottom = 12.dp),
                     text = "My Pets",
                     style = MaterialTheme.typography.displaySmall
                 )

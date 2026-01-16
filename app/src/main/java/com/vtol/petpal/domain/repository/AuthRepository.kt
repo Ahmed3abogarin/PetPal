@@ -9,8 +9,11 @@ interface AuthRepository {
     suspend fun register(user: User, password: String): Result<Unit>
     suspend fun login(email: String, password: String): Result<Unit>
     fun logout()
-     fun authState(): Flow<AuthState>
+    fun authState(): Flow<AuthState>
 
     // After the user register successfully save info in a collection
 //    fun createUserInfo(): User?
+
+    fun isCompleted(): Flow<Boolean>
+    suspend fun setCompleted()
 }

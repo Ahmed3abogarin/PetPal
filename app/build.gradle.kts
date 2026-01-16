@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -84,9 +85,9 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
 
     // Hilt
-    implementation (libs.hilt.android)
-    kapt (libs.hilt.compiler)
-    implementation (libs.androidx.hilt.navigation.compose)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 
     // Vico library - chart library
@@ -102,5 +103,9 @@ dependencies {
 
     // firebase auth
     implementation(libs.firebase.auth.ktx)
+
+
+    // data store
+    implementation("androidx.datastore:datastore-preferences:1.2.0")
 
 }

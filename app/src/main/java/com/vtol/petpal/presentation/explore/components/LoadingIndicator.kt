@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.nearby.components
+package com.vtol.petpal.presentation.explore.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
