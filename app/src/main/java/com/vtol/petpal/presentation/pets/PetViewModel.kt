@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.pets
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
@@ -40,10 +41,10 @@ class PetViewModel @Inject constructor(
 
     // TODO: CREATE THE STATE CLASS FOR THE PETS
 
-    fun addPet(pet: Pet, weight: WeightRecord){
+    fun addPet(pet: Pet,imageUri: Uri?, weight: WeightRecord){
         viewModelScope.launch {
             _addPetState.value = Resource.Loading
-            _addPetState.value =  appUseCases.addPet(pet,weight)
+            _addPetState.value =  appUseCases.addPet(pet = pet, imageUri = imageUri, weight = weight)
 
         }
     }

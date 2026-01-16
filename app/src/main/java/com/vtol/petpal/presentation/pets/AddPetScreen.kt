@@ -273,7 +273,9 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 //                                weightUnit = selectWUnit,
 //                                weight = listOf(WeightRecord(weight = petWeight.toDouble(), date =   Date(System.currentTimeMillis()) ))
                             ),
-                            weight = WeightRecord(weight = petWeight.toDouble(), unit = selectWUnit)
+                            imageUri = imageUri,
+                            weight = WeightRecord(weight = petWeight.toDouble(), unit = selectWUnit),
+
                         )
                     }
 

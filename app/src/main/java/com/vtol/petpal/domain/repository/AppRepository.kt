@@ -1,5 +1,6 @@
 package com.vtol.petpal.domain.repository
 
+import android.net.Uri
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
@@ -7,7 +8,7 @@ import com.vtol.petpal.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface AppRepository {
-    suspend fun addPet(pet: Pet,weight: WeightRecord): Resource<Unit>
+    suspend fun addPet(pet: Pet,imageUri: Uri?,weight: WeightRecord): Resource<Unit>
 
     fun getPets(): Flow<List<Pet>>
 

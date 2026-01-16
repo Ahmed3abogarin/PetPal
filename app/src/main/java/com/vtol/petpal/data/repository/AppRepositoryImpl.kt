@@ -1,7 +1,9 @@
 package com.vtol.petpal.data.repository
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
@@ -10,6 +12,7 @@ import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.util.Constants.PETS_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
 import com.vtol.petpal.util.Constants.WEIGHT_COLLECTION
+import com.vtol.petpal.util.PetStoragePaths.petProfileStoragePath
 import com.vtol.petpal.util.Resource
 import jakarta.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
@@ -20,39 +23,58 @@ import kotlinx.coroutines.tasks.await
 class AppRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val tasksDao: TasksDao,
-    auth: FirebaseAuth
+    auth: FirebaseAuth,
+    private val storage: FirebaseStorage
 ) : AppRepository {
 
     private val currentUid = auth.currentUser?.uid
 
-    override suspend fun addPet(pet: Pet, weight: WeightRecord): Resource<Unit> {
+    override suspend fun addPet(
+        pet: Pet,
+        imageUri: Uri?,
+        weight: WeightRecord
+    ): Resource<Unit> {
+
+        val uid = currentUid
+            ?: return Resource.Error("User not authenticated")
 
         return try {
-            currentUid?.let {
-                val petRef = firestore.collection(USERS_COLLECTION)
-                    .document(it)
-                    .collection(PETS_COLLECTION)
-                    .document()
+            val petRef = firestore
+                .collection(USERS_COLLECTION)
+                .document(uid)
+                .collection(PETS_COLLECTION)
+                .document()
 
-                val newPet = pet.copy(id = petRef.id)
+            var imageUrl: String? = null
 
-                // save pet
-                petRef.set(newPet).await()
+            // Upload image ONLY if exists
+            if (imageUri != null) {
+                val storageRef = storage.reference.child(
+                    petProfileStoragePath(uid, petRef.id)
+                )
 
-
-                // save weight
-                petRef.collection(WEIGHT_COLLECTION)
-                    .add(weight)
-                    .await()
-
+                storageRef.putFile(imageUri).await()
+                imageUrl = storageRef.downloadUrl.await().toString()
             }
+
+            val newPet = pet.copy(
+                id = petRef.id,
+                imagePath = imageUrl ?: ""
+            )
+
+            // Save pet
+            petRef.set(newPet).await()
+
+            // Save initial weight
+            petRef.collection(WEIGHT_COLLECTION)
+                .add(weight)
+                .await()
+
             Resource.Success(Unit)
 
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Unknown error")
         }
-
-
     }
 
     override fun getPets(): Flow<List<Pet>> = callbackFlow {

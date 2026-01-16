@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.repository.AppRepositoryImpl
@@ -55,8 +56,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(firestore: FirebaseFirestore, tasksDao: TasksDao, auth: FirebaseAuth): AppRepository =
-        AppRepositoryImpl(firestore, tasksDao, auth)
+    fun provideAppRepository(firestore: FirebaseFirestore, tasksDao: TasksDao, auth: FirebaseAuth, storage: FirebaseStorage): AppRepository =
+        AppRepositoryImpl(firestore, tasksDao, auth, storage)
 
 
     @Provides
@@ -94,6 +95,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirebaseAuth() = FirebaseAuth.getInstance()
+
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorage() = FirebaseStorage.getInstance()
 
 
     @Provides
