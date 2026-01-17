@@ -193,7 +193,7 @@ fun MainNavGraph() {
                 NearByScreen()
             }
             composable(route = Routes.ProfileScreen.route) {
-                ProfileScreen()
+                ProfileScreen(userViewModel)
             }
 
             // sub screens
