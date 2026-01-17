@@ -136,7 +136,6 @@ private fun PetDetailsScreenContent(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // TODO: Add suitable placeholder image
 
             Box(
                 modifier = Modifier
@@ -149,10 +148,10 @@ private fun PetDetailsScreenContent(
                     modifier = Modifier
                         .fillMaxSize(),
                     model = ImageRequest.Builder(context).data(pet.imagePath).build(),
-                    error = painterResource(R.drawable.ic_unknown),
+                    error = painterResource(R.drawable.pet_placeholder),
                     contentDescription = "pet profile image",
                     contentScale = ContentScale.Crop,
-                    placeholder = painterResource(R.drawable.ic_unknown)
+                    placeholder = painterResource(R.drawable.pet_placeholder)
                 )
 
             }

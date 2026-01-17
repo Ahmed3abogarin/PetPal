@@ -66,8 +66,8 @@ fun PetCard(
                         .size(80.dp)
                         .clip(CircleShape),
                     model = ImageRequest.Builder(context).data(pet.imagePath).build(),
-                    placeholder = painterResource(R.drawable.cat),
-                    error = painterResource(R.drawable.cat),
+                    placeholder = painterResource(R.drawable.pet_placeholder),
+                    error = painterResource(R.drawable.pet_placeholder),
                     contentScale = ContentScale.Crop,
                     contentDescription = "pet photo"
                 )
