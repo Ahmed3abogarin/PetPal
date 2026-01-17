@@ -52,7 +52,7 @@ fun HighlightCard(modifier: Modifier = Modifier, tasks: List<Task>?, date: Local
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(8.dp),
-                    painter = painterResource(R.drawable.ic_unknown),
+                    painter = painterResource(R.drawable.pet_placeholder),
                     contentDescription = ""
                 )
             }
