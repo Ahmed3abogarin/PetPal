@@ -14,10 +14,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.vtol.petpal.presentation.navgraph.AuthNavGraph
 import com.vtol.petpal.presentation.navgraph.MainNavGraph
 import com.vtol.petpal.presentation.navgraph.components.ErrorScreen
-import com.vtol.petpal.presentation.navgraph.components.SplashScreen
 import com.vtol.petpal.presentation.onboarding.OnboardingScreen
 import com.vtol.petpal.presentation.register.AuthState
 import com.vtol.petpal.presentation.register.RegisterViewModel
+import com.vtol.petpal.presentation.splash.SplashScreen
 import com.vtol.petpal.ui.theme.PetPalTheme
 import dagger.hilt.android.AndroidEntryPoint
 
