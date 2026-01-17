@@ -175,7 +175,7 @@ private fun PetDetailsScreenContent(
 
             // ------------------------- Tabs ---------------------------------
             Spacer(modifier = Modifier.height(20.dp))
-            var selectedTabIndex by rememberSaveable { mutableIntStateOf(1) }
+            var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
             val tabs = listOf("Overview", "Health", "Gallery")
 
             // A column will act as a container for the tabs
