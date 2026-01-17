@@ -12,5 +12,7 @@ data class AppUseCases(
     val getTasks: GetTasks,
     val getTasksById: GetTasksById,
     val addWeight: AddWeight,
-    val getWeights: GetWeights
+    val getWeights: GetWeights,
+
+    val getUser: GetUser
 )

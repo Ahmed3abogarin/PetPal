@@ -27,6 +27,7 @@ import androidx.navigation.navArgument
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.calender.CalenderScreen
 import com.vtol.petpal.presentation.calender.CalenderViewModel
+import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.home.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
@@ -54,6 +55,9 @@ fun MainNavGraph() {
     val petViewModel: PetViewModel = hiltViewModel()
     val calendarViewModel: CalenderViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
+
+    val userViewModel: UserViewModel = hiltViewModel()
+
 
 
     val bottomItems = remember {
@@ -156,7 +160,8 @@ fun MainNavGraph() {
                         navController.navigate(Routes.PetDetailsScreen.createRoute(it)){
                             launchSingleTop = false
                         }
-                    }
+                    },
+                    userViewModel = userViewModel
                 )
             }
             composable(Routes.PetsScreen.route) {
