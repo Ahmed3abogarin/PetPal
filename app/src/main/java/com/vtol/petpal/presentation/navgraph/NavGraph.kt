@@ -129,7 +129,6 @@ fun MainNavGraph() {
                                 navController = navController,
                                 route = Routes.ProfileScreen.route
                             )
-
                         }
                     }
                 )
@@ -142,9 +141,8 @@ fun MainNavGraph() {
         NavHost(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    innerPadding
-                ), startDestination = Routes.HomeScreen.route, navController = navController
+                .padding(innerPadding),
+            startDestination = Routes.HomeScreen.route, navController = navController
         ) {
 
             composable(Routes.HomeScreen.route) {
@@ -153,7 +151,13 @@ fun MainNavGraph() {
                         navController.navigate(Routes.AddTaskScreen.route)
                     },
                     onAddPetClicked = {
-                        navController.navigate(Routes.AddPetScreen.route)
+                        if (homeViewModel.state.value.petsList.size < 2){
+                            navController.navigate(Routes.AddPetScreen.route)
+                        }else{
+                            // the user has to pay :)
+                            // navigate the user to subscription screen
+
+                        }
                     },
                     viewModel = homeViewModel,
                     onPetClicked = {

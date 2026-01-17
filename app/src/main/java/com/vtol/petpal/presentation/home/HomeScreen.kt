@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +56,7 @@ import com.vtol.petpal.presentation.home.components.ProgressCard
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.Resource
+import com.vtol.petpal.util.showToast
 
 @Composable
 fun HomeScreen(
@@ -245,6 +247,7 @@ fun AppHomeHeader(modifier: Modifier = Modifier, state: Resource<User>) {
         shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
         elevation = CardDefaults.cardElevation(6.dp),
     ) {
+        val context = LocalContext.current
         Column(
             modifier = modifier
                 .padding(horizontal = 12.dp)
@@ -269,7 +272,9 @@ fun AppHomeHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                 }
 
                 OutlinedCard(
-                    onClick = {},
+                    onClick = {
+                        context.showToast()
+                    },
                     shape = CircleShape,
                     border = BorderStroke(width = 1.dp, color = Color.White),
                     colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.6f))
@@ -278,7 +283,7 @@ fun AppHomeHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                         modifier = Modifier.padding(10.dp),
                         imageVector = Icons.Default.Notifications,
                         tint = Color.White,
-                        contentDescription = ""
+                        contentDescription = "notification icon"
                     )
 
                 }
