@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -36,22 +35,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
+import com.vtol.petpal.domain.model.user.User
+import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.components.TaskCard
 import com.vtol.petpal.presentation.home.components.HomePetsList
 import com.vtol.petpal.presentation.home.components.ProgressCard
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.Resource
+import com.vtol.petpal.util.showToast
 
 @Composable
 fun HomeScreen(
@@ -59,8 +64,11 @@ fun HomeScreen(
     onAddPetClicked: () -> Unit,
     onPetClicked: (String) -> Unit,
     viewModel: HomeViewModel,
+    userViewModel: UserViewModel
 ) {
     val state = viewModel.state.collectAsState()
+
+    val userState by userViewModel.state.collectAsState()
 
     val scaffoldState = remember { SnackbarHostState() }
 
@@ -107,7 +115,7 @@ fun HomeScreen(
 
             // The header
             item {
-                AppHomeHeader()
+                AppHomeHeader(state = userState)
             }
 //            AppHomeHeader()
 
@@ -116,7 +124,10 @@ fun HomeScreen(
                 // Pets list
                 Spacer(modifier = Modifier.height(16.dp))
 
-                HomePetsList(pets = state.value.petsList, onPetClicked = { onPetClicked(it) }, onAddPetClicked = { onAddPetClicked() })
+                HomePetsList(
+                    pets = state.value.petsList,
+                    onPetClicked = { onPetClicked(it) },
+                    onAddPetClicked = { onAddPetClicked() })
                 Spacer(modifier = Modifier.height(16.dp))
 
             }
@@ -230,12 +241,13 @@ fun HomeScreen(
 
 
 @Composable
-fun AppHomeHeader(modifier: Modifier = Modifier) {
+fun AppHomeHeader(modifier: Modifier = Modifier, state: Resource<User>) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MainPurple),
         shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
         elevation = CardDefaults.cardElevation(6.dp),
     ) {
+        val context = LocalContext.current
         Column(
             modifier = modifier
                 .padding(horizontal = 12.dp)
@@ -260,7 +272,9 @@ fun AppHomeHeader(modifier: Modifier = Modifier) {
                 }
 
                 OutlinedCard(
-                    onClick = {},
+                    onClick = {
+                        context.showToast()
+                    },
                     shape = CircleShape,
                     border = BorderStroke(width = 1.dp, color = Color.White),
                     colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.6f))
@@ -269,7 +283,7 @@ fun AppHomeHeader(modifier: Modifier = Modifier) {
                         modifier = Modifier.padding(10.dp),
                         imageVector = Icons.Default.Notifications,
                         tint = Color.White,
-                        contentDescription = ""
+                        contentDescription = "notification icon"
                     )
 
                 }
@@ -285,26 +299,50 @@ fun AppHomeHeader(modifier: Modifier = Modifier) {
                 Column {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(text = "Hello,", fontSize = 28.sp, color = Color.White)
-                    Text(
-                        modifier = Modifier.padding(start = 3.dp),
-                        text = "Ahmed Adil",
-                        fontSize = 28.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    when (state) {
+                        is Resource.Loading -> {
+                            Text(
+                                text = "Loading...",
+                                fontSize = 28.sp,
+                                color = Color.White.copy(alpha = 0.7f)
+                            )
+                        }
+
+                        is Resource.Success -> {
+                            Text(
+                                modifier = Modifier.padding(start = 3.dp),
+                                text = state.data.name,
+                                fontSize = 28.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        is Resource.Error -> {
+                            Text(
+                                modifier = Modifier.padding(start = 3.dp),
+                                text = state.message,
+                                fontSize = 28.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
-                Card(shape = CircleShape) {
-                    Row(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "35° C")
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Image(
-                            painter = painterResource(R.drawable.weather_icon),
-                            contentDescription = "weather icon"
-                        )
-                    }
-                }
+                // TODO: add the weather api
+
+//                Card(shape = CircleShape) {
+//                    Row(modifier = Modifier.padding(16.dp)) {
+//                        Text(text = "35° C")
+//                        Spacer(modifier = Modifier.width(6.dp))
+//                        Image(
+//                            painter = painterResource(R.drawable.weather_icon),
+//                            contentDescription = "weather icon"
+//                        )
+//                    }
+//                }
             }
 
         }

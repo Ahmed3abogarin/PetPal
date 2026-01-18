@@ -143,13 +143,15 @@ class AppRepositoryImpl @Inject constructor(
         tasksDao.getTask(petId)
 
     override suspend fun addWeight(petId: String, weightRecord: WeightRecord) {
-
-        firestore.collection("pets")
-            .document(petId)
-            .collection("weights")
-            .add(weightRecord)
-            .await()
-
+        currentUid?.let {
+            firestore.collection(USERS_COLLECTION)
+                .document(it)
+                .collection(PETS_COLLECTION)
+                .document(petId)
+                .collection(WEIGHT_COLLECTION)
+                .add(weightRecord)
+                .await()
+        }
     }
 
     override fun getWeightList(petId: String): Flow<List<WeightRecord>> = callbackFlow {

@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,8 +66,9 @@ fun PetCard(
                         .size(80.dp)
                         .clip(CircleShape),
                     model = ImageRequest.Builder(context).data(pet.imagePath).build(),
-                    placeholder = painterResource(R.drawable.cat),
-                    error = painterResource(R.drawable.cat),
+                    placeholder = painterResource(R.drawable.pet_placeholder),
+                    error = painterResource(R.drawable.pet_placeholder),
+                    contentScale = ContentScale.Crop,
                     contentDescription = "pet photo"
                 )
                 Spacer(modifier = Modifier.width(8.dp))

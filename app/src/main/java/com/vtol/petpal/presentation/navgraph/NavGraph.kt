@@ -27,6 +27,7 @@ import androidx.navigation.navArgument
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.calender.CalenderScreen
 import com.vtol.petpal.presentation.calender.CalenderViewModel
+import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.home.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
@@ -54,6 +55,9 @@ fun MainNavGraph() {
     val petViewModel: PetViewModel = hiltViewModel()
     val calendarViewModel: CalenderViewModel = hiltViewModel()
     val homeViewModel: HomeViewModel = hiltViewModel()
+
+    val userViewModel: UserViewModel = hiltViewModel()
+
 
 
     val bottomItems = remember {
@@ -125,7 +129,6 @@ fun MainNavGraph() {
                                 navController = navController,
                                 route = Routes.ProfileScreen.route
                             )
-
                         }
                     }
                 )
@@ -138,9 +141,8 @@ fun MainNavGraph() {
         NavHost(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    innerPadding
-                ), startDestination = Routes.HomeScreen.route, navController = navController
+                .padding(innerPadding),
+            startDestination = Routes.HomeScreen.route, navController = navController
         ) {
 
             composable(Routes.HomeScreen.route) {
@@ -149,14 +151,21 @@ fun MainNavGraph() {
                         navController.navigate(Routes.AddTaskScreen.route)
                     },
                     onAddPetClicked = {
-                        navController.navigate(Routes.AddPetScreen.route)
+                        if (homeViewModel.state.value.petsList.size < 2){
+                            navController.navigate(Routes.AddPetScreen.route)
+                        }else{
+                            // the user has to pay :)
+                            // navigate the user to subscription screen
+
+                        }
                     },
                     viewModel = homeViewModel,
                     onPetClicked = {
                         navController.navigate(Routes.PetDetailsScreen.createRoute(it)){
                             launchSingleTop = false
                         }
-                    }
+                    },
+                    userViewModel = userViewModel
                 )
             }
             composable(Routes.PetsScreen.route) {
@@ -188,7 +197,7 @@ fun MainNavGraph() {
                 NearByScreen()
             }
             composable(route = Routes.ProfileScreen.route) {
-                ProfileScreen()
+                ProfileScreen(userViewModel)
             }
 
             // sub screens

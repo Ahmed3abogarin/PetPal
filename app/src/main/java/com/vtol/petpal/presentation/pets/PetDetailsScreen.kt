@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -135,7 +136,6 @@ private fun PetDetailsScreenContent(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // TODO: Add suitable placeholder image
 
             Box(
                 modifier = Modifier
@@ -146,12 +146,12 @@ private fun PetDetailsScreenContent(
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp),
-                    model = ImageRequest.Builder(context).data("").build(),
-                    error = painterResource(R.drawable.ic_unknown),
+                        .fillMaxSize(),
+                    model = ImageRequest.Builder(context).data(pet.imagePath).build(),
+                    error = painterResource(R.drawable.pet_placeholder),
                     contentDescription = "pet profile image",
-                    placeholder = painterResource(R.drawable.ic_unknown)
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.pet_placeholder)
                 )
 
             }
@@ -175,7 +175,7 @@ private fun PetDetailsScreenContent(
 
             // ------------------------- Tabs ---------------------------------
             Spacer(modifier = Modifier.height(20.dp))
-            var selectedTabIndex by rememberSaveable { mutableIntStateOf(1) }
+            var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
             val tabs = listOf("Overview", "Health", "Gallery")
 
             // A column will act as a container for the tabs

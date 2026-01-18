@@ -15,15 +15,18 @@ import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
+import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.domain.repository.MapsRepository
+import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.domain.usecases.AddPet
 import com.vtol.petpal.domain.usecases.AddWeight
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.GetPet
 import com.vtol.petpal.domain.usecases.GetPets
+import com.vtol.petpal.domain.usecases.GetUser
 import com.vtol.petpal.domain.usecases.GetVets
 import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
@@ -101,10 +104,16 @@ object AppModule {
     @Singleton
     fun provideFirebaseStorage() = FirebaseStorage.getInstance()
 
+    @Provides
+    @Singleton
+    fun provideUserRepository(firestore: FirebaseFirestore, auth: FirebaseAuth): UserRepository =
+        UserRepositoryImpl(firestore,auth)
+
+
 
     @Provides
     @Singleton
-    fun provideAppUseCases(appRepository: AppRepository) =
+    fun provideAppUseCases(appRepository: AppRepository, userRepository: UserRepository) =
         AppUseCases(
             addPet = AddPet(appRepository),
             getPets = GetPets(appRepository),
@@ -113,7 +122,8 @@ object AppModule {
             getTasks = GetTasks(appRepository),
             getTasksById = GetTasksById(appRepository),
             addWeight = AddWeight(appRepository),
-            getWeights = GetWeights(appRepository)
+            getWeights = GetWeights(appRepository),
+            getUser = GetUser(userRepository)
         )
 
     @Provides

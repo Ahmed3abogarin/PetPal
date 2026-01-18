@@ -14,20 +14,31 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
+import com.vtol.petpal.domain.model.user.User
+import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.profile.components.SettingsButton
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.Resource
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(viewmodel: UserViewModel) {
+    val state by viewmodel.state.collectAsState()
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,7 +61,34 @@ fun ProfileScreen() {
             contentDescription = "profile image"
         )
 //        Spacer(modifier = Modifier.height(12.dp))
-//        Text(text = "Ahmed Adil", fontSize = 20.sp, color = Color.Gray)
+        when (state) {
+            is Resource.Loading -> {
+                Text(
+                    text = "Loading...",
+                    fontSize = 28.sp,
+                    color = Color.Gray
+                )
+            }
+
+            is Resource.Success -> {
+                Text(
+                    text = (state as Resource.Success<User>).data.email,
+                    fontSize = 20.sp,
+                    color = Color.Gray
+                )
+
+            }
+
+            is Resource.Error -> {
+                Text(
+                    modifier = Modifier.padding(start = 3.dp),
+                    text = (state as Resource.Error).message,
+                    fontSize = 28.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(32.dp))
 
         SettingsButton(
@@ -87,11 +125,6 @@ fun ProfileScreen() {
         )
 
 
-
-
-
-
-
     }
 }
 
@@ -100,6 +133,6 @@ fun ProfileScreen() {
 @Composable
 fun ProfilePreview() {
     PetPalTheme {
-        ProfileScreen()
+//        ProfileScreen()
     }
 }

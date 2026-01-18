@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.pets
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -60,6 +61,7 @@ class PetDetailsViewModel @Inject constructor(
                     appUseCases.getTasksById(petId),
                     appUseCases.getWeights(petId)
                 ) { tasks, weights ->
+                    Log.v("WE",weights.size.toString())
                     DetailsState(
                         pet = pet,
                         tasks = tasks.sortedBy { it.dateTime },

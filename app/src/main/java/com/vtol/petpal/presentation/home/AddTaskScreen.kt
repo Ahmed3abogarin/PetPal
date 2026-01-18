@@ -63,6 +63,7 @@ import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.PetDropDownMenu
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.components.TextFieldVariant
+import com.vtol.petpal.presentation.components.filledTextFieldColors
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
 import com.vtol.petpal.presentation.home.components.TaskDatePicker
 import com.vtol.petpal.presentation.home.components.TimePicker
@@ -504,12 +505,7 @@ fun AddTaskScreen(modifier: Modifier = Modifier, petsList: List<Pet>, viewModel:
                                         duration = newValue
                                     }
                                 },
-                                colors = TextFieldDefaults.colors(
-                                    disabledTextColor = Color.Black,
-                                    disabledContainerColor = Color.White,
-                                    focusedContainerColor = Color.White,
-                                    disabledIndicatorColor = Color.Transparent
-                                ),
+                                colors = filledTextFieldColors(),
                                 shape = RoundedCornerShape(12.dp),
                                 label = { Text("Duration") },
                                 placeholder = { Text("30") },

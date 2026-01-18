@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.calender
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.vtol.petpal.presentation.calender.components.CalendarDayCell
 import com.vtol.petpal.presentation.calender.components.HighlightCard
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.PetPalTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -52,12 +54,21 @@ fun CalenderScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .statusBarsPadding()
+            .background(BackgroundColor),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        Text(
+            modifier = Modifier.padding(top = 6.dp),
+            text = "Calendar",
+            style = MaterialTheme.typography.displaySmall
+        )
+
+        Spacer(modifier = Modifier.height(22.dp))
+        
+
         // calendar days
-        Column (modifier = Modifier.weight(0.5f)){
+        Column {
             HorizontalCalendar(
                 dayContent = { day ->
                     CalendarDayCell(
@@ -108,7 +119,8 @@ fun CalenderScreen(
 
         // Highlight card for the selected date
         HighlightCard(
-            tasks = calendarTasks[selectedDate].orEmpty(),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            tasks = calendarTasks[selectedDate],
             date = selectedDate,
             petMap = state.petMap
         )
