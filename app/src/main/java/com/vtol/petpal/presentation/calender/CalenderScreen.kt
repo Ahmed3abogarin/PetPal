@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.calender
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.vtol.petpal.presentation.calender.components.CalendarDayCell
 import com.vtol.petpal.presentation.calender.components.HighlightCard
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.PetPalTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -52,7 +54,8 @@ fun CalenderScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-,        horizontalAlignment = Alignment.CenterHorizontally
+            .background(BackgroundColor),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Text(
