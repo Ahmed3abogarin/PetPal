@@ -19,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +27,6 @@ import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.vtol.petpal.presentation.calender.components.CalendarDayCell
 import com.vtol.petpal.presentation.calender.components.HighlightCard
 import com.vtol.petpal.ui.theme.BackgroundColor
-import com.vtol.petpal.ui.theme.PetPalTheme
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -124,15 +122,6 @@ fun CalenderScreen(
             date = selectedDate,
             petMap = state.petMap
         )
-
-    }
-}
-
-
-@Preview
-@Composable
-fun CalendarPreview() {
-    PetPalTheme {
 
     }
 }
