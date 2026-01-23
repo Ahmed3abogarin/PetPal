@@ -105,7 +105,7 @@ private fun PetDetailsScreenContent(
                 Icon(Icons.Default.Edit, contentDescription = null)
             }
         }
-    ) {  _ ->
+    ) {  padding ->
 
         Column(
             modifier = modifier
