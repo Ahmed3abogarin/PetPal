@@ -105,13 +105,11 @@ private fun PetDetailsScreenContent(
                 Icon(Icons.Default.Edit, contentDescription = null)
             }
         }
-    ) { paddingValues ->
-
+    ) {  padding ->
 
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
                 .padding(horizontal = 16.dp, vertical = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
