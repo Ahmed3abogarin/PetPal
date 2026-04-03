@@ -41,33 +41,43 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun RootScreen(
-    authViewModel: RegisterViewModel
+    authViewModel: RegisterViewModel,
+    updateViewModel: UpdateViewModel = hiltViewModel()
 ) {
     val authState by authViewModel.authState.collectAsState()
+    val updateState by updateViewModel.updateState.collectAsState()
 
-    when (authState) {
-        AuthState.Loading -> {
-            SplashScreen()
-        }
+    when(updateState){
+        is UpdateState.Loading -> SplashScreen()
+        is UpdateState.Immediate -> Unit // show Immediate update dialog or screen
+        is UpdateState.Flexible -> Unit // show flexible update process
+        is UpdateState.UpToDate -> {
+            when (authState) {
+                AuthState.Loading -> {
+                    SplashScreen()
+                }
 
-        AuthState.Unauthenticated -> {
-            AuthNavGraph()
-        }
+                AuthState.Unauthenticated -> {
+                    AuthNavGraph()
+                }
 
-        AuthState.OnBoarding -> {
-            OnboardingScreen {
-                authViewModel.completeOnBoarding()
+                AuthState.OnBoarding -> {
+                    OnboardingScreen {
+                        authViewModel.completeOnBoarding()
+                    }
+                }
+
+                is AuthState.Authenticated -> {
+                    MainNavGraph()
+                }
+
+                is AuthState.Error -> {
+                    ErrorScreen(
+                        message = (authState as AuthState.Error).message
+                    )
+                }
             }
         }
-
-        is AuthState.Authenticated -> {
-            MainNavGraph()
-        }
-
-        is AuthState.Error -> {
-            ErrorScreen(
-                message = (authState as AuthState.Error).message
-            )
-        }
     }
+
 }
