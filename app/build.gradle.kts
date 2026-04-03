@@ -2,12 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 
     // should use KSP instead of Kapt
-    id("kotlin-kapt")
+//    id("kotlin-kapt")
 
     // Hilt
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.dagger.hilt)
 
     // Firebase
     alias(libs.plugins.google.gms.google.services)
@@ -65,7 +66,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom)) // bom => Bill of Materials
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
@@ -88,7 +89,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
 
@@ -97,10 +98,10 @@ dependencies {
 
     // Room
     implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
     // Calendar
-    implementation("com.kizitonwose.calendar:compose:2.9.0")
+    implementation(libs.kizitonwose)
 
 
     // firebase auth
@@ -108,6 +109,6 @@ dependencies {
 
 
     // data store
-    implementation("androidx.datastore:datastore-preferences:1.2.0")
+    implementation(libs.datastore.preferences)
 
 }
