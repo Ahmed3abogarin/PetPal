@@ -9,21 +9,25 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
+import com.vtol.petpal.data.repository.UpdateRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.domain.repository.MapsRepository
+import com.vtol.petpal.domain.repository.UpdateRepository
 import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.domain.usecases.AddPet
 import com.vtol.petpal.domain.usecases.AddWeight
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.GetVersion
 import com.vtol.petpal.domain.usecases.GetPet
 import com.vtol.petpal.domain.usecases.GetPets
 import com.vtol.petpal.domain.usecases.GetUser
@@ -110,10 +114,15 @@ object AppModule {
         UserRepositoryImpl(firestore,auth)
 
 
+    @Provides
+    @Singleton
+    fun provideUpdateRepository(remoteConfig: FirebaseRemoteConfig): UpdateRepository = UpdateRepositoryImpl(remoteConfig)
+
+
 
     @Provides
     @Singleton
-    fun provideAppUseCases(appRepository: AppRepository, userRepository: UserRepository) =
+    fun provideAppUseCases(appRepository: AppRepository, userRepository: UserRepository, updateRepository: UpdateRepository) =
         AppUseCases(
             addPet = AddPet(appRepository),
             getPets = GetPets(appRepository),
@@ -123,7 +132,8 @@ object AppModule {
             getTasksById = GetTasksById(appRepository),
             addWeight = AddWeight(appRepository),
             getWeights = GetWeights(appRepository),
-            getUser = GetUser(userRepository)
+            getUser = GetUser(userRepository),
+            getVersion = GetVersion(updateRepository),
         )
 
     @Provides
@@ -153,5 +163,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDao(tasksDB: TasksDB): TasksDao = tasksDB.tasksDao
+
+
+    @Provides
+    @Singleton
+    fun provideRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
 }

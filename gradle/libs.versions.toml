@@ -1,7 +1,9 @@
 [versions]
 agp = "8.13.0"
 coilCompose = "2.7.0"
+compose = "2.9.0"
 composeM3 = "2.3.0"
+datastorePreferences = "1.2.0"
 firebaseAuthKtx = "23.2.1"
 kotlin = "2.2.21"
 coreKtx = "1.17.0"
@@ -24,6 +26,9 @@ roomCompiler = "2.7.1"
 roomKtx = "2.7.1"
 roomRuntime = "2.7.1"
 firebaseStorage = "22.0.1"
+firebaseCrashlytics = "20.0.4"
+googleFirebaseCrashlytics = "3.0.6"
+firebaseConfig = "23.0.1"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -31,6 +36,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-m3 = { module = "com.patrykandpatrick.vico:compose-m3", version.ref = "composeM3" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -57,12 +63,18 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+kizitonwose = { module = "com.kizitonwose.calendar:compose", version.ref = "compose" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebaseConfig" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-hilt = {id = "com.google.dagger.hilt.android",version.ref ="hiltAndroid"}
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
+dagger-hilt = { id = "com.google.dagger.hilt.android" }
+ksp = {id = "com.google.devtools.ksp" }
 
