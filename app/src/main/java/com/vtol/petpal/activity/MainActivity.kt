@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,6 +19,10 @@ import com.vtol.petpal.presentation.onboarding.OnboardingScreen
 import com.vtol.petpal.presentation.register.AuthState
 import com.vtol.petpal.presentation.register.RegisterViewModel
 import com.vtol.petpal.presentation.splash.SplashScreen
+import com.vtol.petpal.presentation.update.FlexibleUpdateScreen
+import com.vtol.petpal.presentation.update.ImmediateUpdateScreen
+import com.vtol.petpal.presentation.update.UpdateState
+import com.vtol.petpal.presentation.update.UpdateViewModel
 import com.vtol.petpal.ui.theme.PetPalTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,11 +33,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PetPalTheme {
+                val updateViewModel: UpdateViewModel = hiltViewModel()
+                val authViewModel: RegisterViewModel = hiltViewModel()
+
+                LaunchedEffect(Unit) {
+                    updateViewModel.getMinRequiredVersion()
+                }
+
                 Column(modifier = Modifier.fillMaxSize()) {
-
-                    val viewModel: RegisterViewModel = hiltViewModel()
-                    RootScreen(viewModel)
-
+                    RootScreen(authViewModel, updateViewModel)
                 }
             }
         }
@@ -42,26 +51,26 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun RootScreen(
     authViewModel: RegisterViewModel,
-    updateViewModel: UpdateViewModel = hiltViewModel()
+    updateViewModel: UpdateViewModel
 ) {
-    val authState by authViewModel.authState.collectAsState()
     val updateState by updateViewModel.updateState.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
 
-    when(updateState){
+    when (updateState) {
         is UpdateState.Loading -> SplashScreen()
-        is UpdateState.Immediate -> Unit // show Immediate update dialog or screen
-        is UpdateState.Flexible -> Unit // show flexible update process
+        is UpdateState.Immediate -> ImmediateUpdateScreen()  // show Immediate update dialog or screen
+        is UpdateState.Flexible -> FlexibleUpdateScreen { updateViewModel.dismissFlexibleUpdate() } // show flexible update process
         is UpdateState.UpToDate -> {
             when (authState) {
-                AuthState.Loading -> {
+                is AuthState.Loading -> {
                     SplashScreen()
                 }
 
-                AuthState.Unauthenticated -> {
+                is AuthState.Unauthenticated -> {
                     AuthNavGraph()
                 }
 
-                AuthState.OnBoarding -> {
+                is AuthState.OnBoarding -> {
                     OnboardingScreen {
                         authViewModel.completeOnBoarding()
                     }
