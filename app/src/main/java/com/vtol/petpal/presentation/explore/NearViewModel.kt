@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -41,13 +42,19 @@ class NearViewModel @Inject constructor(
 
     fun getLocations(){
         viewModelScope.launch {
-            val userLocation = locationProvider.getCurrentLocation()
+            try {
+                val userLocation = locationProvider.getCurrentLocation()
 //            val jeddahLocation = LatLng(21.4858, 39.1925)
-            userLocation?.let {
-                Log.v("Current",it.toString())
-                _location.value = it
-                _locations.value = appUseCases.getNearLocations(it,selectedCategory.value)
+                userLocation?.let {
+                    Timber.v(it.toString())
+                    _location.value = it
+                    _locations.value = appUseCases.getNearLocations(it,selectedCategory.value)
+                }
+
+            } catch (e: Exception){
+                Timber.tag("GoogleMapsApi").e(e.message.toString())
             }
+
 
         }
     }

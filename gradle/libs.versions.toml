@@ -29,6 +29,7 @@ firebaseStorage = "22.0.1"
 firebaseCrashlytics = "20.0.4"
 googleFirebaseCrashlytics = "3.0.6"
 firebaseConfig = "23.0.1"
+timber = "5.0.1"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -66,6 +67,7 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage", v
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 kizitonwose = { module = "com.kizitonwose.calendar:compose", version.ref = "compose" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebaseConfig" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 
 [plugins]

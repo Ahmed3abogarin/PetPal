@@ -15,6 +15,7 @@ class UpdateRepositoryImpl @Inject constructor(
 ): UpdateRepository {
     init {
         val configSettings = remoteConfigSettings {
+            // Change this for production (e,g 3600)
             minimumFetchIntervalInSeconds = 0
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
@@ -33,7 +34,7 @@ class UpdateRepositoryImpl @Inject constructor(
                 AppVersion(minVersion = minVersion, latestVersion = latestVersion)
             }
 
-        }catch (_: Exception){
+        } catch (_: Exception){
             AppVersion(1,1)
         }
     }

@@ -59,7 +59,14 @@ fun RootScreen(
     when (updateState) {
         is UpdateState.Loading -> SplashScreen()
         is UpdateState.Immediate -> ImmediateUpdateScreen()  // show Immediate update dialog or screen
-        is UpdateState.Flexible -> FlexibleUpdateScreen { updateViewModel.dismissFlexibleUpdate() } // show flexible update process
+        is UpdateState.Flexible -> FlexibleUpdateScreen {
+
+            // For Flexible updates I want to show a pop up dialog when the user navigate to Home screen,
+            // I have two options:
+            // 1- Keep get version as it is and save the status (true/false) in local preferences
+            // 2- Modify get version function in Update VM to check only for Immediate update version, and in Home VM create another function to check only for Flexible update version
+            updateViewModel.dismissFlexibleUpdate()
+        } // show flexible update process
         is UpdateState.UpToDate -> {
             when (authState) {
                 is AuthState.Loading -> {
