@@ -122,7 +122,7 @@ fun secondFilledTextFieldColors() = TextFieldDefaults.colors(
     errorIndicatorColor = Color.Transparent,
     errorContainerColor = SemiTransparentPurple,
     errorPlaceholderColor = Color.Black,
-    errorTextColor =  Color.Gray,
+    errorTextColor =  Color.Black,
     errorLabelColor = Color.Black,
 )
 

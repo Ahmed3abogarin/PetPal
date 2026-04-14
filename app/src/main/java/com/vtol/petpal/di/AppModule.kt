@@ -15,12 +15,14 @@ import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
+import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.UpdateRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
+import com.vtol.petpal.domain.repository.FeedbackRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.repository.UpdateRepository
 import com.vtol.petpal.domain.repository.UserRepository
@@ -34,6 +36,7 @@ import com.vtol.petpal.domain.usecases.GetUser
 import com.vtol.petpal.domain.usecases.GetVets
 import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
+import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import com.vtol.petpal.domain.usecases.register.GetAuthState
 import com.vtol.petpal.domain.usecases.register.Logout
@@ -135,6 +138,17 @@ object AppModule {
             getUser = GetUser(userRepository),
             getVersion = GetVersion(updateRepository),
         )
+
+    @Provides
+    @Singleton
+    fun provideFeedbackRepository(firestore: FirebaseFirestore): FeedbackRepository =
+        FeedbackRepositoryImpl(firestore)
+
+
+    @Provides
+    @Singleton
+    fun provideFeedbackUseCase(feedbackRepository: FeedbackRepository): SubmitFeedBackUseCase =
+        SubmitFeedBackUseCase(feedbackRepository)
 
     @Provides
     @Singleton

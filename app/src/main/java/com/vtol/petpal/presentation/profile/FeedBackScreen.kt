@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.profile
 
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,24 +30,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.firestore.FieldValue
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.components.SaveButton
-import com.vtol.petpal.presentation.navgraph.Routes
+import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
+import kotlinx.coroutines.delay
+import java.util.Locale
 
 
 @Composable
-fun FeedbackScreen(modifier: Modifier = Modifier, uiState: FeedbackUiState, navigateUp: () -> Unit) {
+fun FeedbackScreen(modifier: Modifier = Modifier, viewModel: ProfileViewModel, navigateUp: () -> Unit) {
 
-    when (uiState) {
-        is FeedbackUiState.FeedbackForm -> FeedbackScreenContent(navigateUp = navigateUp)
-        is FeedbackUiState.Loading -> {}
-        is FeedbackUiState.Error -> {}
+    val state by viewModel.state.collectAsState()
+
+    when (state) {
+        is FeedbackUiState.FeedbackForm -> FeedbackScreenContent(viewModel, navigateUp = navigateUp)
+        is FeedbackUiState.Loading -> {
+            LoadingIndicator()
+        }
+        is FeedbackUiState.Error -> {
+            Text(text = "Something went wrong")
+            LaunchedEffect(Unit) {
+                delay(2000)
+                navigateUp()
+            }
+        }
         is FeedbackUiState.Success -> FeedbackSuccessScreen(navigateUp = navigateUp)
     }
     
@@ -52,7 +67,17 @@ fun FeedbackScreen(modifier: Modifier = Modifier, uiState: FeedbackUiState, navi
 
 
 @Composable
-fun FeedbackScreenContent(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
+fun FeedbackScreenContent(viewModel: ProfileViewModel, navigateUp: () -> Unit) {
+
+    val context = LocalContext.current
+    val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
+
+    val country = Locale.getDefault().displayCountry
+    val language = Locale.getDefault().displayLanguage
+
+    val deviceModel = Build.MANUFACTURER + " " + Build.MODEL
+    val androidVersion = Build.VERSION.RELEASE
+
 
     var rating by remember { mutableIntStateOf(0) }
     var message by remember { mutableStateOf("") }
@@ -117,13 +142,24 @@ fun FeedbackScreenContent(modifier: Modifier = Modifier, navigateUp: () -> Unit)
 
         SaveButton(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = "Send Feedback", color = MainPurple
+            text = "Send Feedback", color = MainPurple,
+            enabled = rating > 0
         ) {
+
+            val feedback = hashMapOf(
+                "message" to message,
+                "rating" to rating.toString(),
+                "appVersion" to appVersion,
+                "androidVersion" to androidVersion,
+                "deviceModel" to deviceModel,
+                "country" to country,
+                "language" to language,
+                "timestamp" to FieldValue.serverTimestamp()
+            )
+            viewModel.submitFeedback(feedback)
 
         }
     }
-
-
 }
 
 @Composable
@@ -146,10 +182,10 @@ fun StarRatingBar(
     }
 }
 
-@Preview
-@Composable
-fun FeedPreview() {
-    PetPalTheme {
-        FeedbackScreenContent(navigateUp = {})
-    }
-}
+//@Preview
+//@Composable
+//fun FeedPreview() {
+//    PetPalTheme {
+//        FeedbackScreenContent(navigateUp = {})
+//    }
+//}

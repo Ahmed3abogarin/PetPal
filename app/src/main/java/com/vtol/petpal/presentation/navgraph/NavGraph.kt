@@ -40,8 +40,8 @@ import com.vtol.petpal.presentation.pets.PetDetailsViewModel
 import com.vtol.petpal.presentation.pets.PetViewModel
 import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.FeedbackScreen
-import com.vtol.petpal.presentation.profile.FeedbackUiState
 import com.vtol.petpal.presentation.profile.ProfileScreen
+import com.vtol.petpal.presentation.profile.ProfileViewModel
 
 
 @Composable
@@ -228,8 +228,9 @@ fun MainNavGraph() {
 
 
             composable(Routes.FeedbackScreen.route) {
+                val viewModel: ProfileViewModel = hiltViewModel()
                 FeedbackScreen(
-                    uiState = FeedbackUiState.Success,
+                    viewModel = viewModel,
                     navigateUp = { navController.navigateUp() })
             }
         }
