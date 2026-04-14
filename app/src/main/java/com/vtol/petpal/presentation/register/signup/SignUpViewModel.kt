@@ -25,36 +25,59 @@ class SignUpViewModel @Inject constructor(
     fun onEvent(event: SignUpEvent) {
         when (event) {
             is SignUpEvent.NameChanged -> {
-                _uiState.update { it.copy(name = event.value) }
-                ValidationUtils.validateName(event.value)?.let { error ->
-                    _uiState.update { it.copy(nameError = error) }
+                _uiState.update {
+                    it.copy(
+                        name = event.value,
+                        nameError = ValidationUtils.validateName(event.value)
+                    )
+                }
+            }
+
+            is SignUpEvent.EmailChanged -> {
+                _uiState.update {
+                    it.copy(
+                        email = event.value,
+                        emailError = ValidationUtils.validateEmail(event.value)
+                    )
                 }
 
             }
 
-            is SignUpEvent.EmailChanged -> {
-
-            }
             is SignUpEvent.PasswordChanged -> {
+                _uiState.update {
+                    it.copy(
+                        password = event.value,
+                        passwordError = ValidationUtils.validatePassword(event.value)
+                    )
+                }
 
             }
-            is SignUpEvent.SignUpClicked -> {}
+
+            is SignUpEvent.SignUpClicked -> register()
         }
     }
 
 
     fun register() = viewModelScope.launch {
 
-        if (uiState.value.email.isEmpty() || uiState.value.name.isEmpty() || uiState.value.password.isEmpty()) {
-            _uiState.update { it.copy(error = "Fields cannot be empty") }
+        val nameError = ValidationUtils.validateName(_uiState.value.name)
+        val emailError = ValidationUtils.validateEmail(_uiState.value.email)
+        val passwordError = ValidationUtils.validatePassword(_uiState.value.password)
+
+        if (nameError != null || emailError != null || passwordError != null) {
+            _uiState.update {
+                it.copy(
+                    nameError = nameError,
+                    emailError = emailError,
+                    passwordError = passwordError
+                )
+            }
             return@launch
         }
         _uiState.update { it.copy(isLoading = true, error = null) }
 
 
-        useCases.signUp(
-            User(name = _uiState.value.name, email = _uiState.value.email), _uiState.value.password
-        )
+        useCases.signUp(User(name = _uiState.value.name, email = _uiState.value.email), _uiState.value.password)
             .onSuccess { _uiState.update { it.copy(isLoading = false) } }
             .onFailure { failure ->
                 _uiState.update {

@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
-import com.vtol.petpal.presentation.register.login.RegisterViewModel
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.SemiTransparentPurple
 
@@ -74,7 +73,7 @@ fun SignUpScreen(
             )
 
             AppTextField(
-                value = state.user.email,
+                value = state.email,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Email",
                 onValueChanged = { viewModel.onEvent(SignUpEvent.EmailChanged(it)) }
@@ -84,7 +83,7 @@ fun SignUpScreen(
                 value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
-                onValueChanged = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) }
+                onValueChanged = { viewModel.onEvent(SignUpEvent.PasswordChanged(it)) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -94,7 +93,7 @@ fun SignUpScreen(
                 color = MainPurple,
             ) {
                 // handle the sign up click
-                viewModel.onEvent(AuthEvent.RegisterClicked)
+                viewModel.onEvent(SignUpEvent.SignUpClicked)
 
             }
 
