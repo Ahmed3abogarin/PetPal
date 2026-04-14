@@ -5,9 +5,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.vtol.petpal.presentation.register.LoginScreen
-import com.vtol.petpal.presentation.register.RegisterViewModel
-import com.vtol.petpal.presentation.register.SignUpScreen
+import com.vtol.petpal.presentation.register.login.LoginScreen
+import com.vtol.petpal.presentation.register.login.RegisterViewModel
+import com.vtol.petpal.presentation.register.signup.SignUpScreen
 
 @Composable
 fun AuthNavGraph() {

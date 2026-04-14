@@ -56,7 +56,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
     ): Result<Unit> {
-        return runCatching { auth.signInWithEmailAndPassword(email, password) }
+        return runCatching { auth.signInWithEmailAndPassword(email, password).await() }
 
     }
 

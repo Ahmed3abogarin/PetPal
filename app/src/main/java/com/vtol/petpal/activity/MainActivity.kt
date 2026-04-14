@@ -17,7 +17,7 @@ import com.vtol.petpal.presentation.navgraph.MainNavGraph
 import com.vtol.petpal.presentation.navgraph.components.ErrorScreen
 import com.vtol.petpal.presentation.onboarding.OnboardingScreen
 import com.vtol.petpal.presentation.register.AuthState
-import com.vtol.petpal.presentation.register.RegisterViewModel
+import com.vtol.petpal.presentation.register.login.RegisterViewModel
 import com.vtol.petpal.presentation.splash.SplashScreen
 import com.vtol.petpal.presentation.update.FlexibleUpdateScreen
 import com.vtol.petpal.presentation.update.ImmediateUpdateScreen

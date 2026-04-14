@@ -1,0 +1,106 @@
+package com.vtol.petpal.presentation.register.login
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.domain.usecases.register.AuthUseCases
+import com.vtol.petpal.presentation.register.AuthState
+import com.vtol.petpal.util.ValidationUtils.validateEmail
+import com.vtol.petpal.util.ValidationUtils.validatePassword
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import javax.inject.Inject
+
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val useCases: AuthUseCases
+) : ViewModel() {
+
+    val authState: StateFlow<AuthState> =
+        combine(
+            useCases.getAuthState(),
+            useCases.readAppEntry()
+        ) { authState, onboardingCompleted ->
+            if (!onboardingCompleted) {
+                AuthState.OnBoarding
+            } else {
+                authState
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            AuthState.Loading
+        )
+
+
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState
+
+    private var hasError = false
+
+
+    fun onEvent(event: LoginEvent) {
+        when (event) {
+            is LoginEvent.EmailChanged -> {
+                _uiState.update { it.copy(email = event.value) }
+                validateEmail(event.value)?.let {
+                    _uiState.update { it.copy(emailError = it.emailError) }
+                    hasError = true
+                }
+            }
+
+            is LoginEvent.PasswordChanged -> {
+                _uiState.update { it.copy(password = event.value) }
+                validatePassword(event.value)?.let {
+                    _uiState.update { it.copy(passwordError = it.passwordError) }
+                    hasError = true
+                }
+            }
+
+            is LoginEvent.LoginClicked -> login()
+        }
+    }
+
+    fun completeOnBoarding() {
+        viewModelScope.launch {
+            useCases.saveAppEntry()
+        }
+    }
+
+
+    fun login() = viewModelScope.launch {
+
+        if (hasError) return@launch
+
+        _uiState.update { it.copy(isLoading = true, error = null) }
+
+        val result = withContext(Dispatchers.IO) {
+            useCases.signIn(_uiState.value.email, _uiState.value.password)
+        }
+
+        result
+            .onSuccess { _uiState.update { it.copy(isLoading = false) } }
+            .onFailure { throwable ->
+                _uiState.update { it.copy(isLoading = false, error = throwable.message) }
+                Timber.tag("Failure").e(throwable.message)
+            }
+    }
+}
+
+
+data class LoginUiState(
+    val email: String = "",
+    val password: String = "",
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val emailError: String? = null,
+    val passwordError: String? = null
+)
