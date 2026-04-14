@@ -44,24 +44,24 @@ class RegisterViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    private var hasError = false
-
 
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EmailChanged -> {
-                _uiState.update { it.copy(email = event.value) }
-                validateEmail(event.value)?.let {
-                    _uiState.update { it.copy(emailError = it.emailError) }
-                    hasError = true
+                _uiState.update {
+                    it.copy(
+                        email = event.value,
+                        emailError = validateEmail(event.value)
+                    )
                 }
             }
 
             is LoginEvent.PasswordChanged -> {
-                _uiState.update { it.copy(password = event.value) }
-                validatePassword(event.value)?.let {
-                    _uiState.update { it.copy(passwordError = it.passwordError) }
-                    hasError = true
+                _uiState.update {
+                    it.copy(
+                        password = event.value,
+                        passwordError = validatePassword(event.value)
+                    )
                 }
             }
 
@@ -78,7 +78,13 @@ class RegisterViewModel @Inject constructor(
 
     fun login() = viewModelScope.launch {
 
-        if (hasError) return@launch
+        val emailError = validateEmail(_uiState.value.email)
+        val passwordError = validatePassword(_uiState.value.password)
+
+        if (emailError != null || passwordError != null) {
+            _uiState.update { it.copy(emailError = emailError, passwordError = passwordError) }
+            return@launch
+        }
 
         _uiState.update { it.copy(isLoading = true, error = null) }
 

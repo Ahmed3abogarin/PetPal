@@ -37,6 +37,7 @@ fun SignUpScreen(
 
     val state by viewModel.uiState.collectAsState()
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -66,7 +67,7 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(36.dp))
 
             AppTextField(
-                value = state.user.name,
+                value = state.name,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Name",
                 onValueChanged = { viewModel.onEvent(SignUpEvent.NameChanged(it)) }
