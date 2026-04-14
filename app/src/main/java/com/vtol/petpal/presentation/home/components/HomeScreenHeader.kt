@@ -115,7 +115,7 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                         is Resource.Error -> {
                             Text(
                                 modifier = Modifier.padding(start = 3.dp),
-                                text = state.message,
+                                text = "Error",
                                 fontSize = 28.sp,
                                 color = Color.White,
                                 fontWeight = FontWeight.SemiBold

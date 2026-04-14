@@ -20,15 +20,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
+import com.vtol.petpal.ui.theme.ButtonLightGray
 import com.vtol.petpal.ui.theme.VeryLightPurple
 
 @Composable
-fun SettingsButton(leadIcon: Int? = null, text: String ){
+fun SettingsButton(leadIcon: Int? = null, text: String, onClick: () -> Unit ){
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 14.dp).padding(bottom = 14.dp),
-        onClick = {},
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = VeryLightPurple),
         shape = RoundedCornerShape(14.dp)
     ) {

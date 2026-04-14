@@ -17,6 +17,8 @@ sealed class Routes(val route: String) {
     }
     data object AddTaskScreen: Routes("addTaskScreen")
 
+    data object FeedbackScreen: Routes("feedbackScreen")
+
 
     // app navigation
     data object AppStartNavigation: Routes("appStartNavigation")

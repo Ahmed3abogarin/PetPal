@@ -39,6 +39,8 @@ import com.vtol.petpal.presentation.pets.PetDetailsScreen
 import com.vtol.petpal.presentation.pets.PetDetailsViewModel
 import com.vtol.petpal.presentation.pets.PetViewModel
 import com.vtol.petpal.presentation.pets.PetsScreen
+import com.vtol.petpal.presentation.profile.FeedbackScreen
+import com.vtol.petpal.presentation.profile.FeedbackUiState
 import com.vtol.petpal.presentation.profile.ProfileScreen
 
 
@@ -57,7 +59,6 @@ fun MainNavGraph() {
     val homeViewModel: HomeViewModel = hiltViewModel()
 
     val userViewModel: UserViewModel = hiltViewModel()
-
 
 
     val bottomItems = remember {
@@ -151,9 +152,9 @@ fun MainNavGraph() {
                         navController.navigate(Routes.AddTaskScreen.route)
                     },
                     onAddPetClicked = {
-                        if (homeViewModel.state.value.petsList.size < 2){
+                        if (homeViewModel.state.value.petsList.size < 2) {
                             navController.navigate(Routes.AddPetScreen.route)
-                        }else{
+                        } else {
                             // the user has to pay :)
                             // navigate the user to subscription screen
 
@@ -161,7 +162,7 @@ fun MainNavGraph() {
                     },
                     viewModel = homeViewModel,
                     onPetClicked = {
-                        navController.navigate(Routes.PetDetailsScreen.createRoute(it)){
+                        navController.navigate(Routes.PetDetailsScreen.createRoute(it)) {
                             launchSingleTop = false
                         }
                     },
@@ -197,7 +198,9 @@ fun MainNavGraph() {
                 NearByScreen()
             }
             composable(route = Routes.ProfileScreen.route) {
-                ProfileScreen(userViewModel)
+                ProfileScreen(userViewModel, navigateToFeedback = {
+                    navController.navigate(Routes.FeedbackScreen.route)
+                })
             }
 
             // sub screens
@@ -212,7 +215,7 @@ fun MainNavGraph() {
             ) {
                 val petDetailsVM: PetDetailsViewModel = hiltViewModel()
 
-                PetDetailsScreen(petViewModel = petDetailsVM){navController.navigateUp()}
+                PetDetailsScreen(petViewModel = petDetailsVM) { navController.navigateUp() }
             }
             composable(Routes.AddTaskScreen.route) {
                 val pets = petViewModel.state.collectAsState()
@@ -221,6 +224,13 @@ fun MainNavGraph() {
                     petsList = pets.value.pets,
                     navigateUp = { navController.navigateUp() }
                 )
+            }
+
+
+            composable(Routes.FeedbackScreen.route) {
+                FeedbackScreen(
+                    uiState = FeedbackUiState.Success,
+                    navigateUp = { navController.navigateUp() })
             }
         }
     }

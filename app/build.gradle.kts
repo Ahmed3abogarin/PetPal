@@ -120,4 +120,8 @@ dependencies {
     // Timber for logging
     implementation(libs.timber)
 
+
+    // Lottie animation
+    implementation("com.airbnb.android:lottie-compose:6.7.1")
+
 }

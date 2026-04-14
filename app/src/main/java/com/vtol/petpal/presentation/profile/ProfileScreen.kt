@@ -1,5 +1,7 @@
 package com.vtol.petpal.presentation.profile
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,8 +38,10 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.Resource
 
 @Composable
-fun ProfileScreen(viewmodel: UserViewModel) {
+fun ProfileScreen(viewmodel: UserViewModel, navigateToFeedback: () -> Unit) {
     val state by viewmodel.state.collectAsState()
+
+    val context = LocalContext.current
 
 
     Column(
@@ -82,9 +87,9 @@ fun ProfileScreen(viewmodel: UserViewModel) {
             is Resource.Error -> {
                 Text(
                     modifier = Modifier.padding(start = 3.dp),
-                    text = (state as Resource.Error).message,
+                    text = "Guest",
                     fontSize = 28.sp,
-                    color = Color.White,
+                    color = Color.Gray,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -93,35 +98,47 @@ fun ProfileScreen(viewmodel: UserViewModel) {
 
         SettingsButton(
             leadIcon = R.drawable.ic_settings,
-            text = "Settings"
+            text = "Settings",
+            onClick = {}
         )
         SettingsButton(
             leadIcon = R.drawable.ic_bell,
-            text = "Notification"
+            text = "Notification",
+            onClick = {}
         )
 
         SettingsButton(
             leadIcon = R.drawable.ic_world,
-            text = "Language"
+            text = "Language",
+            onClick = {}
         )
 
         SettingsButton(
             leadIcon = R.drawable.ic_contact,
-            text = "Emergency contacts"
+            text = "Emergency contacts",
+            onClick = {}
         )
 
         SettingsButton(
             leadIcon = R.drawable.ic_invite,
-            text = "Invite friends"
+            text = "Invite friends",
+            onClick = {}
         )
 
         SettingsButton(
             leadIcon = R.drawable.ic_help,
-            text = "Invite friends"
+            text = "Send Feedback",
+            onClick = {
+                navigateToFeedback()
+            }
         )
 
         SettingsButton(
-            text = "Terms & Privacy"
+            text = "Terms & Privacy",
+            onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ahmed3abogarin.github.io/PetPal-privacy-policy"))
+                context.startActivity(intent)
+            }
         )
 
 
