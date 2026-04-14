@@ -36,7 +36,6 @@ fun SignUpScreen(
 
     val state by viewModel.uiState.collectAsState()
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -119,8 +118,12 @@ fun secondFilledTextFieldColors() = TextFieldDefaults.colors(
     unfocusedContainerColor = SemiTransparentPurple,
     disabledIndicatorColor = Color.Transparent,
     focusedIndicatorColor = Color.Transparent,
-    unfocusedIndicatorColor = Color.Transparent
-
+    unfocusedIndicatorColor = Color.Transparent,
+    errorIndicatorColor = Color.Transparent,
+    errorContainerColor = SemiTransparentPurple,
+    errorPlaceholderColor = Color.Black,
+    errorTextColor =  Color.Gray,
+    errorLabelColor = Color.Black,
 )
 
 @Preview

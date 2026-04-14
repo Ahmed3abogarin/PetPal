@@ -6,13 +6,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vtol.petpal.presentation.register.login.LoginScreen
-import com.vtol.petpal.presentation.register.login.RegisterViewModel
+import com.vtol.petpal.presentation.register.login.LoginViewModel
 import com.vtol.petpal.presentation.register.signup.SignUpScreen
+import com.vtol.petpal.presentation.register.signup.SignUpViewModel
 
 @Composable
 fun AuthNavGraph() {
     val navController = rememberNavController()
-    val viewmodel: RegisterViewModel = hiltViewModel()
+    val signUpVm: SignUpViewModel = hiltViewModel()
+    val loginVm: LoginViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -20,7 +22,7 @@ fun AuthNavGraph() {
     ) {
         composable("login") {
             LoginScreen(
-                viewModel = viewmodel,
+                viewModel = loginVm,
                 navigateToSignUp = {
                     navController.navigate("signup")
                 }
@@ -29,7 +31,7 @@ fun AuthNavGraph() {
 
         composable("signup") {
             SignUpScreen(
-                viewModel = viewmodel,
+                viewModel = signUpVm,
                 navigateToLogin = {
                     navController.navigate("login")
                 }

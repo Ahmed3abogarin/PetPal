@@ -32,7 +32,7 @@ import com.vtol.petpal.ui.theme.MainPurple
 
 @Composable
 fun LoginScreen(
-    viewModel: RegisterViewModel,
+    viewModel: LoginViewModel,
     navigateToSignUp: () -> Unit
 ) {
 
@@ -75,9 +75,10 @@ fun LoginScreen(
 
 
             AppTextField(
-                value = state.user.email,
+                value = state.email,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Email",
+                errorTxt = state.emailError,
                 onValueChanged = { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
             )
 
@@ -85,6 +86,7 @@ fun LoginScreen(
                 value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
+                errorTxt = state.passwordError,
                 onValueChanged = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
             )
 
@@ -94,10 +96,7 @@ fun LoginScreen(
                 text = "Sign in",
                 color = MainPurple,
             ) {
-
                 viewModel.onEvent(LoginEvent.LoginClicked)
-
-
             }
 
             Spacer(modifier = Modifier.height(24.dp))

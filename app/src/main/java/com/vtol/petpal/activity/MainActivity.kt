@@ -17,7 +17,7 @@ import com.vtol.petpal.presentation.navgraph.MainNavGraph
 import com.vtol.petpal.presentation.navgraph.components.ErrorScreen
 import com.vtol.petpal.presentation.onboarding.OnboardingScreen
 import com.vtol.petpal.presentation.register.AuthState
-import com.vtol.petpal.presentation.register.login.RegisterViewModel
+import com.vtol.petpal.presentation.register.login.LoginViewModel
 import com.vtol.petpal.presentation.splash.SplashScreen
 import com.vtol.petpal.presentation.update.FlexibleUpdateScreen
 import com.vtol.petpal.presentation.update.ImmediateUpdateScreen
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PetPalTheme {
                 val updateViewModel: UpdateViewModel = hiltViewModel()
-                val authViewModel: RegisterViewModel = hiltViewModel()
+                val authViewModel: LoginViewModel = hiltViewModel()
 
                 LaunchedEffect(Unit) {
                     updateViewModel.getMinRequiredVersion()
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun RootScreen(
-    authViewModel: RegisterViewModel,
+    authViewModel: LoginViewModel,
     updateViewModel: UpdateViewModel
 ) {
     val updateState by updateViewModel.updateState.collectAsState()

@@ -1,6 +1,9 @@
 package com.vtol.petpal.presentation.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -13,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 
@@ -23,21 +27,35 @@ fun AppTextField(
     minLines: Int = 1,
     colors: TextFieldColors = filledTextFieldColors(),
     placeHolder: String,
+    errorTxt: String? = null,
     onValueChanged: (String) -> Unit,
 ) {
-    TextField(
-        value = value,
-        colors = colors,
-        minLines = minLines ,
-        onValueChange = { onValueChanged(it) },
-        label = { Text(placeHolder) },
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-            .clip(RoundedCornerShape(10.dp))
+    Column {
+        TextField(
+            value = value,
+            colors = colors,
+            minLines = minLines,
+            onValueChange = { onValueChanged(it) },
+            label = { Text(placeHolder) },
+            shape = RoundedCornerShape(12.dp),
+            isError = errorTxt != null,
+            supportingText = {
+                errorTxt?.let {
+                    Text(text = errorTxt)
 
-    )
+                }
+            },
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+
+    }
+
 }
 
 @Composable
@@ -48,16 +66,18 @@ fun filledTextFieldColors() = TextFieldDefaults.colors(
     unfocusedContainerColor = Color.White,
     disabledIndicatorColor = Color.Transparent,
     focusedIndicatorColor = Color.Transparent,
-    unfocusedIndicatorColor = Color.Transparent
-
+    unfocusedIndicatorColor = Color.Transparent,
+    errorIndicatorColor = Color.Transparent,
+    errorContainerColor = Color.White,
+    errorPlaceholderColor = Color.Gray,
+    errorTextColor =  Color.Gray
 )
-
 
 
 @Preview
 @Composable
-fun Ddsg(){
+fun Ddsg() {
     PetPalTheme {
-        AppTextField(value = "", placeHolder = "") { }
+        AppTextField(value = "", placeHolder = "", errorTxt = "Email Cannot be empty") { }
     }
 }
