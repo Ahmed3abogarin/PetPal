@@ -29,6 +29,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val mapsApiKey = project.findProperty("mapsApiKey").toString()
+
+        buildConfigField(
+            "String",
+            "mapsApiKey",
+            "\"$mapsApiKey\""
+        )
     }
 
     buildTypes {
@@ -69,6 +77,7 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.config)
+    implementation(libs.firebase.analytics)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -2,7 +2,6 @@ package com.vtol.petpal.presentation.explore
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
@@ -49,6 +48,7 @@ import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.presentation.explore.components.LocationList
 import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -99,7 +99,7 @@ fun NearByScreenContent() {
     Box(modifier = Modifier.fillMaxSize()) {
 
         location?.let { location ->
-            val cLocation = remember { MarkerState(LatLng(location.latitude, location.latitude)) }
+            val cLocation = remember { MarkerState(LatLng(location.latitude, location.longitude)) }
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
@@ -114,7 +114,7 @@ fun NearByScreenContent() {
 
 
                 vets.forEachIndexed { index, vet ->
-                    Log.v("Address", "ITs: ${vet.address}")
+                    Timber.tag("Address").v("ITs: ${vet.address}")
 
                     // then shows the near selected locations
 

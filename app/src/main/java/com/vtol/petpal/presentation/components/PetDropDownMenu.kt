@@ -39,10 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.ui.theme.MainPurple
@@ -53,7 +56,8 @@ fun PetDropDownMenu(
     onConfirm: (Pet) -> Unit,
     selectedPet: Pet
 ) {
-//    val selectedPets = remember { mutableStateListOf(petsList[0]) }
+
+    val context = LocalContext.current
 
 
     var expanded by remember { mutableStateOf(false) }
@@ -76,11 +80,13 @@ fun PetDropDownMenu(
                 Icon(icon, "")
             },
             leadingIcon = {
-                Image(
+                AsyncImage(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape),
-                    painter = painterResource(R.drawable.cat),
+                    model = ImageRequest.Builder(context,).data(selectedPet.imagePath).build(),
+                    error =  painterResource(R.drawable.pet_placeholder),
+                    placeholder = painterResource(R.drawable.pet_placeholder),
                     contentDescription = ""
                 )
             },

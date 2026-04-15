@@ -8,6 +8,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.net.SearchNearbyRequest
 import com.google.android.libraries.places.api.net.SearchNearbyResponse
+import com.vtol.petpal.BuildConfig
 import com.vtol.petpal.domain.model.map.PlaceCategory
 import com.vtol.petpal.domain.model.map.VetAddress
 import com.vtol.petpal.domain.repository.MapsRepository
@@ -18,7 +19,7 @@ class MapsRepositoryImpl(
 ) : MapsRepository {
     private val placesClient: PlacesClient by lazy {
         if (!Places.isInitialized()) {
-            Places.initialize(context.applicationContext, "AIzaSyAoJgOIASf44vRfmN1UXfSBmGWrtqk_Qt4")
+            Places.initializeWithNewPlacesApiEnabled(context.applicationContext, BuildConfig.mapsApiKey)
         }
         Places.createClient(context.applicationContext)
     }
@@ -33,7 +34,7 @@ class MapsRepositoryImpl(
         )
 
         // Define the search area — e.g., 5000 m radius around userLocation
-        val bounds = CircularBounds.newInstance(userLocation, 5000.0)
+        val bounds = CircularBounds.newInstance(userLocation, 4000.0)
 
         // Build the SearchNearbyRequest
         val request = SearchNearbyRequest
