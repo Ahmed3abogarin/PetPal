@@ -1,9 +1,9 @@
 package com.vtol.petpal.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -48,7 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.vtol.petpal.domain.model.Pet
@@ -67,8 +66,8 @@ import com.vtol.petpal.presentation.components.filledTextFieldColors
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
 import com.vtol.petpal.presentation.home.components.TaskDatePicker
 import com.vtol.petpal.presentation.home.components.TimePicker
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.convertDate
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -110,6 +109,9 @@ fun AddTaskScreen2(
                 .verticalScroll(scrollState), // Make screen scrollable
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            // header
+
 
             // --- SECTION A: The Basics ---
             OutlinedTextField(
@@ -244,7 +246,12 @@ fun AddTaskScreen2(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTaskScreen(modifier: Modifier = Modifier, petsList: List<Pet>, viewModel: HomeViewModel, navigateUp: () -> Unit) {
+fun AddTaskScreen(
+    modifier: Modifier = Modifier,
+    petsList: List<Pet>,
+    viewModel: HomeViewModel,
+    navigateUp: () -> Unit
+) {
 
     var typeIndex by remember { mutableIntStateOf(-1) }
 
@@ -290,7 +297,7 @@ fun AddTaskScreen(modifier: Modifier = Modifier, petsList: List<Pet>, viewModel:
             val staticFieldsValid = selectedType != null
 
             // Dynamic fields validation
-            val dynamicFieldsValid = when (selectedType){
+            val dynamicFieldsValid = when (selectedType) {
                 TaskType.FEED -> food.isNotBlank() && amount.isNotBlank()
                 TaskType.VET -> clinic.isNotBlank() && reason.isNotBlank()
                 TaskType.MEDICATION -> medicineName.isNotBlank() && dosage.isNotBlank()
@@ -306,322 +313,311 @@ fun AddTaskScreen(modifier: Modifier = Modifier, petsList: List<Pet>, viewModel:
 
 
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = { navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = ""
-                        )
-                    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundColor)
+            .padding(horizontal = 16.dp)
+            .padding(top = 32.dp)
+
+            .verticalScroll(scrollState)
+    ) {
+
+        // Header
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            Icon(
+                modifier = Modifier.clickable { navigateUp() },
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = ""
+            )
+
+
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "New Reminder", style = MaterialTheme.typography.titleLarge)
+
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
+        Text(text = "For which pet?")
+        Spacer(modifier = Modifier.height(16.dp))
+
+        PetDropDownMenu(
+            petsList = petsList,
+            selectedPet = selectedPet,
+            onConfirm = {
+                selectedPet = it
+            },
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(text = "Select task type")
+        MyDropDownMenu(
+            items = TaskType.entries.map { it },
+            selectedIndex = typeIndex,
+            onItemSelected = { index, type ->
+                // clear the focus
+                typeIndex = index
+                selectedType = type
+
+            },
+            label = "Task Type"
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(text = "Date & time")
+        Spacer(modifier = Modifier.height(16.dp))
+
+
+        // Date picker dialog
+        TextField(
+            value = dueDate.convertDate(),
+            colors = TextFieldDefaults.colors(
+                disabledTextColor = Color.Black,
+                disabledContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            onValueChange = {},
+            label = { Text("Due date") },
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .clickable {
+//                        focusManger.clearFocus()
+                    showDatePicker = true
                 },
-                title = { Text("New Reminder") }
+            readOnly = true,
+            enabled = false,
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = null,
+                    tint = Color.Black
+                )
+            }
+        )
+
+        if (showDatePicker) {
+            TaskDatePicker(
+                onDateSelected = { date ->
+                    dueDate = date
+                },
+                onDismiss = {
+                    showDatePicker = false
+                }
             )
         }
 
-    ) { innerPadding ->
-        Box(
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .verticalScroll(scrollState)
-            ) {
-                Text(text = "For which pet?")
-                Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-                // TODO: GET THE PETS FROM FIREBASE
-                PetDropDownMenu(
-                    petsList = petsList,
-                    selectedPet = selectedPet,
-                    onConfirm = {
-                        selectedPet = it
-                    },
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(text = "Select task type")
-                MyDropDownMenu(
-                    items = TaskType.entries.map { it },
-                    selectedIndex = typeIndex,
-                    onItemSelected = { index, type ->
-                        // clear the focus
-                        typeIndex = index
-                        selectedType = type
+        // Time picker
+        TimePicker(onTimeChanged = {
+            dueTime = it
+        })
+        Spacer(modifier = Modifier.height(16.dp))
 
-                    },
-                    label = "Task Type"
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(text = "Date & time")
-                Spacer(modifier = Modifier.height(16.dp))
-
-
-                // Date picker dialog
-                TextField(
-                    value = dueDate.convertDate(),
-                    colors = TextFieldDefaults.colors(
-                        disabledTextColor = Color.Black,
-                        disabledContainerColor = Color.White,
-                        focusedContainerColor = Color.White,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    onValueChange = {},
-                    label = { Text("Due date") },
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
-                        .clickable {
-//                        focusManger.clearFocus()
-                            showDatePicker = true
-                        },
-                    readOnly = true,
-                    enabled = false,
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                    }
-                )
-
-                if (showDatePicker) {
-                    TaskDatePicker(
-                        onDateSelected = { date ->
-                            dueDate = date
-                        },
-                        onDismiss = {
-                            showDatePicker = false
-                        }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Time picker
-                TimePicker(onTimeChanged = {
-                    dueTime = it
-                })
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Recurrence
+        // Recurrence
 //                Text(text = "Recurrence")
 //                Spacer(modifier = Modifier.height(16.dp))
 
-                MyDropDownMenu(
-                    expendedIcon = Icons.Default.Repeat,
-                    closedIcon = Icons.Default.Repeat,
-                    variant = TextFieldVariant.Filled,
-                    items = RepeatInterval.entries.map { it },
-                    selectedIndex = recurrenceIndex,
-                    onItemSelected = { index, type ->
-                        // clear the focus
-                        recurrenceIndex = index
-                        recurrence = type
+        MyDropDownMenu(
+            expendedIcon = Icons.Default.Repeat,
+            closedIcon = Icons.Default.Repeat,
+            variant = TextFieldVariant.Filled,
+            items = RepeatInterval.entries.map { it },
+            selectedIndex = recurrenceIndex,
+            onItemSelected = { index, type ->
+                // clear the focus
+                recurrenceIndex = index
+                recurrence = type
+            },
+            label = "Recurrence"
+        )
+
+
+        // TODO : don't display the associated fields until the user specify the task type
+
+        // ------------------------ The Dynamic Fields -------------------------------
+        selectedType?.let {
+            // display only the associated fields with the task type
+
+            // Food fields
+            AnimatedVisibility(visible = selectedType == TaskType.FEED) {
+                Column {
+                    AppTextField(
+                        value = food,
+                        placeHolder = "Food",
+                        onValueChanged = { food = it }
+                    )
+                    AppTextField(
+                        value = amount,
+                        placeHolder = "Amount",
+                        onValueChanged = { amount = it }
+                    )
+                }
+            }
+
+
+            // VET fields
+
+            AnimatedVisibility(visible = selectedType == TaskType.VET) {
+                Column {
+                    Text(text = "Clinic details")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AppTextField(
+                        value = clinic,
+                        placeHolder = "Clinic name",
+                        onValueChanged = { clinic = it }
+                    )
+                    AppTextField(
+                        value = reason,
+                        placeHolder = "Why are you visiting the vet?",
+                        onValueChanged = { reason = it }
+                    )
+                }
+            }
+
+            // MED fields
+
+            AnimatedVisibility(visible = selectedType == TaskType.MEDICATION) {
+                Column {
+                    Text(text = "Medication Details")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AppTextField(
+                        value = medicineName,
+                        placeHolder = "Medicine Name (e.g. Heartgard)",
+                        onValueChanged = { medicineName = it }
+                    )
+                    AppTextField(
+                        value = dosage,
+                        placeHolder = "Dosage (e.g. 1 pill)",
+                        onValueChanged = { dosage = it }
+                    )
+                }
+            }
+
+            // Walk fields
+
+            AnimatedVisibility(visible = selectedType == TaskType.WALK) {
+                Column {
+                    Text(text = "Walk Details")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
+                        value = duration,
+                        onValueChange = { newValue ->
+                            // Allow digits only
+                            if (newValue.all { it.isDigit() }) {
+                                duration = newValue
+                            }
+                        },
+                        colors = filledTextFieldColors(),
+                        shape = RoundedCornerShape(12.dp),
+                        label = { Text("Duration") },
+                        placeholder = { Text("30") },
+                        suffix = { Text("min") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        singleLine = true,
+                        modifier = modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AppTextField(
+                        value = location,
+                        placeHolder = "Location (e.g. Park)",
+                        onValueChanged = { location = it }
+                    )
+                }
+            }
+
+            if (showNote) {
+
+                AppTextField(
+                    value = note,
+                    minLines = 4,
+                    onValueChanged = { note = it },
+                    placeHolder = "Add a note"
+                )
+
+            } else {
+                val coroutine = rememberCoroutineScope()
+                Row(
+                    modifier = Modifier.clickable {
+                        showNote = true
+                        coroutine.launch {
+                            kotlinx.coroutines.yield()
+                            scrollState.animateScrollTo(value = scrollState.maxValue)
+                        }
                     },
-                    label = "Recurrence"
-                )
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = MainPurple
+                    )
+                    Text(
+                        text = "Add note",
+                        color = MainPurple,
+                        fontWeight = FontWeight.Medium
+                    )
 
-
-                // TODO : don't display the associated fields until the user specify the task type
-
-                // ------------------------ The Dynamic Fields -------------------------------
-                selectedType?.let {
-                    // display only the associated fields with the task type
-
-                    // Food fields
-                    AnimatedVisibility(visible = selectedType == TaskType.FEED) {
-                        Column {
-                            AppTextField(
-                                value = food,
-                                placeHolder = "Food",
-                                onValueChanged = { food = it }
-                            )
-                            AppTextField(
-                                value = amount,
-                                placeHolder = "Amount",
-                                onValueChanged = { amount = it }
-                            )
-                        }
-                    }
-
-
-                    // VET fields
-
-                    AnimatedVisibility(visible = selectedType == TaskType.VET) {
-                        Column {
-                            Text(text = "Clinic details")
-                            Spacer(modifier = Modifier.height(16.dp))
-                            AppTextField(
-                                value = clinic,
-                                placeHolder = "Clinic name",
-                                onValueChanged = { clinic = it }
-                            )
-                            AppTextField(
-                                value = reason,
-                                placeHolder = "Why are you visiting the vet?",
-                                onValueChanged = { reason = it }
-                            )
-                        }
-                    }
-
-                    // MED fields
-
-                    AnimatedVisibility(visible = selectedType == TaskType.MEDICATION) {
-                        Column {
-                            Text(text = "Medication Details")
-                            Spacer(modifier = Modifier.height(16.dp))
-                            AppTextField(
-                                value = medicineName,
-                                placeHolder = "Medicine Name (e.g. Heartgard)",
-                                onValueChanged = { medicineName = it }
-                            )
-                            AppTextField(
-                                value = dosage,
-                                placeHolder = "Dosage (e.g. 1 pill)",
-                                onValueChanged = { dosage = it }
-                            )
-                        }
-                    }
-
-                    // Walk fields
-
-                    AnimatedVisibility(visible = selectedType == TaskType.WALK) {
-                        Column {
-                            Text(text = "Walk Details")
-                            Spacer(modifier = Modifier.height(16.dp))
-                            TextField(
-                                value = duration,
-                                onValueChange = { newValue ->
-                                    // Allow digits only
-                                    if (newValue.all { it.isDigit() }) {
-                                        duration = newValue
-                                    }
-                                },
-                                colors = filledTextFieldColors(),
-                                shape = RoundedCornerShape(12.dp),
-                                label = { Text("Duration") },
-                                placeholder = { Text("30") },
-                                suffix = { Text("min") },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number
-                                ),
-                                singleLine = true,
-                                modifier = modifier.fillMaxWidth()
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            AppTextField(
-                                value = location,
-                                placeHolder = "Location (e.g. Park)",
-                                onValueChanged = { location = it }
-                            )
-                        }
-                    }
-
-                    if (showNote) {
-
-                        AppTextField(
-                            value = note,
-                            minLines = 4,
-                            onValueChanged = { note = it },
-                            placeHolder = "Add a note"
-                        )
-
-                    } else {
-                        val coroutine = rememberCoroutineScope()
-                        Row(
-                            modifier = Modifier.clickable {
-                                showNote = true
-                                coroutine.launch {
-                                    kotlinx.coroutines.yield()
-                                    scrollState.animateScrollTo(value = scrollState.maxValue)
-                                }
-                            },
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = MainPurple
-                            )
-                            Text(
-                                text = "Add note",
-                                color = MainPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-                    Spacer(modifier = Modifier.height(42.dp))
                 }
+                Spacer(modifier = Modifier.height(24.dp))
             }
-
-            // the button should be static in the bottom
-            SaveButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                text = "Save",
-                isLoading = isSaving,
-                enabled = isValid && !isSaving,
-                color = MainPurple
-            ) {
-                isSaving = true
-                val gson = Gson()
-                val jsonDetails = when (selectedType) {
-                    TaskType.FEED -> gson.toJson(FoodDetails(food, amount))
-                    TaskType.VET -> gson.toJson(VetDetails(clinic, reason))
-                    TaskType.MEDICATION -> gson.toJson(MedDetails(medicineName, dosage))
-                    TaskType.WALK -> gson.toJson(WalkDetails(duration.toIntOrNull() ?: 0, location))
-                    else -> ""
-                }
-
-                // 2. Create the combined DateTime (LocalDate + LocalTime)
-                // Convert your dueDate and dueTime into a single Long timestamp
-                val combinedDateTime = LocalDateTime.of(dueDate, dueTime)
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli()
-
-                // 3. Construct the Final Task Object
-                val newTask = Task(
-                    petId = selectedPet.id, // You'll eventually get this from your PetDropDown selection
-                    title = selectedType?.name ?: "Task",
-                    type = selectedType ?: TaskType.FEED,
-                    dateTime = combinedDateTime,
-                    details = jsonDetails,
-                    repeatInterval = recurrence,
-                    note = note,
-                    isCompleted = false
-                )
-
-                // 4- call the vm TODO
-                viewModel.insertTask(newTask)
-
-
-                // 5- navigate back after successfully save it
-                navigateUp()
-
-            }
+            Spacer(modifier = Modifier.height(42.dp))
         }
-    }
-}
+
+        Spacer(modifier = Modifier.weight(1f))
 
 
-@Preview
-@Composable
-fun AddTaskScreenPreview() {
-    PetPalTheme {
+        // the button should be static in the bottom
+        SaveButton(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = "Save",
+            isLoading = isSaving,
+            enabled = isValid && !isSaving,
+            color = MainPurple
+        ) {
+            isSaving = true
+            val gson = Gson()
+            val jsonDetails = when (selectedType) {
+                TaskType.FEED -> gson.toJson(FoodDetails(food, amount))
+                TaskType.VET -> gson.toJson(VetDetails(clinic, reason))
+                TaskType.MEDICATION -> gson.toJson(MedDetails(medicineName, dosage))
+                TaskType.WALK -> gson.toJson(WalkDetails(duration.toIntOrNull() ?: 0, location))
+                else -> ""
+            }
+
+            // 2. Create the combined DateTime (LocalDate + LocalTime)
+            // Convert your dueDate and dueTime into a single Long timestamp
+            val combinedDateTime = LocalDateTime.of(dueDate, dueTime)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+
+            // 3. Construct the Final Task Object
+            val newTask = Task(
+                petId = selectedPet.id, // You'll eventually get this from your PetDropDown selection
+                title = selectedType?.name ?: "Task",
+                type = selectedType ?: TaskType.FEED,
+                dateTime = combinedDateTime,
+                details = jsonDetails,
+                repeatInterval = recurrence,
+                note = note,
+                isCompleted = false
+            )
+
+            // 4- call the vm TODO
+            viewModel.insertTask(newTask)
 
 
+            // 5- navigate back after successfully save it
+            navigateUp()
+        }
     }
 }
