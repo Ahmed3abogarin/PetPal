@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.navgraph
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -51,6 +53,8 @@ fun MainNavGraph() {
     val calender = ImageVector.vectorResource(R.drawable.ic_calender)
     val near = ImageVector.vectorResource(R.drawable.ic_nearby)
     val profile = ImageVector.vectorResource(R.drawable.ic_profile)
+
+    val context = LocalContext.current
 
 
     // create the view models once the app starts to avoid delay when navigate to the screens
@@ -218,10 +222,16 @@ fun MainNavGraph() {
                 PetDetailsScreen(petViewModel = petDetailsVM) { navController.navigateUp() }
             }
             composable(Routes.AddTaskScreen.route) {
-                val pets = petViewModel.state.collectAsState()
+                val pets = petViewModel.state.collectAsState().value.pets
+
+                if (pets.isEmpty()){
+                    Toast.makeText(context, "Please add a pet first", Toast.LENGTH_SHORT).show()
+                    return@composable
+                }
+
                 AddTaskScreen(
                     viewModel = homeViewModel,
-                    petsList = pets.value.pets,
+                    petsList = pets,
                     navigateUp = { navController.navigateUp() }
                 )
             }
