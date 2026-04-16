@@ -65,15 +65,17 @@ class HomeViewModel @Inject constructor(
         combine(appUseCases.getTasks(), appUseCases.getPets()) { tasks, pets ->
             // Success logic...
 
-            val total = tasks.size
-            val completed = tasks.count { task -> task.isCompleted }
+            val petMap = pets.associate { pet -> pet.id to pet.petName }
+            val todayTasksList = todayTasks(tasks)  // extract first
+
+            val total = todayTasksList.size                                    // ← was tasks.size
+            val completed = todayTasksList.count { task -> task.isCompleted }
 
             val progress = if (total > 0) completed.toFloat() / total else 0f
 
-            val petMap = pets.associate { pet -> pet.id to pet.petName }
 
             HomeState(
-                todayTasks = todayTasks(tasks),
+                todayTasks = todayTasksList,
                 petsList = pets,
                 petMap = petMap,
                 upcomingTasks = upcomingTasks(tasks),
