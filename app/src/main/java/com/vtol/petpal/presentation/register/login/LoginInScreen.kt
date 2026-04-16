@@ -87,6 +87,7 @@ fun LoginScreen(
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
                 errorTxt = state.passwordError,
+                password = true,
                 onValueChanged = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
             )
 
