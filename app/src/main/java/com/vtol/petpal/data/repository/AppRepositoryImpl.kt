@@ -132,9 +132,8 @@ class AppRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun insertTask(task: Task) {
+    override suspend fun insertTask(task: Task): Long =
         tasksDao.insertTask(task)
-    }
 
     override fun getAllTasks(): Flow<List<Task>> =
         tasksDao.getAllTasks()

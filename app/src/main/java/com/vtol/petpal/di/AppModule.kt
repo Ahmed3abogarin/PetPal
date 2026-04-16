@@ -18,14 +18,18 @@ import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
+import com.vtol.petpal.data.repository.NotificationRepositoryImpl
 import com.vtol.petpal.data.repository.UpdateRepositoryImpl
+import com.vtol.petpal.data.repository.UserPreferencesRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.domain.repository.FeedbackRepository
 import com.vtol.petpal.domain.repository.MapsRepository
+import com.vtol.petpal.domain.repository.NotificationRepository
 import com.vtol.petpal.domain.repository.UpdateRepository
+import com.vtol.petpal.domain.repository.UserPreferencesRepository
 import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.domain.usecases.AddPet
 import com.vtol.petpal.domain.usecases.AddWeight
@@ -189,4 +193,17 @@ object AppModule {
     @Singleton
     fun provideRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
+
+
+    @Provides
+    @Singleton
+    fun provideUserPrefsRepository(
+        @ApplicationContext ctx: Context
+    ): UserPreferencesRepository = UserPreferencesRepositoryImpl(ctx)
+
+    @Provides
+    @Singleton
+    fun provideNotificationRepository(
+        @ApplicationContext ctx: Context
+    ): NotificationRepository = NotificationRepositoryImpl(ctx)
 }

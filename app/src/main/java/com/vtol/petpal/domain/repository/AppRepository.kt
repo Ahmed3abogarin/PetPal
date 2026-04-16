@@ -14,7 +14,7 @@ interface AppRepository {
 
     suspend fun getPet(id: String): Pet
 
-    suspend fun insertTask(task: Task)
+    suspend fun insertTask(task: Task): Long
 
     fun getAllTasks(): Flow<List<Task>>
 

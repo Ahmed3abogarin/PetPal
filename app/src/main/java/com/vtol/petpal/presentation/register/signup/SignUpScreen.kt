@@ -82,6 +82,7 @@ fun SignUpScreen(
                 value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
+                password = true,
                 onValueChanged = { viewModel.onEvent(SignUpEvent.PasswordChanged(it)) }
             )
 

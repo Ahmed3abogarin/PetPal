@@ -1,5 +1,10 @@
 package com.vtol.petpal.presentation.home
 
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,11 +38,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.components.TaskCard
@@ -56,6 +63,7 @@ fun HomeScreen(
     userViewModel: UserViewModel
 ) {
     val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     val userState by userViewModel.state.collectAsState()
 
@@ -65,6 +73,10 @@ fun HomeScreen(
         state.value.error?.let {
             scaffoldState.showSnackbar(it)
         }
+    }
+
+    LaunchedEffect(viewModel.permissionRequired) {
+        requestExactAlarmPermissionIfNeeded(context)
     }
 
 //    Image(
@@ -228,6 +240,17 @@ fun HomeScreen(
     }
 }
 
+fun requestExactAlarmPermissionIfNeeded(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // API 31+
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (!alarmManager.canScheduleExactAlarms()) {
+            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                data = "package:${context.packageName}".toUri()
+            }
+            context.startActivity(intent)
+        }
+    }
+}
 
 @Preview
 @Composable

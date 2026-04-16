@@ -1,10 +1,12 @@
 package com.vtol.petpal.presentation.home
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.framework.ReminderScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,10 +26,14 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
+    private val reminderScheduler: ReminderScheduler
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
+
+    private val _permissionRequired = MutableStateFlow(false)
+    val permissionRequired = _permissionRequired.asStateFlow()
 
     init {
         observeHomeData()
@@ -36,6 +42,10 @@ class HomeViewModel @Inject constructor(
     fun insertTask(task: Task) {
         viewModelScope.launch {
             appUseCases.insertTask(task)
+            val scheduled = reminderScheduler.schedule(task)
+            if (!scheduled) {
+                _permissionRequired.update { true } // Notify UI to request permission
+            }
         }
     }
 
