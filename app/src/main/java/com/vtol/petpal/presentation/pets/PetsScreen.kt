@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.pets
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vtol.petpal.presentation.pets.components.PetCard
@@ -31,6 +33,8 @@ fun PetsScreen(
     onCardClick: (String) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -44,7 +48,14 @@ fun PetsScreen(
 
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navigateToAddPetScreen() }) {
+            FloatingActionButton(onClick = {
+                if (state.pets.size < 2){
+                    navigateToAddPetScreen()
+                }else {
+                    Toast.makeText(context,"Upgrade to premium",Toast.LENGTH_SHORT).show()
+                }
+
+            }) {
                 Icon(Icons.Default.Add, contentDescription = "add pet button")
             }
         }

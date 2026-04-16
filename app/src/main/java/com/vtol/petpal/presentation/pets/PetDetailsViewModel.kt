@@ -35,6 +35,12 @@ class PetDetailsViewModel @Inject constructor(
         observePetInfo()
     }
 
+    fun toggleCompletion(taskId: Int, isCompleted: Boolean) {
+        viewModelScope.launch {
+            appUseCases.toggleTask(taskId, isCompleted)
+        }
+    }
+
     fun addWeight(petId: String, weightRecord: WeightRecord) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
@@ -63,7 +69,8 @@ class PetDetailsViewModel @Inject constructor(
                     DetailsState(
                         pet = pet,
                         tasks = tasks.sortedBy { it.dateTime },
-                        lastWeight = weights
+                        lastWeight = weights,
+                        lastTask = tasks.filter { !it.isCompleted }.maxByOrNull { it.dateTime }
                     )
                 }
                     .catch { e ->
@@ -116,6 +123,7 @@ class PetDetailsViewModel @Inject constructor(
 
 data class DetailsState(
     val tasks: List<Task> = emptyList(),
+    val lastTask: Task? = null,
     val pet: Pet? = null,
 
     // This will work in both OverView and Health tabs, since it in overview will just take the last sorted one, which the last weight the user updated so it represent the current pet's weight :)

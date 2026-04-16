@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -125,12 +126,20 @@ fun HomeScreen(
                 // Pets list
                 Spacer(modifier = Modifier.height(16.dp))
 
-                HomePetsList(
-                    pets = state.value.petsList,
-                    onPetClicked = { onPetClicked(it) },
-                    onAddPetClicked = { onAddPetClicked() })
-                Spacer(modifier = Modifier.height(16.dp))
+                val petsList = state.value.petsList
 
+                HomePetsList(
+                    pets = petsList,
+                    onPetClicked = { onPetClicked(it) },
+                    onAddPetClicked = {
+                        if (petsList.size < 2){
+                            onAddPetClicked()
+                        }else {
+                            Toast.makeText(context,"Upgrade to premium",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
 
@@ -184,11 +193,14 @@ fun HomeScreen(
                     }
 
                     // The tasks list (today)
-                    items(state.value.todayTasks) {
+                    items(state.value.todayTasks) { task ->
                         TaskCard(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            task = it,
-                            petName = state.value.petMap[it.petId] ?: "Unknown"
+                            task = task,
+                            petName = state.value.petMap[task.petId] ?: "Unknown",
+                            onCheckedChange = {
+                                viewModel.toggleCompletion(task.id.toInt(), it)
+                            }
                         )
                     }
                 }
@@ -209,11 +221,14 @@ fun HomeScreen(
 
 
                 // the list of tasks
-                items(state.value.upcomingTasks) {
+                items(state.value.upcomingTasks) { task ->
                     TaskCard(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        task = it,
-                        petName = state.value.petMap[it.petId] ?: "Unknown"
+                        task = task,
+                        petName = state.value.petMap[task.petId] ?: "Unknown",
+                        onCheckedChange = {
+                            viewModel.toggleCompletion(task.id.toInt(), it)
+                        }
                     )
                 }
             }
@@ -222,7 +237,7 @@ fun HomeScreen(
                 Spacer(
                     modifier = Modifier
                         .navigationBarsPadding()
-                        .height(paddingValues.calculateBottomPadding())
+                        .height(paddingValues.calculateBottomPadding() + 18.dp)
                 )
             }
         }

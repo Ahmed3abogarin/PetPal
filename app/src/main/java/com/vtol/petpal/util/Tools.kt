@@ -50,6 +50,35 @@ fun Long.toTimeString(): String {
     return time.format(DateTimeFormatter.ofPattern("h:mm a"))
 }
 
+fun Long.toDateTimeString(): String {
+    val dateTime = Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime()
+
+    return dateTime.format(
+        DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm a")
+    )
+}
+
+fun Long.toRelativeTime(): String {
+    val now = System.currentTimeMillis()
+    val diff = now - this
+
+    val minute = 60_000
+    val hour = 60 * minute
+    val day = 24 * hour
+
+    return when {
+        diff < minute -> "Just now"
+        diff < hour -> "${diff / minute} min ago"
+        diff < day -> "${diff / hour} hour${if (diff / hour > 1) "s" else ""} ago"
+        diff < day * 2 -> "Yesterday"
+        else -> "${diff / day} days ago"
+    }
+}
+
+
+
 fun Context.showToast() {
     Toast.makeText(this, "Not available yet", Toast.LENGTH_SHORT).show()
 

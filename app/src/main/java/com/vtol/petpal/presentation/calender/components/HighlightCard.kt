@@ -119,13 +119,9 @@ fun HighlightCard(modifier: Modifier = Modifier, tasks: List<Task>?, date: Local
 
                             val earliestTime = tasks.minOfOrNull { it.dateTime }?.toTimeString() ?: ""
                             if (earliestTime.isNotEmpty()) {
-                                Text(text = earliestTime)
+                                Text(modifier = Modifier.padding(start = 8.dp), text = earliestTime)
                             }
                         }
-
-
-
-
                     }
                 }
 

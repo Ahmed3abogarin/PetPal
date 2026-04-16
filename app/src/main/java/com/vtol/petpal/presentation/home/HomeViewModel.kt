@@ -1,13 +1,13 @@
 package com.vtol.petpal.presentation.home
 
-import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
-import com.vtol.petpal.framework.ReminderScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
-    private val reminderScheduler: ReminderScheduler
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -42,8 +42,7 @@ class HomeViewModel @Inject constructor(
     fun insertTask(task: Task) {
         viewModelScope.launch {
             appUseCases.insertTask(task)
-            val scheduled = reminderScheduler.schedule(task)
-            if (!scheduled) {
+            if (context.checkSelfPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 _permissionRequired.update { true } // Notify UI to request permission
             }
         }
@@ -85,6 +84,12 @@ class HomeViewModel @Inject constructor(
             .onEach { newState ->
                 _state.value = newState
             }.launchIn(viewModelScope)
+    }
+
+    fun toggleCompletion(taskId: Int, isCompleted: Boolean) {
+        viewModelScope.launch {
+            appUseCases.toggleTask(taskId, isCompleted)
+        }
     }
 
 

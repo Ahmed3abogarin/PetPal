@@ -52,6 +52,7 @@ import com.vtol.petpal.domain.usecases.register.SignIn
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
+import com.vtol.petpal.domain.usecases.tasks.ToggleTask
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -135,18 +136,25 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppUseCases(appRepository: AppRepository, userRepository: UserRepository, updateRepository: UpdateRepository) =
+    fun provideAppUseCases(
+        appRepository: AppRepository,
+        userRepository: UserRepository,
+        updateRepository: UpdateRepository,
+        preferencesRepository: UserPreferencesRepository,
+        notificationRepository: NotificationRepository
+        ) =
         AppUseCases(
             addPet = AddPet(appRepository),
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository),
-            insertTask = InsertTask(appRepository),
+            insertTask = InsertTask(appRepository, preferencesRepository, notificationRepository),
             getTasks = GetTasks(appRepository),
             getTasksById = GetTasksById(appRepository),
             addWeight = AddWeight(appRepository),
             getWeights = GetWeights(appRepository),
             getUser = GetUser(userRepository),
             getVersion = GetVersion(updateRepository),
+            toggleTask = ToggleTask(appRepository)
         )
 
     @Provides

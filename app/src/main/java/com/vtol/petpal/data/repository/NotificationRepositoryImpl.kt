@@ -19,11 +19,16 @@ class NotificationRepositoryImpl(
         val intent = Intent(context, TaskAlarmReceiver::class.java).apply {
             putExtra("task_id", task.id)
             putExtra("task_title", task.title)
-         }
+            putExtra("repeat_interval", task.repeatInterval?.name)
+            putExtra("task_type", task.type.name)
+            putExtra("trigger_time", task.dateTime) // ✅ now included
+        }
+
         val pendingIntent = PendingIntent.getBroadcast(
             context, task.id.toInt(), intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             task.dateTime,

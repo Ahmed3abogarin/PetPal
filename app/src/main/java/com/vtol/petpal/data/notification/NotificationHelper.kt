@@ -1,13 +1,15 @@
 package com.vtol.petpal.data.notification
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.vtol.petpal.R
 
-// data/notification/NotificationHelper.kt
 object NotificationHelper {
     private const val CHANNEL_ID = "pet_tasks_channel"
 
@@ -19,15 +21,20 @@ object NotificationHelper {
             .createNotificationChannel(channel)
     }
 
-    fun showNotification(context: Context, taskId: Long, title: String, note: String?) {
+    fun showNotification(context: Context, taskId: Long, title: String) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.pet_placeholder)
             .setContentTitle(title)
-            .setContentText(note ?: "Time for your pet task!")
+            .setContentText("Time for your pet task!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
 
-        NotificationManagerCompat.from(context).notify(taskId.toInt(), notification)
+        if (ActivityCompat.checkSelfPermission(
+                context, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            NotificationManagerCompat.from(context).notify(taskId.toInt(), notification)
+        }
     }
 }

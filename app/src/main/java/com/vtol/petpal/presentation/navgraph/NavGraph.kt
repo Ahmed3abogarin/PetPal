@@ -1,17 +1,10 @@
 package com.vtol.petpal.presentation.navgraph
 
-import android.app.AlarmManager
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import androidx.compose.foundation.layout.Box
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -22,14 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.vtol.petpal.R
@@ -160,13 +151,7 @@ fun MainNavGraph() {
                         navController.navigate(Routes.AddTaskScreen.route)
                     },
                     onAddPetClicked = {
-                        if (homeViewModel.state.value.petsList.size < 2) {
-                            navController.navigate(Routes.AddPetScreen.route)
-                        } else {
-                            // the user has to pay :)
-                            // navigate the user to subscription screen
-
-                        }
+                        navController.navigate(Routes.AddPetScreen.route)
                     },
                     viewModel = homeViewModel,
                     onPetClicked = {
@@ -252,35 +237,5 @@ fun navigateToTab(navController: NavController, route: String) {
         }
         restoreState = true
         launchSingleTop = true
-    }
-}
-
-
-@Composable
-fun NavGraph() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.AppMainNavigation.route) {
-        navigation(
-            route = Routes.AppStartNavigation.route,
-            startDestination = Routes.OnboardingScreen.route
-        ) {
-            composable(Routes.OnboardingScreen.route) {
-                /*
-                Add the pager and the page indicator
-                 */
-                Box {
-                    Text("This where will be the on boarding screen")
-                }
-            }
-
-        }
-        navigation(
-            route = Routes.AppMainNavigation.route,
-            startDestination = Routes.ScreensNavigation.route
-        ) {
-            composable(Routes.ScreensNavigation.route) {
-                MainNavGraph()
-            }
-        }
     }
 }

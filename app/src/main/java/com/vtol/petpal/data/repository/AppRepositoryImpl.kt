@@ -178,5 +178,9 @@ class AppRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun toggleTaskCompletion(taskId: Int, isCompleted: Boolean) {
+        tasksDao.updateTaskCompletion(taskId, isCompleted)
+    }
+
 
 }

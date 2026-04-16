@@ -30,6 +30,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+
         val mapsApiKey = project.findProperty("mapsApiKey").toString()
 
         buildConfigField(

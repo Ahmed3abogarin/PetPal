@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.pets.components
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +42,9 @@ import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.ui.theme.LightPurple
-import com.vtol.petpal.util.toTimeString
+import com.vtol.petpal.util.toDateTimeString
+import com.vtol.petpal.util.toRelativeTime
+import timber.log.Timber
 
 @Composable
 fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightClicked: () -> Unit) {
@@ -69,7 +70,7 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
 
 
                     item {
-                        Spacer(modifier= Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
                         Row(
                             modifier = Modifier
@@ -85,11 +86,20 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
                                 Icon(Icons.Default.Add, contentDescription = null)
                             }
                         }
+                        val lastUpdated = remember(weightList) {
+                            weightList.maxByOrNull { it.timestamp }?.timestamp
+                        }
                         Text(
-                            text = "Last updated: 13 minutes ago",
+                            modifier = Modifier.padding(start = 12.dp),
+                            text = lastUpdated?.toRelativeTime() ?: "Keep track of your pet's weight",
                             color = Color.LightGray,
                             fontSize = 12.sp
                         )
+//                        Text(
+//                            text = "Keep track of your pets' weight",
+//                            color = Color.LightGray,
+//                            fontSize = 12.sp
+//                        )
                         Spacer(modifier = Modifier.height(8.dp))
 
                         /* the weights represent the Y axis (vertical line)
@@ -97,7 +107,7 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
                          */
 
                         AppChart(records = weightList.sortedBy { it.timestamp })
-                        Log.v("klmoe", weightList.size.toString())
+                        Timber.e( weightList.size.toString())
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "Vet Visits", style = MaterialTheme.typography.headlineMedium)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -108,25 +118,14 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
 
                         }
                     }
-
-
-
-
                     items(vetTasks) { task ->
-                        VetItem(task, task.dateTime.toTimeString())
-
-
+                        VetItem(task, task.dateTime.toDateTimeString())
                     }
                 }
 
             }
-
-
         }
-
-
     }
-
 }
 
 @Composable
@@ -163,7 +162,7 @@ fun VetItem(task: Task, date: String) {
 
             }
 
-            // then the clinc name and Reason
+            // then the clinic name and Reason
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = vet.clinicName, style = MaterialTheme.typography.titleMedium)

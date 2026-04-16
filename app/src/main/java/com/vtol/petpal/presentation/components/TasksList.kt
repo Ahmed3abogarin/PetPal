@@ -1,8 +1,6 @@
 package com.vtol.petpal.presentation.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,119 +20,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
-import com.vtol.petpal.presentation.home.HomeState
-import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.toTimeString
 
 @Composable
-fun TasksList2(modifier: Modifier = Modifier, state: HomeState) {
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(Color.White)
-            .padding(14.dp)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .padding(end = 8.dp),
-                    painter = painterResource(R.drawable.ic_walk),
-                    contentDescription = null
-                )
-                Text(text = "Walk", fontSize = 22.sp)
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(R.drawable.ic_clock),
-                    contentDescription = null
-                )
-                Text(text = "07:00AM", fontSize = 18.sp, modifier = Modifier.padding(start = 6.dp))
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .padding(end = 8.dp),
-                    painter = painterResource(R.drawable.ic_fed),
-                    contentDescription = null
-                )
-                Text(text = "Feed", fontSize = 22.sp)
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(R.drawable.ic_clock),
-                    contentDescription = null
-                )
-                Text(text = "04:00PM", fontSize = 18.sp, modifier = Modifier.padding(start = 6.dp))
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .padding(end = 8.dp),
-                    painter = painterResource(R.drawable.ic_pill),
-                    contentDescription = null
-                )
-                Text(text = "Medicine", fontSize = 22.sp)
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(R.drawable.ic_clock),
-                    contentDescription = null
-                )
-                Text(text = "06:00PM", fontSize = 18.sp, modifier = Modifier.padding(start = 6.dp))
-            }
-        }
-    }
-}
-
-
-
-@Composable
-fun TaskCard(modifier: Modifier = Modifier,task: Task, petName: String? = null) {
+fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null, onCheckedChange: (Boolean) -> Unit) {
 
     val (taskType, taskImg) = when (task.type) {
         TaskType.VET -> "Vet" to R.drawable.ic_vet
@@ -156,11 +54,11 @@ fun TaskCard(modifier: Modifier = Modifier,task: Task, petName: String? = null) 
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row (verticalAlignment = Alignment.CenterVertically){
+            Row(verticalAlignment = Alignment.CenterVertically) {
 
                 Surface(
                     shape = CircleShape,
-                    color =Color(0x8BDCC5FF),
+                    color = Color(0x8BDCC5FF),
                     modifier = Modifier.size(66.dp)
                 ) {
                     Image(
@@ -202,40 +100,9 @@ fun TaskCard(modifier: Modifier = Modifier,task: Task, petName: String? = null) 
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(modifier = Modifier.size(24.dp)) {
-                    RadioButton(selected = false, onClick = { /*TODO*/ })
+                    RadioButton(selected = task.isCompleted, onClick = {onCheckedChange(!task.isCompleted)})
                 }
-
             }
-
-
         }
-    }
-
-}
-
-@Preview
-@Composable
-fun MyPreview() {
-    /*
-     Displays:
-     - Pet/s images
-     - Task Type
-     - Pet/s name/s
-     - Time
-     - RadioButton -
-     */
-    PetPalTheme {
-        TaskCard(
-            petName = "Blind Pew",
-            task = Task(
-                5,
-                "22",
-                "Blind Pew, Max, Lionel ",
-                "6:00PM",
-                type = TaskType.VET,
-                dateTime = 55
-            )
-        )
-
     }
 }

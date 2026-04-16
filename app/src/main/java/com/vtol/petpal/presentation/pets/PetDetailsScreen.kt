@@ -39,19 +39,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
-import com.vtol.petpal.domain.model.PetGender
-import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
 import com.vtol.petpal.presentation.pets.tabs.OverviewTab
-import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.showToast
 import com.vtol.petpal.util.toAgeString
 
@@ -70,19 +66,14 @@ fun PetDetailsScreen(
             pet = it,
             task = state,
             navigateUp = navigateUp,
-            onAddWeight = { petId, weight ->
-                petViewModel.addWeight(petId,weight)
-            }
+            petViewModel,
         )
-
     }
 
     if (state.isLoading){
         Box(modifier= Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
             CircularProgressIndicator()
-
         }
-
     }
 
     if (state.error != null) Text(text = state.error)
@@ -94,7 +85,7 @@ private fun PetDetailsScreenContent(
     pet: Pet,
     task: DetailsState,
     navigateUp: () -> Unit,
-    onAddWeight: (petId: String,weight:WeightRecord) -> Unit,
+    petViewModel: PetDetailsViewModel
 ) {
     val context = LocalContext.current
 
@@ -105,7 +96,7 @@ private fun PetDetailsScreenContent(
                 Icon(Icons.Default.Edit, contentDescription = null)
             }
         }
-    ) {  padding ->
+    ) {  _ ->
 
         Column(
             modifier = modifier
@@ -192,10 +183,12 @@ private fun PetDetailsScreenContent(
             }
 
             when (selectedTabIndex) {
-                0 -> OverviewTab(state = task)
+                0 -> OverviewTab(state = task, onCheckedChanged = {id, isCompleted ->
+                    petViewModel.toggleCompletion(id,isCompleted)
+                })
                 1 -> HealthTab(
                     onAddWeightClicked = {
-                        onAddWeight(pet.id, it)
+                        petViewModel.addWeight(pet.id, it)
                     },
                     weightList = task.lastWeight,
                     state = task
@@ -204,23 +197,5 @@ private fun PetDetailsScreenContent(
                 2 -> GalleryTab(isPremium = false) { context.showToast() }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun MyPreview() {
-    PetPalTheme {
-        PetDetailsScreenContent(
-            pet = Pet(
-                petName = "Lionel Messi",
-                breed = "Shirazi",
-                birthDate = 123456789,
-                gender = PetGender.Male
-            ),
-            task = DetailsState(),
-            navigateUp = {},
-            onAddWeight = { _, _ -> }
-        )
     }
 }

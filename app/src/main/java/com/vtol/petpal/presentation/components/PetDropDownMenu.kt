@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -145,12 +143,15 @@ fun PetDropDownMenu(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
+                            AsyncImage(
                                 modifier = Modifier
                                     .size(32.dp)
                                     .clip(CircleShape),
                                 contentDescription = "",
-                                painter = painterResource(R.drawable.cat)
+                                model = ImageRequest.Builder(context,).data(pet.imagePath).build(),
+                                placeholder = painterResource(R.drawable.pet_placeholder),
+                                error = painterResource(R.drawable.pet_placeholder),
+                                contentScale = ContentScale.Crop
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(text = pet.petName)
@@ -168,139 +169,7 @@ fun PetDropDownMenu(
 
                     }
                 }
-
-                // TODO: maybe add Onconfirm button
             }
-
-
-        }
-    }
-}
-
-
-@Composable
-fun PetDropDownMenuV2MultiSelection(
-    petsList: List<Pet>,
-    onConfirm: (Set<Pet>) -> Unit,
-) {
-//    val selectedPets = remember { mutableStateListOf(petsList[0]) }
-    var selectedPets by remember { mutableStateOf(setOf(petsList[0])) }
-
-
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier.height(IntrinsicSize.Min)) {
-        // the text input field
-        OutlinedTextField(
-            value = if (selectedPets.isNotEmpty()) selectedPets.first().petName else "Select Pet",
-            shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .fillMaxWidth(),
-//        supportingText = {
-//            if (error != null){
-//                Text(error)
-//            }
-//        },
-            trailingIcon = {
-                val icon =
-                    if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
-                Icon(icon, "")
-            },
-            leadingIcon = {
-                Image(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape),
-                    painter = painterResource(R.drawable.cat),
-                    contentDescription = ""
-                )
-            },
-            onValueChange = { },
-            readOnly = true,
-        )
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 8.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .clickable { expanded = true },
-            color = Color.Transparent,
-        ) {}
-    }
-
-
-    // Pop up dialog
-    if (expanded) {
-        Dialog(
-            onDismissRequest = {
-                onConfirm(selectedPets)
-                expanded = false
-            })
-        {
-            Column(modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.White).padding(horizontal = 10.dp,vertical = 16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Select pets", fontSize = 24.sp)
-                    IconButton(onClick = {
-                        onConfirm(selectedPets)
-                        expanded = false
-                    }) {
-                        Icon(imageVector = Icons.Default.Check, tint = MainPurple, contentDescription = "")
-                    }
-                }
-                HorizontalDivider(modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp, top = 4.dp))
-
-                petsList.forEachIndexed { index,pet ->
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp)
-                            .clickable {
-                                selectedPets = if (pet in selectedPets) selectedPets - pet
-                                else selectedPets + pet
-//                                    if (pet in selectedPets) selectedPets.remove(pet)
-//                                    else selectedPets.add(pet)
-                            }
-                            .padding(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                modifier = Modifier
-                                    .size(32.dp)
-                                    .clip(CircleShape),
-                                contentDescription = "",
-                                painter = painterResource(R.drawable.cat)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(text = pet.petName)
-
-                        }
-                        Checkbox(
-                            checked = pet in selectedPets,
-                            onCheckedChange = null // handled by row click
-                        )
-                    }
-
-                    // Add a divider after each item except for the last one
-                    if (index < petsList.lastIndex){
-                        HorizontalDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp).alpha(0.5f))
-
-                    }
-                }
-
-                // TODO: Onconfirm
-            }
-
-
         }
     }
 }

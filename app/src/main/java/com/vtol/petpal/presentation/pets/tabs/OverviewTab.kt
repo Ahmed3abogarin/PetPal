@@ -21,17 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Devices.PIXEL_7_PRO
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.presentation.components.TaskCard
 import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.ui.theme.LightPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.formatDate
 
 @Composable
-fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
+fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState, onCheckedChanged: (Int, Boolean) -> Unit ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -71,9 +68,13 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
             Text(text = "Next action", style = MaterialTheme.typography.headlineMedium)
 
 
-            if (state.tasks.isNotEmpty()) {
+            if (state.lastTask != null) {
                 TaskCard(
-                    task = state.tasks[0]
+                    task = state.lastTask,
+                    onCheckedChange = {
+                        onCheckedChanged(state.lastTask.id.toInt(), it)
+
+                    }
                 )
             }
 
@@ -82,7 +83,7 @@ fun OverviewTab(modifier: Modifier = Modifier, state: DetailsState) {
 
 
         // empty state
-        if (state.tasks.isEmpty()) {
+        if (state.lastTask == null) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -133,13 +134,4 @@ fun InfoItem(modifier: Modifier = Modifier, title: String, subTitle: String) {
         }
 
     }
-}
-
-@Preview(device = PIXEL_7_PRO)
-@Composable
-fun OverviewPreview() {
-    PetPalTheme {
-        OverviewTab(state = DetailsState())
-    }
-
 }

@@ -24,4 +24,7 @@ interface AppRepository {
 
     fun getWeightList(petId: String): Flow<List<WeightRecord>>
 
+
+    suspend fun toggleTaskCompletion(taskId: Int, isCompleted: Boolean)
+
 }

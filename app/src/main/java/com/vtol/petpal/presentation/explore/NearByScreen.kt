@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresPermission
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
@@ -24,25 +23,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.vtol.petpal.R
 import com.vtol.petpal.presentation.explore.components.CategoryList
 import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.presentation.explore.components.LocationList
@@ -109,7 +102,6 @@ fun NearByScreenContent() {
 
                 Marker(
                     state = cLocation,
-                    icon = vectorToBitmapDescriptor(R.drawable.profile_img)
                 )
 
 
@@ -165,12 +157,6 @@ fun NearByScreenContent() {
     }
 }
 
-@Composable
-fun vectorToBitmapDescriptor(@DrawableRes resId: Int): BitmapDescriptor {
-    val imageBitmap = ImageBitmap.imageResource(resId)
-    val bitmap = imageBitmap.asAndroidBitmap()
-    return BitmapDescriptorFactory.fromBitmap(bitmap)
-}
 
 
 @Composable

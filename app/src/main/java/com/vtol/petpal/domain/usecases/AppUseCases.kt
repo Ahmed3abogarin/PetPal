@@ -3,6 +3,7 @@ package com.vtol.petpal.domain.usecases
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
+import com.vtol.petpal.domain.usecases.tasks.ToggleTask
 
 data class AppUseCases(
     val addPet: AddPet,
@@ -18,5 +19,6 @@ data class AppUseCases(
 
     val getVersion: GetVersion,
 
+    val toggleTask: ToggleTask
 
-    )
+)
