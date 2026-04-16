@@ -7,12 +7,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.vtol.petpal.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+private val Context.dataStore by preferencesDataStore("user_prefs")
 
 class UserPreferencesRepositoryImpl(
     private val context: Context
 ) : UserPreferencesRepository {
 
-    private val Context.dataStore by preferencesDataStore("user_prefs")
 
     companion object {
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")

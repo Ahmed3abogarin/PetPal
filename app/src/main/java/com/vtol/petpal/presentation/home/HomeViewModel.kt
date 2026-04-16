@@ -1,6 +1,8 @@
 package com.vtol.petpal.presentation.home
 
+import android.app.AlarmManager
 import android.content.Context
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
@@ -42,11 +44,21 @@ class HomeViewModel @Inject constructor(
     fun insertTask(task: Task) {
         viewModelScope.launch {
             appUseCases.insertTask(task)
-            if (context.checkSelfPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                _permissionRequired.update { true } // Notify UI to request permission
+
+            // Check if exact alarm permission is needed and notify UI
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val alarmManager = context.getSystemService(AlarmManager::class.java)
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    _permissionRequired.update { true }
+                }
             }
         }
     }
+
+    fun onPermissionHandled() {
+        _permissionRequired.update { false }
+    }
+
 
 
     private fun observeHomeData() {

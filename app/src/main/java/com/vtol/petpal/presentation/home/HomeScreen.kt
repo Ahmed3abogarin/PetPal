@@ -70,14 +70,19 @@ fun HomeScreen(
 
     val scaffoldState = remember { SnackbarHostState() }
 
+    val permissionRequired by viewModel.permissionRequired.collectAsState()
+
     LaunchedEffect(state.value.error) {
         state.value.error?.let {
             scaffoldState.showSnackbar(it)
         }
     }
 
-    LaunchedEffect(viewModel.permissionRequired) {
-        requestExactAlarmPermissionIfNeeded(context)
+    LaunchedEffect(permissionRequired) {
+        if (permissionRequired) {
+            requestExactAlarmPermissionIfNeeded(context)
+            viewModel.onPermissionHandled()
+        }
     }
 
 //    Image(

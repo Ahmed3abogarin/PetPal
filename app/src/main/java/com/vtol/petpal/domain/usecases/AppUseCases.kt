@@ -19,6 +19,8 @@ data class AppUseCases(
 
     val getVersion: GetVersion,
 
-    val toggleTask: ToggleTask
+    val toggleTask: ToggleTask,
+
+    val toggleNotification: ToggleNotification
 
 )

@@ -151,12 +151,9 @@ fun NearByScreenContent() {
                 )
 
             }
-
-
         }
     }
 }
-
 
 
 @Composable

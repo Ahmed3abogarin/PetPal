@@ -122,7 +122,6 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
                         VetItem(task, task.dateTime.toDateTimeString())
                     }
                 }
-
             }
         }
     }
@@ -191,5 +190,4 @@ fun VetItem(task: Task, date: String) {
             Text(text = "visit date: $date", fontSize = 12.sp)
         }
     }
-
 }

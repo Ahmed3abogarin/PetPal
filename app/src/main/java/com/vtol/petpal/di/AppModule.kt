@@ -41,6 +41,7 @@ import com.vtol.petpal.domain.usecases.GetUser
 import com.vtol.petpal.domain.usecases.GetVets
 import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
+import com.vtol.petpal.domain.usecases.ToggleNotification
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import com.vtol.petpal.domain.usecases.register.GetAuthState
@@ -154,7 +155,8 @@ object AppModule {
             getWeights = GetWeights(appRepository),
             getUser = GetUser(userRepository),
             getVersion = GetVersion(updateRepository),
-            toggleTask = ToggleTask(appRepository)
+            toggleTask = ToggleTask(appRepository),
+            toggleNotification = ToggleNotification(preferencesRepository)
         )
 
     @Provides
