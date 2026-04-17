@@ -14,6 +14,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
+import com.vtol.petpal.data.notification.NotificationPermissionManager
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
@@ -203,6 +204,14 @@ object AppModule {
     @Singleton
     fun provideRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
+
+    @Provides
+    @Singleton
+    fun provideNotificationPermissionManager(
+        @ApplicationContext context: Context
+    ): NotificationPermissionManager {
+        return NotificationPermissionManager(context)
+    }
 
 
     @Provides

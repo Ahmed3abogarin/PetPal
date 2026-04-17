@@ -1,5 +1,11 @@
 package com.vtol.petpal.presentation.home
 
+import android.Manifest
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,6 +65,7 @@ import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.components.TextFieldVariant
 import com.vtol.petpal.presentation.components.filledTextFieldColors
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
+import com.vtol.petpal.presentation.home.components.PermissionRationaleDialog
 import com.vtol.petpal.presentation.home.components.TaskDatePicker
 import com.vtol.petpal.presentation.home.components.TimePicker
 import com.vtol.petpal.ui.theme.BackgroundColor
@@ -76,6 +85,8 @@ fun AddTaskScreen(
     viewModel: HomeViewModel,
     navigateUp: () -> Unit
 ) {
+
+    val state by viewModel.state.collectAsState()
 
     var typeIndex by remember { mutableIntStateOf(-1) }
 
@@ -133,7 +144,58 @@ fun AddTaskScreen(
 
     }
 
+    LaunchedEffect(state.taskSaved) {
+        if (state.taskSaved) {
+            viewModel.resetTaskSaved()
+            navigateUp()
+        }
+    }
+// POST_NOTIFICATIONS launcher
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        viewModel.onNotificationPermissionResult(granted)
+    }
 
+    // SCHEDULE_EXACT_ALARM launcher
+    val exactAlarmSettingsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        viewModel.onExactAlarmPermissionResult()
+    }
+
+    // POST_NOTIFICATIONS dialog
+    if (state.showNotificationPermissionDialog) {
+        PermissionRationaleDialog(
+            title = "Enable Notifications",
+            message = "Allow PetPal to send reminders so you never miss a pet task.",
+            onConfirm = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    notificationPermissionLauncher.launch(
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                }
+            },
+            onDismiss = { viewModel.onNotificationPermissionDismissed() }
+        )
+    }
+
+    // SCHEDULE_EXACT_ALARM dialog
+    if (state.showExactAlarmPermissionDialog) {
+        PermissionRationaleDialog(
+            title = "Allow Exact Reminders",
+            message = "To remind you at the exact time, PetPal needs permission to schedule precise alarms. You'll be taken to Settings briefly.",
+            confirmText = "Open Settings",
+            onConfirm = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    exactAlarmSettingsLauncher.launch(
+                        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    )
+                }
+            },
+            onDismiss = { viewModel.onPermissionDismissed() }
+        )
+    }
 
 
 
@@ -438,10 +500,6 @@ fun AddTaskScreen(
 
             // 4- call the vm TODO
             viewModel.insertTask(newTask)
-
-
-            // 5- navigate back after successfully save it
-            navigateUp()
         }
     }
 }

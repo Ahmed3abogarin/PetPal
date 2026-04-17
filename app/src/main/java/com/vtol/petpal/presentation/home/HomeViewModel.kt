@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.notification.NotificationPermissionManager
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -28,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
+    private val permissionManager: NotificationPermissionManager,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -37,13 +39,30 @@ class HomeViewModel @Inject constructor(
     private val _permissionRequired = MutableStateFlow(false)
     val permissionRequired = _permissionRequired.asStateFlow()
 
+    // Hold the task temporarily while we ask for permissions
+    private var pendingTask: Task? = null
+
     init {
         observeHomeData()
     }
 
     fun insertTask(task: Task) {
+        pendingTask = task // Store it!
+
         viewModelScope.launch {
-            appUseCases.insertTask(task)
+            when {
+                !permissionManager.hasNotificationPermission() -> {
+                    _state.update {
+                        it.copy(showNotificationPermissionDialog = true)
+                    }
+                }
+                !permissionManager.hasExactAlarmPermission() -> {
+                    _state.update {
+                        it.copy(showExactAlarmPermissionDialog = true)
+                    }
+                }
+                else -> saveTask(task)
+            }
 
             // Check if exact alarm permission is needed and notify UI
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -53,6 +72,18 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun saveTask(task: Task) {
+        viewModelScope.launch {
+            appUseCases.insertTask(task)
+            pendingTask = null // clear it out
+            _state.update { it.copy(taskSaved = true) } // Trigger UI navigation
+        }
+    }
+
+    fun resetTaskSaved() {
+        _state.update { it.copy(taskSaved = false) }
     }
 
     fun onPermissionHandled() {
@@ -119,6 +150,37 @@ class HomeViewModel @Inject constructor(
         taskDate.isAfter(LocalDate.now())
     }
 
+
+
+    // Permission Flow Handlers
+    fun onNotificationPermissionResult(granted: Boolean) {
+        _state.update { it.copy(showNotificationPermissionDialog = false) }
+        val task = pendingTask ?: return
+
+        when {
+            !granted -> saveTask(task)
+            !permissionManager.hasExactAlarmPermission() -> {
+                _state.update { it.copy(showExactAlarmPermissionDialog = true) }
+            }
+            else -> saveTask(task)
+        }
+    }
+
+    fun onNotificationPermissionDismissed() {
+        _state.update { it.copy(showNotificationPermissionDialog = false) }
+        pendingTask?.let { saveTask(it) }
+    }
+
+    fun onExactAlarmPermissionResult() {
+        _state.update { it.copy(showExactAlarmPermissionDialog = false) }
+        pendingTask?.let { saveTask(it) }
+    }
+
+    fun onPermissionDismissed() {
+        _state.update { it.copy(showExactAlarmPermissionDialog = false) }
+        pendingTask?.let { saveTask(it) }
+    }
+
 }
 
 data class HomeState(
@@ -128,6 +190,9 @@ data class HomeState(
     val error: String? = null,
     val petMap: Map<String, String> = emptyMap(),
     val petsList: List<Pet> = emptyList(),
+    val showNotificationPermissionDialog: Boolean = false,
+    val showExactAlarmPermissionDialog: Boolean = false,
+    val taskSaved: Boolean = false,
 
     val completedCount: Int = 0,
     val total: Int = 0,

@@ -23,11 +23,10 @@ import kotlinx.coroutines.tasks.await
 class AppRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val tasksDao: TasksDao,
-    auth: FirebaseAuth,
+    private val auth: FirebaseAuth,
     private val storage: FirebaseStorage
 ) : AppRepository {
 
-    private val currentUid = auth.currentUser?.uid
 
     override suspend fun addPet(
         pet: Pet,
@@ -35,7 +34,7 @@ class AppRepositoryImpl @Inject constructor(
         weight: WeightRecord
     ): Resource<Unit> {
 
-        val uid = currentUid
+        val uid = auth.currentUser?.uid
             ?: return Resource.Error("User not authenticated")
 
         return try {
@@ -78,29 +77,31 @@ class AppRepositoryImpl @Inject constructor(
     }
 
     override fun getPets(): Flow<List<Pet>> = callbackFlow {
-        currentUid?.let {
+        val uid = auth.currentUser?.uid
 
-            val ref = firestore.collection(USERS_COLLECTION)
-                .document(it)
-                .collection(PETS_COLLECTION)
-
-            val subscription = ref
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
-                    }
-
-                    val pets = snapshot?.toObjects(Pet::class.java) ?: emptyList()
-                    trySend(pets) // Send the list to the Flow
-                }
-
-            // Important: Clean up the listener when the Flow is closed
-            awaitClose { subscription.remove() }
-
+        if (uid == null) {
+            trySend(emptyList())
+            close()
+            return@callbackFlow
         }
 
+        val ref = firestore.collection(USERS_COLLECTION)
+            .document(uid)
+            .collection(PETS_COLLECTION)
 
+        val listener = ref.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            val pets = snapshot?.toObjects(Pet::class.java) ?: emptyList()
+            trySend(pets)
+        }
+
+        awaitClose {
+            listener.remove()
+        }
     }
 
 
@@ -118,9 +119,10 @@ class AppRepositoryImpl @Inject constructor(
 
 
     override suspend fun getPet(id: String): Pet {
-        currentUid?.let {
+        val uid = auth.currentUser?.uid
+        uid?.let {
             val pet = firestore.collection(USERS_COLLECTION)
-                .document(currentUid)
+                .document(uid)
                 .collection(PETS_COLLECTION)
                 .document(id)
                 .get().await().toObject(Pet::class.java)
@@ -142,7 +144,8 @@ class AppRepositoryImpl @Inject constructor(
         tasksDao.getTask(petId)
 
     override suspend fun addWeight(petId: String, weightRecord: WeightRecord) {
-        currentUid?.let {
+        val uid = auth.currentUser?.uid
+        uid?.let {
             firestore.collection(USERS_COLLECTION)
                 .document(it)
                 .collection(PETS_COLLECTION)
@@ -154,27 +157,36 @@ class AppRepositoryImpl @Inject constructor(
     }
 
     override fun getWeightList(petId: String): Flow<List<WeightRecord>> = callbackFlow {
-        currentUid?.let {
-            val listener = firestore
-                .collection(USERS_COLLECTION)
-                .document(it)
-                .collection(PETS_COLLECTION)
-                .document(petId)
-                .collection(WEIGHT_COLLECTION)
-                .orderBy("timestamp")
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
-                    }
+        val uid = auth.currentUser?.uid
 
-                    val weights = snapshot?.toObjects(WeightRecord::class.java)
-                        ?: emptyList()
+        if (uid == null) {
+            trySend(emptyList())
+            close()
+            return@callbackFlow
+        }
 
-                    trySend(weights)
+        val listener = firestore
+            .collection(USERS_COLLECTION)
+            .document(uid)
+            .collection(PETS_COLLECTION)
+            .document(petId)
+            .collection(WEIGHT_COLLECTION)
+            .orderBy("timestamp")
+            .addSnapshotListener { snapshot, error ->
+
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
                 }
 
-            awaitClose { listener.remove() }
+                val weights =
+                    snapshot?.toObjects(WeightRecord::class.java) ?: emptyList()
+
+                trySend(weights)
+            }
+
+        awaitClose {
+            listener.remove()
         }
     }
 
