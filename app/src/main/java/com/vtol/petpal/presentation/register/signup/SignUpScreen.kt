@@ -68,12 +68,14 @@ fun SignUpScreen(
                 value = state.name,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Name",
+                isOneLine = true,
                 onValueChanged = { viewModel.onEvent(SignUpEvent.NameChanged(it)) }
             )
 
             AppTextField(
                 value = state.email,
                 colors = secondFilledTextFieldColors(),
+                isOneLine = true,
                 placeHolder = "Email",
                 onValueChanged = { viewModel.onEvent(SignUpEvent.EmailChanged(it)) }
             )
@@ -82,6 +84,7 @@ fun SignUpScreen(
                 value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
+                isOneLine = true,
                 password = true,
                 onValueChanged = { viewModel.onEvent(SignUpEvent.PasswordChanged(it)) }
             )

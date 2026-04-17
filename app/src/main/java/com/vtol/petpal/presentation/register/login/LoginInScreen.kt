@@ -78,6 +78,7 @@ fun LoginScreen(
                 value = state.email,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Email",
+                isOneLine = true,
                 errorTxt = state.emailError,
                 onValueChanged = { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
             )
@@ -86,6 +87,7 @@ fun LoginScreen(
                 value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
+                isOneLine = true,
                 password = true,
                 errorTxt = state.passwordError,
                 onValueChanged = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
