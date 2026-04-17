@@ -98,6 +98,8 @@ fun HomeScreen(
         floatingActionButton = {
             Column(
                 Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = 18.dp)
                     .clip(CircleShape)
                     .background(MainPurple)
                     .clickable { onAddTaskClicked() }
@@ -112,7 +114,7 @@ fun HomeScreen(
                 Text(text = "Add Task", color = Color.White, fontSize = 8.sp)
             }
         }
-    ) { paddingValues ->
+    ) { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -242,7 +244,7 @@ fun HomeScreen(
                 Spacer(
                     modifier = Modifier
                         .navigationBarsPadding()
-                        .height(paddingValues.calculateBottomPadding() + 18.dp)
+                        .height(14.dp)
                 )
             }
         }

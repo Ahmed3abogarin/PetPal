@@ -1,6 +1,8 @@
 package com.vtol.petpal.domain.model
 
+import androidx.annotation.Keep
 
+@Keep
 data class Pet(
     val id: String = "",
     val petName: String = "",
@@ -9,7 +11,7 @@ data class Pet(
     val gender: PetGender = PetGender.Unknown,
     val breed: String? = "",
 )
-
+@Keep
 data class WeightRecord(
     val weight: Double = 0.0,
     val unit: WeightUnit = WeightUnit.G,

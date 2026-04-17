@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -50,9 +51,11 @@ fun SplashScreen() {
 
     Box(
         modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .background(bgColor)
             .fillMaxSize()
-            .statusBarsPadding()
+
     ) {
 
         // app logo in the center

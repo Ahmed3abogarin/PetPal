@@ -65,6 +65,19 @@ android {
     }
 }
 
+//androidComponents {
+//    onVariants { variant ->
+//        variant.outputs.forEach { output ->
+//            val versionName = variant.versionName.orNull ?: "unknown"
+//            val versionCode = variant.versionCode.get()
+//
+//            output.outputFileName.set(
+//                "PetPal-v${versionName}-code${versionCode}.aab"
+//            )
+//        }
+//    }
+//}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)

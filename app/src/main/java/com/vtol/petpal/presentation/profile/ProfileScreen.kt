@@ -46,9 +46,9 @@ fun ProfileScreen(viewmodel: UserViewModel, navigateToFeedback: () -> Unit) {
 
     Column(
         modifier = Modifier
+            .padding(top = 6.dp)
             .fillMaxSize()
             .background(BackgroundColor)
-            .padding(top = 6.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -140,6 +140,7 @@ fun ProfileScreen(viewmodel: UserViewModel, navigateToFeedback: () -> Unit) {
                 context.startActivity(intent)
             }
         )
+        Spacer(modifier = Modifier.height(120.dp))
 
 
     }
