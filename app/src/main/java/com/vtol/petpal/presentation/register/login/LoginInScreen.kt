@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,15 @@ fun LoginScreen(
 
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsState()
+
+
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(state.isLoading) {
+        if (state.isLoading) {
+            focusManager.clearFocus()
+        }
+    }
 
     LaunchedEffect(state.error) {
         state.error?.let {

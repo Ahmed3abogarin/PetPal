@@ -200,12 +200,10 @@ fun AddTaskScreen(
 
 
     Column(
-        modifier = Modifier
+        modifier = Modifier.background(BackgroundColor)
             .fillMaxSize()
-            .background(BackgroundColor)
             .padding(horizontal = 16.dp)
             .padding(top = 32.dp)
-
             .verticalScroll(scrollState)
     ) {
 

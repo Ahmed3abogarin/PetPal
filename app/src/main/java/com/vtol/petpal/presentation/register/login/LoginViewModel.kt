@@ -89,14 +89,14 @@ class LoginViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         val result = withContext(Dispatchers.IO) {
-            useCases.signIn(_uiState.value.email, _uiState.value.password)
+            useCases.signIn(_uiState.value.email.trim(), _uiState.value.password.trim())
         }
 
         result
             .onSuccess { _uiState.update { it.copy(isLoading = false) } }
             .onFailure { throwable ->
                 _uiState.update { it.copy(isLoading = false, error = throwable.message) }
-                Timber.tag("Failure").e(throwable.message)
+                Timber.tag("Failure").e(throwable)
             }
     }
 }
