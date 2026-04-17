@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.explore.components
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.map.VetAddress
+import com.vtol.petpal.presentation.explore.util.MapsIntentHelper.openGoogleMaps
 import com.vtol.petpal.ui.theme.MainPurple
 
 
@@ -58,7 +58,7 @@ fun LocationCard(vet: VetAddress) {
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.elevatedCardElevation(12.dp),
         onClick = {
-            Toast.makeText(context,vet.name, Toast.LENGTH_SHORT).show()
+            openGoogleMaps(context,vet)
         }
     ) {
         Column {

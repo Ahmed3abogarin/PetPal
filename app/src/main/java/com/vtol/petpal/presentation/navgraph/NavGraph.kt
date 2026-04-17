@@ -139,7 +139,7 @@ fun MainNavGraph() {
         NavHost(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding()),
+                .padding(innerPadding),
             startDestination = Routes.HomeScreen.route, navController = navController
         ) {
 

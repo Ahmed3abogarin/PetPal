@@ -53,8 +53,8 @@ fun SplashScreen() {
         modifier = Modifier
             .statusBarsPadding()
             .navigationBarsPadding()
-            .background(bgColor)
             .fillMaxSize()
+            .background(bgColor)
 
     ) {
 

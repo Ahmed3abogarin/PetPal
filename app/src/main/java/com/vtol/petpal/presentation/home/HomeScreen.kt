@@ -12,10 +12,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,6 +52,7 @@ import com.vtol.petpal.presentation.components.TaskCard
 import com.vtol.petpal.presentation.home.components.HomePetsList
 import com.vtol.petpal.presentation.home.components.HomeScreenHeader
 import com.vtol.petpal.presentation.home.components.ProgressCard
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
@@ -94,12 +95,12 @@ fun HomeScreen(
 //    )
 
     Scaffold(
+        containerColor = BackgroundColor,
         snackbarHost = { SnackbarHost(scaffoldState) },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             Column(
                 Modifier
-                    .navigationBarsPadding()
-                    .padding(bottom = 18.dp)
                     .clip(CircleShape)
                     .background(MainPurple)
                     .clickable { onAddTaskClicked() }
@@ -114,13 +115,13 @@ fun HomeScreen(
                 Text(text = "Add Task", color = Color.White, fontSize = 8.sp)
             }
         }
-    ) { _ ->
+    ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0XFFF8F4FF))
-        ) {
+                .padding(bottom = padding.calculateBottomPadding())
 
+        ) {
 
             // The header
             item {
@@ -139,10 +140,10 @@ fun HomeScreen(
                     pets = petsList,
                     onPetClicked = { onPetClicked(it) },
                     onAddPetClicked = {
-                        if (petsList.size < 2){
+                        if (petsList.size < 2) {
                             onAddPetClicked()
-                        }else {
-                            Toast.makeText(context,"Upgrade to premium",Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Upgrade to premium", Toast.LENGTH_SHORT).show()
                         }
                     }
                 )
@@ -241,11 +242,7 @@ fun HomeScreen(
             }
 
             item {
-                Spacer(
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .height(14.dp)
-                )
+                Spacer(modifier = Modifier.height(72.dp))
             }
         }
 

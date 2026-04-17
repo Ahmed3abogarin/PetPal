@@ -1,10 +1,8 @@
 package com.vtol.petpal.presentation.home.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
@@ -13,8 +11,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +33,6 @@ import com.vtol.petpal.ui.theme.MainPurple
 
 @Composable
 fun HomePetsList(
-    modifier: Modifier = Modifier,
     pets: List<Pet>,
     onPetClicked: (String) -> Unit,
     onAddPetClicked: () -> Unit
@@ -62,20 +60,18 @@ fun HomePetsList(
             }
         }
         item {
-            Box(
-                modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(MainPurple), contentAlignment = Alignment.Center
+            FilledIconButton(
+                colors = IconButtonDefaults.iconButtonColors(containerColor = MainPurple),
+                modifier = Modifier.size(64.dp),
+                onClick = { onAddPetClicked() },
+                shape = CircleShape,
             ) {
-                IconButton(onClick = { onAddPetClicked() }) {
-                    Icon(
-                        modifier = Modifier.size(32.dp),
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "",
-                        tint = Color.White
-                    )
-                }
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "",
+                    tint = Color.White
+                )
             }
         }
     }

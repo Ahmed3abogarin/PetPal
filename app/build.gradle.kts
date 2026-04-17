@@ -31,11 +31,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
 
-        val mapsApiKey = project.findProperty("mapsApiKey").toString()
+        val mapsApiKey = project.findProperty("mapsApiKey") as String?
+            ?: throw GradleException("mapsApiKey is missing in gradle.properties")
 
         buildConfigField(
             "String",
-            "mapsApiKey",
+            "MAPS_API_KEY",
             "\"$mapsApiKey\""
         )
     }
@@ -146,6 +147,6 @@ dependencies {
 
 
     // Lottie animation
-    implementation("com.airbnb.android:lottie-compose:6.7.1")
+    implementation(libs.lottie.compose)
 
 }

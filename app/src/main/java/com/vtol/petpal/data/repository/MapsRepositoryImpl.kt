@@ -19,7 +19,7 @@ class MapsRepositoryImpl(
 ) : MapsRepository {
     private val placesClient: PlacesClient by lazy {
         if (!Places.isInitialized()) {
-            Places.initializeWithNewPlacesApiEnabled(context.applicationContext, BuildConfig.mapsApiKey)
+            Places.initializeWithNewPlacesApiEnabled(context.applicationContext, BuildConfig.MAPS_API_KEY)
         }
         Places.createClient(context.applicationContext)
     }

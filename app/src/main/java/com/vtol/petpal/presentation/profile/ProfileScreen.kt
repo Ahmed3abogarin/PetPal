@@ -1,7 +1,6 @@
 package com.vtol.petpal.presentation.profile
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
@@ -34,8 +32,8 @@ import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.profile.components.SettingsButton
 import com.vtol.petpal.ui.theme.BackgroundColor
-import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.Resource
+import androidx.core.net.toUri
 
 @Composable
 fun ProfileScreen(viewmodel: UserViewModel, navigateToFeedback: () -> Unit) {
@@ -46,9 +44,9 @@ fun ProfileScreen(viewmodel: UserViewModel, navigateToFeedback: () -> Unit) {
 
     Column(
         modifier = Modifier
-            .padding(top = 6.dp)
             .fillMaxSize()
             .background(BackgroundColor)
+            .padding(top = 6.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -136,21 +134,12 @@ fun ProfileScreen(viewmodel: UserViewModel, navigateToFeedback: () -> Unit) {
         SettingsButton(
             text = "Terms & Privacy",
             onClick = {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ahmed3abogarin.github.io/PetPal-privacy-policy"))
+                val intent = Intent(Intent.ACTION_VIEW,
+                    "https://ahmed3abogarin.github.io/PetPal-privacy-policy".toUri())
                 context.startActivity(intent)
             }
         )
-        Spacer(modifier = Modifier.height(120.dp))
 
 
-    }
-}
-
-
-@Preview
-@Composable
-fun ProfilePreview() {
-    PetPalTheme {
-//        ProfileScreen()
     }
 }

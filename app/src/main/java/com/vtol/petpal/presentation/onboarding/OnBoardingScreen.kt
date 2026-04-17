@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.presentation.onboarding.components.PagerIndicators
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.launch
@@ -43,11 +44,12 @@ fun OnboardingScreen(onFinish: () -> Unit) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .padding(top = 16.dp)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .background(Color(0XFFF8F4FF))
-            .padding(top = 16.dp),
+            .fillMaxSize()
+            .background(BackgroundColor)
+            ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PagerIndicators(currentPage = pagerState.currentPage)
