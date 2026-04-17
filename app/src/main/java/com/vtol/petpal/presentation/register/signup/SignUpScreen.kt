@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -25,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.SemiTransparentPurple
 
@@ -38,12 +43,14 @@ fun SignUpScreen(
 
     Box(
         modifier = Modifier
+            .background(BackgroundColor)
             .fillMaxSize()
-            .background(Color(0XFFF8F4FF)),
+            .statusBarsPadding()
+            .imePadding(),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 

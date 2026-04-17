@@ -44,12 +44,11 @@ fun OnboardingScreen(onFinish: () -> Unit) {
 
     Column(
         modifier = Modifier
+            .background(BackgroundColor)
             .padding(top = 16.dp)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .fillMaxSize()
-            .background(BackgroundColor)
-            ,
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PagerIndicators(currentPage = pagerState.currentPage)

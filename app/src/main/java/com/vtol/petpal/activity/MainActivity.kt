@@ -1,12 +1,6 @@
 package com.vtol.petpal.activity
 
-import android.app.AlarmManager
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,7 +25,6 @@ import com.vtol.petpal.presentation.update.UpdateState
 import com.vtol.petpal.presentation.update.UpdateViewModel
 import com.vtol.petpal.ui.theme.PetPalTheme
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

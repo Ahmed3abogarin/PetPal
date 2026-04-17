@@ -51,15 +51,12 @@ fun SplashScreen() {
 
     Box(
         modifier = Modifier
+            .background(bgColor)
             .statusBarsPadding()
             .navigationBarsPadding()
             .fillMaxSize()
-            .background(bgColor)
-
     ) {
-
         // app logo in the center
-
         AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.Center),
