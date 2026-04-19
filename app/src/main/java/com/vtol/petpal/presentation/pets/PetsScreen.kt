@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,10 +53,10 @@ fun PetsScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                if (state.pets.size < 2){
+                if (state.pets.size < 2) {
                     navigateToAddPetScreen()
-                }else {
-                    Toast.makeText(context,"Upgrade to premium",Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Upgrade to premium", Toast.LENGTH_SHORT).show()
                 }
 
             }) {
@@ -63,38 +65,42 @@ fun PetsScreen(
         }
     ) { innerPadding ->
 
-        when {
-            state.isLoading -> {
-                CircularProgressIndicator()
-            }
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
 
-            state.error != null -> {
-                Text(text = state.error!!)
-            }
+            when {
+                state.isLoading -> {
+                    CircularProgressIndicator()
+                }
 
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.padding(innerPadding),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp)
-                ) {
-                    items(state.pets) { pet ->
-                        PetCard(
-                            pet = pet,
-                            onScheduleClick = { onScheduleClick(it) },
-                            onCardClick = { onCardClick(pet.id) },
-                            task = state.firstTasks[pet.id]
-                        )
+                state.error != null -> {
+                    LaunchedEffect(state.error) {
+                        Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                else -> {
+                    val pets = state.pets
+                    if (pets.isEmpty()) {
+                        Text(modifier = Modifier.align(Alignment.Center), text = "No pets yet")
+                    }
+                    LazyColumn(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp)
+                    ) {
+                        items(state.pets) { pet ->
+                            PetCard(
+                                pet = pet,
+                                onScheduleClick = { onScheduleClick(it) },
+                                onCardClick = { onCardClick(pet.id) },
+                                task = state.firstTasks[pet.id]
+                            )
+                        }
                     }
                 }
             }
-
         }
-
-
     }
-
-
 }
 
 

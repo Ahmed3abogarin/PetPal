@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -86,6 +87,7 @@ fun SignUpScreen(
                 value = state.name,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Name",
+                errorTxt = state.nameError,
                 isOneLine = true,
                 onValueChanged = { viewModel.onEvent(SignUpEvent.NameChanged(it)) }
             )
@@ -94,6 +96,7 @@ fun SignUpScreen(
                 value = state.email,
                 colors = secondFilledTextFieldColors(),
                 isOneLine = true,
+                errorTxt = state.emailError,
                 placeHolder = "Email",
                 onValueChanged = { viewModel.onEvent(SignUpEvent.EmailChanged(it)) }
             )
@@ -102,6 +105,7 @@ fun SignUpScreen(
                 value = state.password,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
+                errorTxt = state.passwordError,
                 isOneLine = true,
                 password = true,
                 onValueChanged = { viewModel.onEvent(SignUpEvent.PasswordChanged(it)) }
@@ -127,6 +131,17 @@ fun SignUpScreen(
                     text = "Sign In", color = MainPurple, fontWeight = FontWeight.SemiBold
                 )
             }
+        }
+    }
+
+    if (state.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
 }

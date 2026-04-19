@@ -103,7 +103,13 @@ fun HomeScreen(
                 Modifier
                     .clip(CircleShape)
                     .background(MainPurple)
-                    .clickable { onAddTaskClicked() }
+                    .clickable {
+                        if (state.value.petsList.isEmpty()){
+                            Toast.makeText(context,"Add a pet first",Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        onAddTaskClicked()
+                    }
                     .padding(horizontal = 10.dp, vertical = 5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
