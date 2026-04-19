@@ -1,10 +1,12 @@
 package com.vtol.petpal.presentation.pets.components
 
-import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,35 +35,54 @@ import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
-    val sorted = records.sortedBy { it.timestamp }
-    Log.v("Chart2",sorted.size.toString())
-    Log.v("Chart2","records: ${records.size}")
-    val xValues = sorted.mapIndexed { index, _ -> index.toFloat() }
-    val yValues = sorted.map { it.weight.toFloat() }
-
-    Log.v("Chart2",xValues.size.toString())
-    Log.v("Chart2",yValues.size.toString())
+    val sorted = remember(records) {
+        records.sortedBy { it.timestamp }
+    }
 
     val modelProducer = remember { CartesianChartModelProducer() }
 
-    runBlocking {
-        modelProducer.runTransaction {
-            lineSeries {
-                series(x = xValues, y = yValues)
+    val shape: Shape = CircleShape.toVicoShape()
+
+    val startColor = Color(0xFF673AB7).copy(alpha = 0.5f)
+    val endColor = Color.Transparent
+
+    // Convert data safely
+    val xValues = remember(sorted) {
+        sorted.mapIndexed { index, _ -> index.toFloat() }
+    }
+
+    val yValues = remember(sorted) {
+        sorted.map { it.weight.toFloat() }
+    }
+
+    // Update chart safely
+    LaunchedEffect(sorted) {
+        if (sorted.isNotEmpty()) {
+            modelProducer.runTransaction {
+                lineSeries {
+                    series(x = xValues, y = yValues)
+                }
             }
         }
     }
-    val shape: Shape = CircleShape.toVicoShape()
 
-    val startColor = Color(0xFF673AB7).copy(alpha = 0.5f) // Purple (Semi-transparent)
-    val endColor = Color.Transparent
-
+    // EMPTY STATE HANDLING
+    if (sorted.isEmpty()) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(220.dp),
+            contentAlignment = androidx.compose.ui.Alignment.Center
+        ) {
+            Text(text = "No weight records yet")
+        }
+        return
+    }
 
     // Here we define the line proprietaries (the art :) )
     val line = LineCartesianLayer.rememberLine(
@@ -109,10 +130,13 @@ fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
                 itemPlacer = HorizontalAxis.ItemPlacer.aligned(),
                 valueFormatter = { _, value, _ ->
                     val index = value.toInt()
+
                     if (index in sorted.indices) {
                         SimpleDateFormat("MMM d", Locale.getDefault())
                             .format(sorted[index].timestamp)
-                    } else ""
+                    } else {
+                        " "
+                    }
                 }
             ),
         ),

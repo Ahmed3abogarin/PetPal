@@ -108,15 +108,14 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
 
                         AppChart(records = weightList.sortedBy { it.timestamp })
                         Timber.e( weightList.size.toString())
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "Vet Visits", style = MaterialTheme.typography.headlineMedium)
-                        Spacer(modifier = Modifier.height(8.dp))
 
-
-                        if (vetTasks.isEmpty()) {
-                            Text(modifier = Modifier.align(Alignment.Center), text = "No vet tasks")
+                        if (vetTasks.isNotEmpty()){
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(text = "Vet Visits", style = MaterialTheme.typography.headlineMedium)
+                            Spacer(modifier = Modifier.height(8.dp))
 
                         }
+
                     }
                     items(vetTasks) { task ->
                         VetItem(task, task.dateTime.toDateTimeString())

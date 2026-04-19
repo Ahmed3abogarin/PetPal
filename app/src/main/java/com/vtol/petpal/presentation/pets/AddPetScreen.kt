@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -46,6 +47,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import coil.compose.rememberAsyncImagePainter
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
@@ -78,7 +80,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
     var selectWUnit by remember { mutableStateOf(WeightUnit.KG) }
 
     var gender by remember { mutableStateOf(PetGender.Unknown) }
-    var genderError by remember {mutableStateOf<String?>(null)}
+    var genderError by remember { mutableStateOf<String?>(null) }
     var selectedIndex by remember { mutableIntStateOf(-1) }
 
     var birthDate by remember { mutableStateOf<Long?>(null) }
@@ -113,7 +115,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                     .fillMaxWidth()
                     .padding(top = 12.dp, bottom = 14.dp)
             ) {
-                BackArrow{navigateUp()}
+                BackArrow { navigateUp() }
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = "Add Pet",
@@ -164,9 +166,17 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
 
-            PetTextField(placeHolder = "Pet Name", value = petName, error = petNameError) { petName = it }
+            PetTextField(
+                placeHolder = "Pet Name",
+                value = petName,
+                error = petNameError
+            ) { petName = it }
 
-            PetTextField(placeHolder = "Specie", value = petBreed, error = petBreedError) { petBreed = it }
+            PetTextField(
+                placeHolder = "Specie",
+                value = petBreed,
+                error = petBreedError
+            ) { petBreed = it }
 
             // TODO: Add a unit in the end of the text field using Row and drop down menu kg/pound/gram
             PetTextField(
@@ -255,7 +265,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                         "This field cannot be empty"
                     } else null
 
-                    petWeightError = if (petWeight.isBlank()) {
+                    petWeightError = if (petWeight.isBlank() || petWeight.isDigitsOnly()) {
                         isValid = false
                         "This field cannot be empty"
                     } else null
@@ -263,7 +273,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
 
 
-                    if (isValid){
+                    if (isValid) {
                         viewModel.addPet(
                             pet = Pet(
                                 petName = petName,
@@ -274,11 +284,13 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 //                                weight = listOf(WeightRecord(weight = petWeight.toDouble(), date =   Date(System.currentTimeMillis()) ))
                             ),
                             imageUri = imageUri,
-                            weight = WeightRecord(weight = petWeight.toDouble(), unit = selectWUnit),
+                            weight = WeightRecord(
+                                weight = petWeight.toDouble(),
+                                unit = selectWUnit
+                            ),
 
-                        )
+                            )
                     }
-
 
 
                 },
@@ -293,27 +305,30 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
             }
         }
 
-            when (state) {
-                is Resource.Loading -> {
-                    Log.e("TTTOLSDF", "its loading now")
-                    isUiEnabled = false
-                    LoadingIndicator()
-                }
-
-                is Resource.Success -> {
-                    Log.e("TTTOLSDF", "its succeed")
-                    navigateUp()
-                    Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show()
-
-                }
-
-                is Resource.Error -> {
-                    val error = (state as Resource.Error).message
-                    Log.e("TTTOLSDF", error)
-                }
-
-                else -> Unit
+        when (state) {
+            is Resource.Loading -> {
+                Log.e("TTTOLSDF", "its loading now")
+                isUiEnabled = false
+                LoadingIndicator()
             }
+
+            is Resource.Success -> {
+                Log.e("TTTOLSDF", "its succeed")
+                navigateUp()
+                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show()
+
+            }
+
+            is Resource.Error -> {
+                val error = (state as Resource.Error).message
+                Log.e("ADDPET", "Error $error")
+                LaunchedEffect(state) {
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            else -> Unit
+        }
 
     }
 }
