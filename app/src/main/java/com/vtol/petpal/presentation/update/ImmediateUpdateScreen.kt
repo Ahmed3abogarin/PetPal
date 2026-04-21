@@ -1,7 +1,6 @@
 package com.vtol.petpal.presentation.update
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -39,6 +38,8 @@ import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import androidx.core.net.toUri
+import com.vtol.petpal.BuildConfig
 
 @Composable
 fun ImmediateUpdateScreen() {
@@ -103,7 +104,8 @@ fun ImmediateUpdateScreen() {
                 color = MainPurple
             ) {
                 // ************ Navigate the user to play store to update the app :) ****************
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"))
+                val intent = Intent(Intent.ACTION_VIEW,
+                    "https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}".toUri())
                 context.startActivity(intent)
             }
         }
