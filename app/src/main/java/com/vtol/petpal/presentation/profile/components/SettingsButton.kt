@@ -49,8 +49,8 @@ fun SettingsButton(
                 modifier = Modifier
                     .clip(RoundedCornerShape(18.dp))
                     .background(bgColor)
-                    .padding(12.dp)
-                    .size(28.dp),
+                    .padding(14.dp)
+                    .size(20.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
