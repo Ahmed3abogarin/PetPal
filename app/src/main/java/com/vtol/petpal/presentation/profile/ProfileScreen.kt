@@ -1,6 +1,9 @@
 package com.vtol.petpal.presentation.profile
 
 import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +28,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +48,7 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.ui.theme.BackgroundColor
 import androidx.core.net.toUri
+import com.vtol.petpal.presentation.profile.components.ConfirmationDialog
 import com.vtol.petpal.presentation.profile.components.SettingsButton
 import com.vtol.petpal.presentation.profile.components.ProfileInfoCard
 import com.vtol.petpal.ui.theme.MainPurple
@@ -59,6 +67,9 @@ fun ProfileScreen(
     event: (ProfileEvents) -> Unit
 ) {
     val context = LocalContext.current
+
+    var showDialog by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -326,12 +337,26 @@ fun ProfileScreen(
                 bgColor = Color(0XFFFFEAEE),
                 icon = R.drawable.ic_signout
             ) {
-                event(ProfileEvents.SignOut)
+                showDialog = true
             }
         }
 
 
         Spacer(modifier = Modifier.height(32.dp))
+    }
+
+    AnimatedVisibility(
+        visible = showDialog,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        ConfirmationDialog(
+            onDismiss = { showDialog = false },
+            onSignOutClicked = {
+                showDialog = false
+                event(ProfileEvents.SignOut)
+            }
+        )
     }
 }
 
