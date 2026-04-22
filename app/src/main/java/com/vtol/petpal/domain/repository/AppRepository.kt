@@ -4,6 +4,7 @@ import android.net.Uri
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -26,5 +27,7 @@ interface AppRepository {
 
 
     suspend fun toggleTaskCompletion(taskId: Int, isCompleted: Boolean)
+
+    fun getSpecificTasks(type: TaskType): Flow<List<Task>>
 
 }

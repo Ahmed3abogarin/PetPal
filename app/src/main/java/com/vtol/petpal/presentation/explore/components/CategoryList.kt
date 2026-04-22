@@ -46,7 +46,7 @@ fun CategoryList(
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp))
                 .background(Color.White)
-                .padding(start = 6.dp, bottom = 12.dp, top = 6.dp),
+                .padding(start = 6.dp, bottom = 12.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(text = "Explore", style = MaterialTheme.typography.displaySmall)

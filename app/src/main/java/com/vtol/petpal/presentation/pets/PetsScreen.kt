@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -41,10 +42,15 @@ fun PetsScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(vertical = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 // text in the top middle
                 Text(
-                    modifier = Modifier.padding(top = 6.dp, bottom = 12.dp),
                     text = "My Pets",
                     style = MaterialTheme.typography.displaySmall
                 )
@@ -65,7 +71,9 @@ fun PetsScreen(
         }
     ) { innerPadding ->
 
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)) {
 
             when {
                 state.isLoading -> {

@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.TaskType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -27,6 +28,9 @@ interface TasksDao {
 
     @Query("SELECT * FROM pet_tasks WHERE petId = :petId ORDER BY dateTime ASC")
     fun getTask(petId: String): Flow<List<Task>>
+
+    @Query("SELECT * FROM pet_tasks WHERE type = :type ORDER BY dateTime ASC")
+    fun getSpecificTasks(type: TaskType): Flow<List<Task>>
 
     //  @Query("SELECT * FROM pet_tasks WHERE petId = :petId ORDER BY dateTime ASC")
 }

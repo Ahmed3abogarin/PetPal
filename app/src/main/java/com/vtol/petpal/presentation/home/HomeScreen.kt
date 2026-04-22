@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -58,6 +59,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     onAddTaskClicked: () -> Unit,
     onAddPetClicked: () -> Unit,
     onPetClicked: (String) -> Unit,
@@ -95,6 +97,7 @@ fun HomeScreen(
 //    )
 
     Scaffold(
+        modifier = modifier,
         containerColor = BackgroundColor,
         snackbarHost = { SnackbarHost(scaffoldState) },
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -131,9 +134,8 @@ fun HomeScreen(
 
             // The header
             item {
-                HomeScreenHeader(state = userState)
+                HomeScreenHeader(modifier = Modifier.statusBarsPadding().padding(top = 16.dp), state = userState)
             }
-//            AppHomeHeader()
 
 
             item {

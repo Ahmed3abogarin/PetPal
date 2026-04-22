@@ -51,6 +51,7 @@ import com.vtol.petpal.domain.usecases.register.ReadAppEntry
 import com.vtol.petpal.domain.usecases.register.Register
 import com.vtol.petpal.domain.usecases.register.SaveAppEntry
 import com.vtol.petpal.domain.usecases.register.SignIn
+import com.vtol.petpal.domain.usecases.tasks.GetSpecificTasks
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
@@ -157,7 +158,8 @@ object AppModule {
             getUser = GetUser(userRepository),
             getVersion = GetVersion(updateRepository),
             toggleTask = ToggleTask(appRepository),
-            toggleNotification = ToggleNotification(preferencesRepository)
+            toggleNotification = ToggleNotification(preferencesRepository),
+            getSpecificTasks = GetSpecificTasks(appRepository)
         )
 
     @Provides

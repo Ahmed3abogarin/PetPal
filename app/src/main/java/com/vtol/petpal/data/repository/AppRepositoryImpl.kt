@@ -8,6 +8,7 @@ import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.util.Constants.PETS_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
@@ -192,6 +193,10 @@ class AppRepositoryImpl @Inject constructor(
 
     override suspend fun toggleTaskCompletion(taskId: Int, isCompleted: Boolean) {
         tasksDao.updateTaskCompletion(taskId, isCompleted)
+    }
+
+    override fun getSpecificTasks(type: TaskType): Flow<List<Task>> {
+        return tasksDao.getSpecificTasks(type)
     }
 
 

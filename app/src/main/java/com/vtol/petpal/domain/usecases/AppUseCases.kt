@@ -1,5 +1,6 @@
 package com.vtol.petpal.domain.usecases
 
+import com.vtol.petpal.domain.usecases.tasks.GetSpecificTasks
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
@@ -21,6 +22,8 @@ data class AppUseCases(
 
     val toggleTask: ToggleTask,
 
-    val toggleNotification: ToggleNotification
+    val toggleNotification: ToggleNotification,
+
+    val getSpecificTasks: GetSpecificTasks
 
 )

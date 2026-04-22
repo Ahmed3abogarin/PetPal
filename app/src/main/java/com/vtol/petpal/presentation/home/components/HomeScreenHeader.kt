@@ -43,11 +43,9 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
     ) {
         val context = LocalContext.current
         Column(
-            modifier = modifier
-                .padding(horizontal = 12.dp)
+            modifier = modifier.padding(horizontal = 12.dp)
 
         ) {
-            Spacer(modifier = Modifier.height(18.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),

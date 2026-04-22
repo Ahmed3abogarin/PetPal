@@ -23,3 +23,5 @@ val DarkGold = Color(0xFFD79200)
 val ButtonLightGray = Color(0xFFEAEAEA)
 
 val BackgroundColor = Color(0xFFF8F4FF)
+
+val Red = Color(0xFFFF2B3A)

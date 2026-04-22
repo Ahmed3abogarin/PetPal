@@ -57,6 +57,8 @@ fun MainNavGraph() {
 
     val userViewModel: UserViewModel = hiltViewModel()
 
+    val profileViewModel: ProfileViewModel = hiltViewModel()
+
 
     val bottomItems = remember {
         mutableListOf(
@@ -95,7 +97,7 @@ fun MainNavGraph() {
     }
 
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = Color.White,
         bottomBar = {
             if (isBottomNavVisible) {
                 AppBottomNavComponent(
@@ -139,7 +141,7 @@ fun MainNavGraph() {
         NavHost(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(bottom = innerPadding.calculateBottomPadding()),
             startDestination = Routes.HomeScreen.route, navController = navController
         ) {
 
@@ -189,9 +191,16 @@ fun MainNavGraph() {
                 NearByScreen()
             }
             composable(route = Routes.ProfileScreen.route) {
-                ProfileScreen(userViewModel, navigateToFeedback = {
-                    navController.navigate(Routes.FeedbackScreen.route)
-                })
+                ProfileScreen(
+                    user = userViewModel.state.value,
+                    state = profileViewModel.uiState.value,
+                    event = userViewModel::onEvent,
+                    petsCount = petViewModel.state.value.pets.size,
+                    doneTasks = homeViewModel.state.value.completedCount,
+                    navigateToFeedBack = {
+                        navController.navigate(Routes.FeedbackScreen.route)
+                    }
+                )
             }
 
             // sub screens
@@ -219,9 +228,9 @@ fun MainNavGraph() {
 
 
             composable(Routes.FeedbackScreen.route) {
-                val viewModel: ProfileViewModel = hiltViewModel()
+
                 FeedbackScreen(
-                    viewModel = viewModel,
+                    viewModel = profileViewModel,
                     navigateUp = { navController.navigateUp() })
             }
         }
