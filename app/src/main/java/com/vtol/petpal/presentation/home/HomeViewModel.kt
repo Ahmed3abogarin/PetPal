@@ -126,8 +126,15 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-            .onEach { newState ->
-                _state.value = newState
+            .onEach { dataUpdate ->
+                _state.update { currentState ->
+                    dataUpdate.copy(
+                        // Preserve these flags from the current UI state
+                        taskSaved = currentState.taskSaved,
+                        showNotificationPermissionDialog = currentState.showNotificationPermissionDialog,
+                        showExactAlarmPermissionDialog = currentState.showExactAlarmPermissionDialog
+                    )
+                }
             }.launchIn(viewModelScope)
     }
 

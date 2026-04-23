@@ -146,6 +146,7 @@ fun AddTaskScreen(
 
     LaunchedEffect(state.taskSaved) {
         if (state.taskSaved) {
+            isSaving = false
             viewModel.resetTaskSaved()
             navigateUp()
         }
