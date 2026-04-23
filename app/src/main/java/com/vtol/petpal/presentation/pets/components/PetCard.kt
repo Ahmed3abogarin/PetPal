@@ -24,7 +24,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -35,7 +34,6 @@ import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.ui.theme.ButtonLightGray
 import com.vtol.petpal.ui.theme.LightPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.toAgeString
 
 @Composable
@@ -103,7 +101,7 @@ fun PetCard(
                     Image(
                         modifier = Modifier
                             .size(26.dp),
-                        painter = painterResource(R.drawable.ic_calender),
+                        painter = painterResource(R.drawable.ic_calendar_outlined),
                         contentDescription = ""
                     )
                     Spacer(modifier = Modifier.width(12.dp))
@@ -112,18 +110,8 @@ fun PetCard(
                         modifier = Modifier.padding(vertical = 2.dp),
                         color = Color.Black
                     )
-
                 }
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PetCardPreview() {
-    PetPalTheme {
-//        PetCard(Pet(), onCardClick = {}, onScheduleClick = {}, task = Task())
-    }
-
 }

@@ -76,7 +76,7 @@ fun ImmediateUpdateScreen() {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,
-                    painter = painterResource(R.drawable.img_update_v2),
+                    painter = painterResource(R.drawable.img_update),
                     contentDescription = "update image"
                 )
                 Spacer(modifier = Modifier.height(16.dp))
