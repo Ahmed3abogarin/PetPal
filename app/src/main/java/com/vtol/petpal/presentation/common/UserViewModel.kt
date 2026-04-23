@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
-import com.vtol.petpal.presentation.profile.ProfileEvents
 import com.vtol.petpal.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val appUseCases: AppUseCases
+    private val appUseCases: AppUseCases,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<Resource<User>>(Resource.Loading)
@@ -23,14 +22,6 @@ class UserViewModel @Inject constructor(
 
     init {
         getUser()
-    }
-
-    fun onEvent(event: ProfileEvents) {
-        when (event) {
-            is ProfileEvents.SignOut -> {
-
-            }
-        }
     }
 
     private fun getUser() {

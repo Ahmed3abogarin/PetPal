@@ -1,9 +1,19 @@
 package com.vtol.petpal.presentation.navgraph
 
+
 sealed class Routes(val route: String) {
 
-    // app main screens
     data object OnboardingScreen: Routes("onboardingScreen")
+    data object SplashScreen: Routes("splashScreen")
+
+    data object ErrorScreen: Routes("errorScreen")
+
+
+
+    // app main screens
+
+    data object LoginScreen: Routes("loginScreen")
+    data object SignUpScreen: Routes("signUpScreen")
     data object HomeScreen: Routes("homeScreen")
     data object PetsScreen: Routes("petsScreen")
     data object CalenderScreen: Routes("calenderScreen")
@@ -20,10 +30,10 @@ sealed class Routes(val route: String) {
     data object FeedbackScreen: Routes("feedbackScreen")
 
 
-    // app navigation
-    data object AppStartNavigation: Routes("appStartNavigation")
-    data object AppMainNavigation: Routes("appMainNavigation")
-    data object ScreensNavigation: Routes("screensNavigation")
+    data object MainGraph: Routes("mainGraph")
+
+    data object MainScreen: Routes("mainScreen")
+    data object AuthGraph: Routes("authGraph")
 
 
 }

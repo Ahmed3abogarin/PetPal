@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
+import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,13 +19,13 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val submitFeedBackUseCase: SubmitFeedBackUseCase,
-    private val appUseCases: AppUseCases
+    private val appUseCases: AppUseCases,
+    private val authUseCases: AuthUseCases
 ) : ViewModel() {
 
 
     private val _state = MutableStateFlow<FeedbackUiState>(FeedbackUiState.FeedbackForm)
     val state = _state.asStateFlow()
-
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
@@ -33,6 +34,23 @@ class ProfileViewModel @Inject constructor(
     init {
         getVetVisits()
     }
+
+
+    fun onEvent(event: ProfileEvents) {
+        when (event) {
+            is ProfileEvents.SignOut -> signOut()
+        }
+    }
+
+
+    private fun signOut() {
+        viewModelScope.launch {
+            authUseCases.logout()
+        }
+    }
+
+
+
     fun submitFeedback(feedback: HashMap<String, Any>) {
 
         viewModelScope.launch {
@@ -49,14 +67,13 @@ class ProfileViewModel @Inject constructor(
 
         appUseCases.getSpecificTasks(TaskType.VET)
             .onEach { tasks ->
-            _uiState.update { it.copy(vetVisits = tasks.size) }
+                _uiState.update { it.copy(vetVisits = tasks.size, loading = false) }
         }.launchIn(viewModelScope)
 
 
     }
 
 }
-
 data class ProfileUiState(
     val loading: Boolean = true,
     val vetVisits: Int = 0,

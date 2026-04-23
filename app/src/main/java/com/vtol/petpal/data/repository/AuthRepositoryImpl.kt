@@ -5,13 +5,17 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.presentation.register.AuthState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -19,7 +23,8 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val db: TasksDB
 ) : AuthRepository {
 
 
@@ -61,6 +66,9 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun logout() {
+        CoroutineScope(Dispatchers.IO).launch{
+            db.clearAllTables()
+        }
         auth.signOut()
     }
 
@@ -88,6 +96,4 @@ class AuthRepositoryImpl @Inject constructor(
             it[OnboardingPrefs.COMPLETED] = true
         }
     }
-
-
 }

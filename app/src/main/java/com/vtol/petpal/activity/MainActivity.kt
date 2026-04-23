@@ -12,12 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.vtol.petpal.presentation.navgraph.AuthNavGraph
-import com.vtol.petpal.presentation.navgraph.MainNavGraph
-import com.vtol.petpal.presentation.navgraph.components.ErrorScreen
-import com.vtol.petpal.presentation.onboarding.OnboardingScreen
-import com.vtol.petpal.presentation.register.AuthState
-import com.vtol.petpal.presentation.register.login.LoginViewModel
+import com.vtol.petpal.presentation.navgraph.NavGraph
 import com.vtol.petpal.presentation.splash.SplashScreen
 import com.vtol.petpal.presentation.update.FlexibleUpdateScreen
 import com.vtol.petpal.presentation.update.ImmediateUpdateScreen
@@ -34,14 +29,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             PetPalTheme {
                 val updateViewModel: UpdateViewModel = hiltViewModel()
-                val authViewModel: LoginViewModel = hiltViewModel()
 
                 LaunchedEffect(Unit) {
                     updateViewModel.getMinRequiredVersion()
                 }
 
                 Column(modifier = Modifier.fillMaxSize()) {
-                    RootScreen(authViewModel, updateViewModel)
+                    RootScreen(updateViewModel)
                 }
             }
         }
@@ -50,11 +44,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun RootScreen(
-    authViewModel: LoginViewModel,
     updateViewModel: UpdateViewModel
 ) {
     val updateState by updateViewModel.updateState.collectAsState()
-    val authState by authViewModel.authState.collectAsState()
 
     when (updateState) {
         is UpdateState.Loading -> SplashScreen()
@@ -68,31 +60,7 @@ fun RootScreen(
             updateViewModel.dismissFlexibleUpdate()
         } // show flexible update process
         is UpdateState.UpToDate -> {
-            when (authState) {
-                is AuthState.Loading -> {
-                    SplashScreen()
-                }
-
-                is AuthState.Unauthenticated -> {
-                    AuthNavGraph()
-                }
-
-                is AuthState.OnBoarding -> {
-                    OnboardingScreen {
-                        authViewModel.completeOnBoarding()
-                    }
-                }
-
-                is AuthState.Authenticated -> {
-                    MainNavGraph()
-                }
-
-                is AuthState.Error -> {
-                    ErrorScreen(
-                        message = (authState as AuthState.Error).message
-                    )
-                }
-            }
+            NavGraph()
         }
     }
 

@@ -1,9 +1,6 @@
 package com.vtol.petpal.presentation.profile
 
 import android.content.Intent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -345,19 +342,16 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(32.dp))
     }
 
-    AnimatedVisibility(
+
+    ConfirmationDialog(
         visible = showDialog,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        ConfirmationDialog(
-            onDismiss = { showDialog = false },
-            onSignOutClicked = {
-                showDialog = false
-                event(ProfileEvents.SignOut)
-            }
-        )
-    }
+        onDismiss = { showDialog = false },
+        onSignOutClicked = {
+            showDialog = false
+            event(ProfileEvents.SignOut)
+        }
+    )
+
 }
 
 

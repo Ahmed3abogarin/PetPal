@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -62,7 +63,7 @@ fun PetDetailsScreen(
 
     state.pet?.let {
         PetDetailsScreenContent(
-            modifier = modifier,
+            modifier = modifier.statusBarsPadding().padding(top = 16.dp),
             pet = it,
             task = state,
             navigateUp = navigateUp,

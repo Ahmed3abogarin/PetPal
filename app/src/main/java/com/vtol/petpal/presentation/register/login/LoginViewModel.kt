@@ -3,16 +3,12 @@ package com.vtol.petpal.presentation.register.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
-import com.vtol.petpal.presentation.register.AuthState
 import com.vtol.petpal.util.ValidationUtils.validateEmail
 import com.vtol.petpal.util.ValidationUtils.validatePassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,21 +20,6 @@ class LoginViewModel @Inject constructor(
     private val useCases: AuthUseCases
 ) : ViewModel() {
 
-    val authState: StateFlow<AuthState> =
-        combine(
-            useCases.getAuthState(),
-            useCases.readAppEntry()
-        ) { authState, onboardingCompleted ->
-            if (!onboardingCompleted) {
-                AuthState.OnBoarding
-            } else {
-                authState
-            }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            AuthState.Loading
-        )
 
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -66,12 +47,6 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginEvent.LoginClicked -> login()
-        }
-    }
-
-    fun completeOnBoarding() {
-        viewModelScope.launch {
-            useCases.saveAppEntry()
         }
     }
 
