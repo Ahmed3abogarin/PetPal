@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -94,8 +95,7 @@ fun AddTaskScreen(
 
     var selectedType by remember { mutableStateOf<TaskType?>(null) }
 
-    var selectedPet by remember { mutableStateOf(petsList[0]) }
-
+    var selectedPet by remember { mutableStateOf(if (petsList.isNotEmpty()) petsList.first() else Pet()) }
 
     var recurrence by remember { mutableStateOf<RepeatInterval?>(RepeatInterval.Never) }
 
@@ -202,8 +202,9 @@ fun AddTaskScreen(
     Column(
         modifier = Modifier.background(BackgroundColor)
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(horizontal = 16.dp)
-            .padding(top = 32.dp)
+            .padding(top = 16.dp)
             .verticalScroll(scrollState)
     ) {
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -112,7 +113,8 @@ fun ProfileScreen(
                         ),
                         onClick = {
                             context.showToast()
-                        }) {
+                        }
+                    ) {
                         Icon(
                             modifier = Modifier.padding(12.dp),
                             painter = painterResource(R.drawable.ic_edit),
@@ -142,7 +144,10 @@ fun ProfileScreen(
                     )
 
                     Image(
-                        modifier = Modifier.align(Alignment.BottomEnd),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .clip(CircleShape)
+                            .clickable { context.showToast() },
                         painter = painterResource(R.drawable.ic_profile_add),
                         contentScale = ContentScale.Crop,
                         contentDescription = "profile image"
@@ -246,11 +251,6 @@ fun ProfileScreen(
             )
             SettingsButton(buttonTxt = "Language", icon = R.drawable.ic_language) {}
         }
-
-
-
-
-
 
         Spacer(modifier = Modifier.height(18.dp))
 

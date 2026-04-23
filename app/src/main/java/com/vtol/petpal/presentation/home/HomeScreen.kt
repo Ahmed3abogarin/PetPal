@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -182,9 +181,8 @@ fun HomeScreen(
                         Image(
                             painter = painterResource(R.drawable.empty_state_image),
                             contentDescription = "No tasks",
-                            modifier = Modifier.size(200.dp)
+                            modifier = Modifier.height(160.dp),
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "No tasks yet!\nAdd a task to get started.",
                             style = MaterialTheme.typography.bodyMedium,
@@ -247,10 +245,6 @@ fun HomeScreen(
                         }
                     )
                 }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(72.dp))
             }
         }
 
