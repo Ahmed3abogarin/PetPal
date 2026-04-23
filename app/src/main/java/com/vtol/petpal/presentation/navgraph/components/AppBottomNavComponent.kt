@@ -51,18 +51,13 @@ fun AppBottomNavComponent(
             .background(Color.White)
             .fillMaxWidth()
             .navigationBarsPadding()
-
-
     ) {
-
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 0.7.dp,
             color = ExtraLightPurple
         )
-
         Box {
-
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()

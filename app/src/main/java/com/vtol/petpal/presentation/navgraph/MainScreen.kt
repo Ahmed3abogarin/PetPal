@@ -1,5 +1,9 @@
 package com.vtol.petpal.presentation.navgraph
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -8,7 +12,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -16,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
+import com.vtol.petpal.ui.theme.BackgroundColor
 
 
 @Composable
@@ -78,9 +82,13 @@ fun MainScreen() {
     }
 
     Scaffold(
-        containerColor = Color.White,
+        containerColor = BackgroundColor,
         bottomBar = {
-            if (isBottomNavVisible) {
+            AnimatedVisibility(
+                visible = isBottomNavVisible,
+                exit = slideOutVertically (animationSpec = tween(200)){ it },
+                enter = slideInVertically { it }
+            ) {
                 AppBottomNavComponent(
                     selectedIndex = selectedItem,
                     bottomItems = bottomItems,

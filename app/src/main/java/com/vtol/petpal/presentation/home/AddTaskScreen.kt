@@ -150,7 +150,7 @@ fun AddTaskScreen(
             navigateUp()
         }
     }
-// POST_NOTIFICATIONS launcher
+    // POST_NOTIFICATIONS launcher
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -200,7 +200,8 @@ fun AddTaskScreen(
 
 
     Column(
-        modifier = Modifier.background(BackgroundColor)
+        modifier = Modifier
+            .background(BackgroundColor)
             .fillMaxSize()
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
