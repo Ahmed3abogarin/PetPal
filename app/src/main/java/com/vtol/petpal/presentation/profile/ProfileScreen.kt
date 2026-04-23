@@ -5,8 +5,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -343,6 +346,40 @@ fun ProfileScreen(
 
 
         Spacer(modifier = Modifier.height(32.dp))
+
+        // version name
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                color = Color.Gray.copy(0.2f)
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Version name: " + context.packageManager.getPackageInfo(
+                    context.packageName,
+                    0
+                ).versionName,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                color = Color.Gray
+            )
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                color = Color.Gray.copy(0.2f)
+            )
+
+        }
+
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 
 
