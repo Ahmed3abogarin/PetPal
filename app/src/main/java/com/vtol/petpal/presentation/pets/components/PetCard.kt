@@ -82,7 +82,6 @@ fun PetCard(
                     task?.let {
                         Text(text = taskTxt)
                     }
-
                 }
             }
 

@@ -53,6 +53,7 @@ import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.Red
 import com.vtol.petpal.util.Resource
+import com.vtol.petpal.util.ShareManager
 import com.vtol.petpal.util.showToast
 
 @Composable
@@ -67,6 +68,8 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     var showDialog by remember { mutableStateOf(false) }
+
+    val shareManager = remember { ShareManager(context) }
 
 
     Column(
@@ -285,7 +288,7 @@ fun ProfileScreen(
                 buttonTxt = "Invite friends",
                 bgColor = Color(0XFFE6F5E8),
                 icon = R.drawable.ic_invite
-            ) {}
+            ) { shareManager.shareApp() }
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(),
