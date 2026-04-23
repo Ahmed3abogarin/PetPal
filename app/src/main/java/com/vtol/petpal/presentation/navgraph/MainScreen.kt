@@ -9,8 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,21 +20,36 @@ import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
 
 @Composable
 fun MainScreen() {
-    val home = ImageVector.vectorResource(R.drawable.ic_home)
-    val pets = ImageVector.vectorResource(R.drawable.ic_pets)
-    val calender = ImageVector.vectorResource(R.drawable.ic_calender)
-    val near = ImageVector.vectorResource(R.drawable.ic_nearby)
-    val profile = ImageVector.vectorResource(R.drawable.ic_profile)
 
     val navController = rememberNavController()
 
     val bottomItems = remember {
         mutableListOf(
-            BottomNavItem(home, Color.Green, title = ""),
-            BottomNavItem(pets, Color.Green, ""),
-            BottomNavItem(calender, Color.Green, ""),
-            BottomNavItem(near, Color.Green, ""),
-            BottomNavItem(profile, Color.Green, ""),
+            BottomNavItem(
+                defaultIcon = R.drawable.ic_home_outlined,
+                filledIcon = R.drawable.ic_home_filled,
+                title = "Home"
+            ),
+            BottomNavItem(
+                defaultIcon = R.drawable.ic_pets_outlined,
+                filledIcon = R.drawable.ic_pets_filled,
+                title = "Pets"
+            ),
+            BottomNavItem(
+                defaultIcon = R.drawable.ic_calendar_outlined,
+                filledIcon = R.drawable.ic_calendar_filled,
+                title = "Calendar"
+            ),
+            BottomNavItem(
+                defaultIcon = R.drawable.ic_world_outlined,
+                filledIcon = R.drawable.ic_world_filled,
+                title = "Explore"
+            ),
+            BottomNavItem(
+                defaultIcon = R.drawable.ic_user_outlined,
+                filledIcon = R.drawable.ic_user_filled,
+                title = "Profile"
+            )
         )
     }
     val backstackState = navController.currentBackStackEntryAsState().value
