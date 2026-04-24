@@ -21,7 +21,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 @Composable
 fun PetTextField(
     modifier: Modifier = Modifier,
-    keyboardOptions: KeyboardOptions? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     placeHolder: String,
     value: String,
     error: String? = null,
@@ -58,7 +58,7 @@ fun PetTextField(
                 Text(text = error)
             }
         },
-        keyboardOptions = keyboardOptions ?: KeyboardOptions.Default
+        keyboardOptions = keyboardOptions
     )
 
 }

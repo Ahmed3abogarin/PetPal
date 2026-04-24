@@ -1,7 +1,6 @@
 package com.vtol.petpal.presentation.pets
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,6 +61,7 @@ import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.formatDate
+import timber.log.Timber
 
 @Composable
 fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
@@ -180,7 +180,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
             // TODO: Add a unit in the end of the text field using Row and drop down menu kg/pound/gram
             PetTextField(
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 placeHolder = "Weight(kg)",
                 trailingIcon = Icons.Default.Face,
                 value = petWeight,
@@ -307,13 +307,13 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
         when (state) {
             is Resource.Loading -> {
-                Log.e("TTTOLSDF", "its loading now")
+                Timber.tag("AddPetScreen").e("its loading now")
                 isUiEnabled = false
                 LoadingIndicator()
             }
 
             is Resource.Success -> {
-                Log.e("TTTOLSDF", "its succeed")
+                Timber.tag("AddPetScreen").e("its succeed")
                 navigateUp()
                 Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show()
 
@@ -321,7 +321,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
             is Resource.Error -> {
                 val error = (state as Resource.Error).message
-                Log.e("ADDPET", "Error $error")
+                Timber.tag("AddPetScreen").e("Error $error")
                 LaunchedEffect(state) {
                     Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
@@ -332,12 +332,3 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
     }
 }
-
-//@Preview
-//@Composable
-//fun MyScreenPets() {
-//    PetPalTheme {
-//        AddPetScreen(navigateUp = {})
-//
-//    }
-//}
