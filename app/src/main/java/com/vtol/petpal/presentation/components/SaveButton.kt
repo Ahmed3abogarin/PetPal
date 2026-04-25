@@ -1,7 +1,6 @@
 package com.vtol.petpal.presentation.components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -43,7 +42,6 @@ fun SaveButton(
             if (isLoading) {
                 CircularProgressIndicator()
             }
-
             Text(
                 text = text,
                 fontSize = 20.sp,

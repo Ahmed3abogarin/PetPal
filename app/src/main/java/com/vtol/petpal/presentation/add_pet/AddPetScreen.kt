@@ -1,7 +1,5 @@
-package com.vtol.petpal.presentation.pets
+package com.vtol.petpal.presentation.add_pet
 
-import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -21,16 +19,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,66 +35,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.text.isDigitsOnly
 import coil.compose.rememberAsyncImagePainter
 import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
-import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.components.BackArrow
+import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.home.components.DatePickerModal
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
-import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.LightPurple
-import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.formatDate
-import timber.log.Timber
 
 @Composable
-fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
-    val context = LocalContext.current
-    var petName by remember { mutableStateOf("") }
-    var petNameError by remember { mutableStateOf<String?>(null) }
-
-    var petBreed by remember { mutableStateOf("") }
-    var petBreedError by remember { mutableStateOf<String?>(null) }
-
-
-    var petWeight by remember { mutableStateOf("") }
-    var petWeightError by remember { mutableStateOf<String?>(null) }
-
-
-    var selectWUnit by remember { mutableStateOf(WeightUnit.KG) }
-
-    var gender by remember { mutableStateOf(PetGender.Unknown) }
-    var genderError by remember { mutableStateOf<String?>(null) }
+fun AddPetScreen(
+    state: AddPetState,
+    event: (AddPetEvent) -> Unit,
+    navigateUp: () -> Unit
+) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
-
-    var birthDate by remember { mutableStateOf<Long?>(null) }
-
     var showDatePicker by remember { mutableStateOf(false) }
 
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     // Image picker
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri -> imageUri = uri }
+    ) { uri -> event(AddPetEvent.OnImageChanged(uri)) }
 
     // to loss the focus
     val focusManger = LocalFocusManager.current
 
-    // to disable the ui when it is loading
-    var isUiEnabled by remember { mutableStateOf(true) }
 
-    val state by viewModel.addPetState.collectAsState()
     Box {
         Column(
             modifier = Modifier
@@ -134,7 +103,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                     }
             ) {
 
-                if (imageUri == null) {
+                if (state.petImage == null) {
                     Image(
                         modifier = Modifier
                             .fillMaxSize()
@@ -153,7 +122,7 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
                     Image(
                         modifier = Modifier.fillMaxSize(),
-                        painter = rememberAsyncImagePainter(imageUri),
+                        painter = rememberAsyncImagePainter(state.petImage),
                         contentScale = ContentScale.FillBounds,
                         contentDescription = "Pet image"
                     )
@@ -168,30 +137,30 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
             PetTextField(
                 placeHolder = "Pet Name",
-                value = petName,
-                error = petNameError
-            ) { petName = it }
+                value = state.petName,
+                error = state.petNameError
+            ) { event(AddPetEvent.OnNameChanged(it)) }
 
             PetTextField(
                 placeHolder = "Specie",
-                value = petBreed,
-                error = petBreedError
-            ) { petBreed = it }
+                value = state.petBreed,
+                error = state.petBreedError
+            ) { event(AddPetEvent.OnBreedChanged(it)) }
 
             // TODO: Add a unit in the end of the text field using Row and drop down menu kg/pound/gram
             PetTextField(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 placeHolder = "Weight(kg)",
                 trailingIcon = Icons.Default.Face,
-                value = petWeight,
-                selectedUnit = selectWUnit,
-                error = petWeightError,
+                value = state.petWeight,
+                selectedUnit = state.petWeightUnit,
+                error = state.petWeightError,
                 onTrailingClicked = {
                     val nextIndex =
-                        (WeightUnit.entries.indexOf(selectWUnit) + 1) % WeightUnit.entries.size
-                    selectWUnit = WeightUnit.entries[nextIndex]
+                        (WeightUnit.entries.indexOf(state.petWeightUnit) + 1) % WeightUnit.entries.size
+                    event(AddPetEvent.OnWeightUnitChanged(WeightUnit.entries[nextIndex]))
                 }
-            ) { petWeight = it }
+            ) { event(AddPetEvent.OnWeightChanged(it)) }
 
 
             // Gender
@@ -200,16 +169,16 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
                 selectedIndex = selectedIndex,
                 onItemSelected = { index, selectedGender ->
                     selectedIndex = index
-                    gender = selectedGender
+                    event(AddPetEvent.OnGenderChanged(selectedGender))
                 },
-                error = genderError,
+                error = state.petGenderError,
                 label = "Gender"
             )
 
 
             // Birth date picker
             OutlinedTextField(
-                value = birthDate?.formatDate() ?: "",
+                value = state.petBirthDate?.formatDate() ?: "",
                 colors = OutlinedTextFieldDefaults.colors(disabledTextColor = Color.Black),
                 onValueChange = {},
                 label = { Text("Birth Date") },
@@ -234,101 +203,33 @@ fun AddPetScreen(viewModel: PetViewModel, navigateUp: () -> Unit) {
 
             if (showDatePicker) {
                 DatePickerModal(
-                    onDateSelected = { birthDate = it },
+                    onDateSelected = { event(AddPetEvent.OnBirthDateChanged(it)) },
                     onDismiss = { showDatePicker = false }
                 )
 
             }
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(enabled = false) {} // Consume clicks so they don't hit fields below
+                        .background(Color.Black.copy(alpha = 0.1f)), // Subtle dimming
+                )
+            }
 
 
             // 'Add button': float button or regular button
-            Button(
+            SaveButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 14.dp),
-                enabled = isUiEnabled,
-                onClick = {
-                    focusManger.clearFocus()
-
-                    // validate the inputs
-                    var isValid = true
-
-                    // see if I have to move this validation from the compose function
-
-                    petNameError = if (petName.isBlank()) {
-                        isValid = false
-                        "This field cannot be empty"
-                    } else null
-
-                    petBreedError = if (petBreed.isBlank()) {
-                        isValid = false
-                        "This field cannot be empty"
-                    } else null
-
-                    petWeightError = if (petWeight.isBlank() || petWeight.isDigitsOnly()) {
-                        isValid = false
-                        "This field cannot be empty"
-                    } else null
-
-
-
-
-                    if (isValid) {
-                        viewModel.addPet(
-                            pet = Pet(
-                                petName = petName,
-                                birthDate = birthDate,
-                                gender = gender,
-                                breed = petBreed,
-//                                weightUnit = selectWUnit,
-//                                weight = listOf(WeightRecord(weight = petWeight.toDouble(), date =   Date(System.currentTimeMillis()) ))
-                            ),
-                            imageUri = imageUri,
-                            weight = WeightRecord(
-                                weight = petWeight.toDouble(),
-                                unit = selectWUnit
-                            ),
-
-                            )
-                    }
-
-
-                },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightPurple)
+                text = "Save Pet",
+                isLoading = state.isLoading,
+                color = LightPurple
             ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 2.dp),
-                    text = "Add Pet",
-                    style = MaterialTheme.typography.headlineSmall
-                )
+                focusManger.clearFocus()
+                event(AddPetEvent.OnSaveClicked)
             }
         }
-
-        when (state) {
-            is Resource.Loading -> {
-                Timber.tag("AddPetScreen").e("its loading now")
-                isUiEnabled = false
-                LoadingIndicator()
-            }
-
-            is Resource.Success -> {
-                Timber.tag("AddPetScreen").e("its succeed")
-                navigateUp()
-                Toast.makeText(context, "Added successfully", Toast.LENGTH_SHORT).show()
-
-            }
-
-            is Resource.Error -> {
-                val error = (state as Resource.Error).message
-                Timber.tag("AddPetScreen").e("Error $error")
-                LaunchedEffect(state) {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            else -> Unit
-        }
-
     }
 }

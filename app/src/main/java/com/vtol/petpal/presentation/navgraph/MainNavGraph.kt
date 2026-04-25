@@ -1,6 +1,9 @@
 package com.vtol.petpal.presentation.navgraph
 
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,7 +18,9 @@ import com.vtol.petpal.presentation.explore.NearByScreen
 import com.vtol.petpal.presentation.home.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
-import com.vtol.petpal.presentation.pets.AddPetScreen
+import com.vtol.petpal.presentation.add_pet.AddPetScreen
+import com.vtol.petpal.presentation.add_pet.AddPetViewModel
+import com.vtol.petpal.presentation.add_pet.UiEffects
 import com.vtol.petpal.presentation.pets.PetDetailsScreen
 import com.vtol.petpal.presentation.pets.PetDetailsViewModel
 import com.vtol.petpal.presentation.pets.PetViewModel
@@ -24,7 +29,7 @@ import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.presentation.profile.ProfileViewModel
 
-fun NavGraphBuilder.mainNavGraph(navController: NavController){
+fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     navigation(
         startDestination = Routes.HomeScreen.route,
         route = Routes.MainGraph.route
@@ -97,8 +102,25 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController){
 
         // sub screens
         composable(route = Routes.AddPetScreen.route) {
-            val addPetViewM: PetViewModel = hiltViewModel()
-            AddPetScreen(addPetViewM, navigateUp = { navController.navigateUp() })
+            val addPetViewModel: AddPetViewModel = hiltViewModel()
+            val context = LocalContext.current
+
+            LaunchedEffect(Unit) {
+                addPetViewModel.uiEffect.collect { effect ->
+                    when (effect) {
+                        is UiEffects.NavigateUp -> navController.navigateUp()
+                        is UiEffects.ShowToastMessage -> {
+                            Toast.makeText(context, effect.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+
+            AddPetScreen(
+                state = addPetViewModel.state.value,
+                navigateUp = { navController.navigateUp() },
+                event = addPetViewModel::onEvent
+            )
         }
 
         composable(
@@ -120,7 +142,6 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController){
 
 
         composable(Routes.FeedbackScreen.route) {
-
             FeedbackScreen(
                 viewModel = hiltViewModel<ProfileViewModel>(),
                 navigateUp = { navController.navigateUp() }
