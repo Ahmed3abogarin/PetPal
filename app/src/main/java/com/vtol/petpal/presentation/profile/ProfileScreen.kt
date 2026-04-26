@@ -35,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -55,6 +54,7 @@ import com.vtol.petpal.presentation.profile.components.ProfileInfoCard
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.Red
+import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.ShareManager
 import com.vtol.petpal.util.showToast
@@ -83,15 +83,9 @@ fun ProfileScreen(
     ) {
         Column {
             // Top content
-            val colors = listOf(Color(0XFF8638FE), Color(0XFFA266FF))
-            // Gradient BG color
-            val gradient = Brush.linearGradient(colors)
-
-
-
             Column(
                 modifier = Modifier
-                    .background(gradient)
+                    .background(petPalGradient)
                     .fillMaxWidth()
                     .statusBarsPadding()
                     .padding(bottom = 32.dp, top = 16.dp),

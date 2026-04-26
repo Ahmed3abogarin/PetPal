@@ -4,8 +4,8 @@ import com.vtol.petpal.R
 
 
 enum class PetGender(val genderTxt: String, val icon: Int) {
-    Male("Male", icon = R.drawable.ic_male),
-    Female("Female", icon = R.drawable.ic_female),
+    Male("M", icon = R.drawable.ic_male),
+    Female("F", icon = R.drawable.ic_female),
     Unknown("Unknown", R.drawable.ic_pets)
 }
 

@@ -1,10 +1,14 @@
 package com.vtol.petpal.presentation.navgraph
 
 import android.widget.Toast
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -101,7 +105,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         }
 
         // sub screens
-        composable(route = Routes.AddPetScreen.route) {
+        composable(
+            route = Routes.AddPetScreen.route,
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+            enterTransition = { slideInVertically(initialOffsetY = { it }) }
+        ) {
             val addPetViewModel: AddPetViewModel = hiltViewModel()
             val context = LocalContext.current
 
@@ -116,8 +124,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 }
             }
 
+            val state by addPetViewModel.state.collectAsStateWithLifecycle()
             AddPetScreen(
-                state = addPetViewModel.state.value,
+                state = state,
                 navigateUp = { navController.navigateUp() },
                 event = addPetViewModel::onEvent
             )

@@ -44,6 +44,7 @@ import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
 import com.vtol.petpal.domain.usecases.ToggleNotification
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
+import com.vtol.petpal.domain.usecases.pets.ValidatePetInputUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import com.vtol.petpal.domain.usecases.register.GetAuthState
 import com.vtol.petpal.domain.usecases.register.Logout
@@ -227,4 +228,9 @@ object AppModule {
     fun provideNotificationRepository(
         @ApplicationContext ctx: Context
     ): NotificationRepository = NotificationRepositoryImpl(ctx)
+
+
+    @Provides
+    @Singleton
+    fun provideValidateUseCase(): ValidatePetInputUseCase = ValidatePetInputUseCase()
 }

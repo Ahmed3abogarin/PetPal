@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.add_pet
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
@@ -33,10 +34,19 @@ class AddPetViewModel @Inject constructor(
             is AddPetEvent.OnNameChanged -> _state.update { it.copy(petName = event.name) }
             is AddPetEvent.OnBreedChanged -> _state.update { it.copy(petBreed = event.breed) }
             is AddPetEvent.OnGenderChanged -> _state.update { it.copy(petGender = event.gender) }
-            is AddPetEvent.OnWeightChanged -> _state.update { it.copy(petWeight = event.weight) }
+            is AddPetEvent.OnWeightChanged -> _state.update {
+                if (event.weight.length <= 5 && event.weight.matches(Regex("^\\d{0,3}(\\.\\d?)?$"))) {
+                    it.copy(petWeight = event.weight)
+                } else it
+            }
             is AddPetEvent.OnWeightUnitChanged -> _state.update { it.copy(petWeightUnit = event.weightUnit) }
             is AddPetEvent.OnImageChanged -> _state.update { it.copy(petImage = event.uri) }
             is AddPetEvent.OnBirthDateChanged -> _state.update { it.copy(petBirthDate = event.birthDate) }
+            is AddPetEvent.OnSpecieChanged -> _state.update {
+                Log.e("Tag", event.specie)
+                it.copy(petSpecie = event.specie)
+            }
+
             is AddPetEvent.OnSaveClicked -> savePet()
 
         }
