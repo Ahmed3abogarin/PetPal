@@ -52,10 +52,10 @@ import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.add_pet.components.PetChipButton
 import com.vtol.petpal.presentation.add_pet.components.PetDateTextField
+import com.vtol.petpal.presentation.common.components.ChipButton
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.pets.components.PetTextField
-import com.vtol.petpal.presentation.profile.ChipButton
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightPurple
