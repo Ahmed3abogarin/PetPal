@@ -31,10 +31,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,7 +54,6 @@ import com.vtol.petpal.presentation.add_pet.components.PetChipButton
 import com.vtol.petpal.presentation.add_pet.components.PetDateTextField
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.components.SaveButton
-import com.vtol.petpal.presentation.home.components.DatePickerModal
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.ExtraLightPurple
@@ -73,8 +68,9 @@ fun AddPetScreen(
     event: (AddPetEvent) -> Unit,
     navigateUp: () -> Unit
 ) {
+
+    // TODO: Fix the optional and required fields
     val context = LocalContext.current
-    var showDatePicker by remember { mutableStateOf(false) }
 
     val gradient = listOf(LightPurple, ExtraLightPurple)
 
@@ -231,7 +227,6 @@ fun AddPetScreen(
                 error = state.petBreedError
             ) { event(AddPetEvent.OnBreedChanged(it)) }
 
-            // TODO: Add a unit in the end of the text field using Row and drop down menu kg/pound/gram
 
             Row(
                 modifier = Modifier.wrapContentHeight(),
@@ -310,20 +305,8 @@ fun AddPetScreen(
                 date = state.petBirthDate
             ) {
                 focusManager.clearFocus()
-                showDatePicker = true
+                event(AddPetEvent.OnBirthDateChanged(it))
             }
-
-
-
-
-            if (showDatePicker) {
-                DatePickerModal(
-                    onDateSelected = { event(AddPetEvent.OnBirthDateChanged(it)) },
-                    onDismiss = { showDatePicker = false }
-                )
-
-            }
-
 
             // 'Add button': float button or regular button
             SaveButton(

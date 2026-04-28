@@ -1,27 +1,31 @@
 package com.vtol.petpal.presentation.profile
 
 import android.os.Build
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,30 +33,43 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.firebase.firestore.FieldValue
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.explore.components.LoadingIndicator
+import com.vtol.petpal.presentation.profile.components.StarRatingBar
 import com.vtol.petpal.ui.theme.BackgroundColor
+import com.vtol.petpal.ui.theme.ExtraLightPurple
+import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.PetPalTheme
 import kotlinx.coroutines.delay
 import java.util.Locale
 
 
 @Composable
-fun FeedbackScreen(modifier: Modifier = Modifier, viewModel: ProfileViewModel, navigateUp: () -> Unit) {
-
-    val state by viewModel.state.collectAsState()
-
+fun FeedbackScreen(
+    state: FeedbackUiState,
+    onSubmitClick: (HashMap<String, Any>) -> Unit,
+    navigateUp: () -> Unit
+) {
     when (state) {
-        is FeedbackUiState.FeedbackForm -> FeedbackScreenContent(viewModel, navigateUp = navigateUp)
+        is FeedbackUiState.FeedbackForm -> FeedbackScreenContent(
+            onSubmitClick = onSubmitClick,
+            navigateUp = navigateUp
+        )
+
         is FeedbackUiState.Loading -> {
             LoadingIndicator()
         }
+
         is FeedbackUiState.Error -> {
             Text(text = "Something went wrong")
             LaunchedEffect(Unit) {
@@ -60,14 +77,17 @@ fun FeedbackScreen(modifier: Modifier = Modifier, viewModel: ProfileViewModel, n
                 navigateUp()
             }
         }
+
         is FeedbackUiState.Success -> FeedbackSuccessScreen(navigateUp = navigateUp)
     }
-    
+
 }
 
 
 @Composable
-fun FeedbackScreenContent(viewModel: ProfileViewModel, navigateUp: () -> Unit) {
+fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigateUp: () -> Unit) {
+
+    var visible by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
@@ -81,111 +101,194 @@ fun FeedbackScreenContent(viewModel: ProfileViewModel, navigateUp: () -> Unit) {
 
     var rating by remember { mutableIntStateOf(0) }
     var message by remember { mutableStateOf("") }
+    var tag by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundColor),
-        horizontalAlignment = Alignment.CenterHorizontally
+    LaunchedEffect(Unit) {
+        delay(200)
+        visible = true
+    }
+
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut()
     ) {
 
-
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(MainPurple)
-                .padding(top = 6.dp, bottom = 12.dp)
+                .fillMaxSize()
+                .background(BackgroundColor),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            BackArrow(
-                modifier= Modifier.align(Alignment.CenterStart),
-                tint = Color.White) {
-                navigateUp()
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MainPurple)
+                    .padding(top = 16.dp, bottom = 62.dp, start = 16.dp)
+            ) {
+
+                BackArrow(
+                    modifier = Modifier.align(Alignment.TopStart),
+                    tint = Color.White
+                ) {
+                    navigateUp()
+                }
+
+                Column(
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                ) {
+                    Text(
+                        text = "Send Feedback",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Help us improve your experience",
+                        color = ExtraLightPurple
+                    )
+
+                }
             }
 
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "Send Feedback",
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
-            )
-        }
 
-        Spacer(modifier = Modifier.height(64.dp))
+            Surface(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .offset(y = (-28).dp),
+                color = Color.White,
+                shadowElevation = 3.dp,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(vertical = 38.dp, horizontal = 16.dp),
+
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
 
-        Text("Rate your experience 🐾")
+                    Text(
+                        "How was your experience?",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MainPurple
+                    )
 
-        Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(18.dp))
 
-        StarRatingBar(
-            rating = rating,
-            onRatingChanged = { rating = it }
-        )
+                    StarRatingBar(
+                        rating = rating,
+                        onRatingChanged = { rating = it }
+                    )
 
-        Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(18.dp))
 
-        OutlinedTextField(
-            value = message,
-            onValueChange = { message = it },
-            shape = RoundedCornerShape(16.dp),
-            minLines = 4,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            placeholder = { Text("Write feedback...") }
-        )
+                    val tags =
+                        listOf("Easy to use", "Fast", "Helpful", "Confusing", "Missing features")
 
-        Spacer(Modifier.height(20.dp))
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        maxItemsInEachRow = 3,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
 
-        SaveButton(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = "Send Feedback", color = MainPurple,
-            enabled = rating > 0
-        ) {
+                        tags.forEach {
+                            val isSelected = tag == it
+                            ChipButton(
+                                text = it,
+                                textColor = if (isSelected) MainPurple else ExtraLightPurple,
+                                borderColor = if (isSelected) MainPurple else ExtraLightPurple
+                            ) {
+                                tag = it
+                            }
+                        }
+                    }
 
-            val feedback = hashMapOf(
-                "message" to message,
-                "rating" to rating.toString(),
-                "appVersion" to appVersion,
-                "androidVersion" to androidVersion,
-                "deviceModel" to deviceModel,
-                "country" to country,
-                "language" to language,
-                "timestamp" to FieldValue.serverTimestamp()
-            )
-            viewModel.submitFeedback(feedback)
 
+                    Spacer(Modifier.height(18.dp))
+
+                    OutlinedTextField(
+                        value = message,
+                        onValueChange = { message = it },
+                        shape = RoundedCornerShape(16.dp),
+                        minLines = 6,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = ExtraLightPurple.copy(alpha = 0.1f),
+                            focusedContainerColor = ExtraLightPurple.copy(alpha = 0.1f),
+                            focusedBorderColor = MainPurple,
+                            unfocusedBorderColor = ExtraLightPurple
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        placeholder = {
+                            Text(
+                                "Tell us more (optional)...",
+                                color = ExtraLightPurple
+                            )
+                        }
+                    )
+
+                    Spacer(Modifier.height(20.dp))
+
+                    SaveButton(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = "Send Feedback", color = MainPurple,
+                        enabled = rating > 0
+                    ) {
+
+                        val feedback = hashMapOf(
+                            "message" to message,
+                            "rating" to rating.toString(),
+                            "tag" to tag,
+                            "appVersion" to appVersion,
+                            "androidVersion" to androidVersion,
+                            "deviceModel" to deviceModel,
+                            "country" to country,
+                            "language" to language,
+                            "timestamp" to FieldValue.serverTimestamp()
+                        )
+                        onSubmitClick(feedback)
+                    }
+
+                    Text(
+                        modifier = Modifier.padding(top = 14.dp),
+                        text = "Your response is anonymous",
+                        fontSize = 13.sp,
+                        color = LightPurple
+                    )
+                }
+            }
         }
     }
 }
+
 
 @Composable
-fun StarRatingBar(
-    maxStars: Int = 5,
-    rating: Int,
-    onRatingChanged: (Int) -> Unit
-) {
-    Row {
-        for (i in 1..maxStars) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Star $i",
-                tint = if (i <= rating) Color(0xFFFFC107) else Color.Gray,
-                modifier = Modifier
-                    .size(38.dp)
-                    .clickable { onRatingChanged(i) }
-            )
-        }
+fun ChipButton(text: String, textColor: Color, borderColor: Color, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .background(ExtraLightPurple.copy(alpha = 0.1f), CircleShape)
+            .border(1.dp, color = borderColor, shape = CircleShape)
+            .clip(CircleShape)
+            .clickable { onClick() }
+            .padding(horizontal = 18.dp, vertical = 10.dp)
+
+    ) {
+        Text(
+            text = text,
+            color = textColor,
+            fontSize = 12.sp
+        )
+
     }
 }
 
-//@Preview
-//@Composable
-//fun FeedPreview() {
-//    PetPalTheme {
-//        FeedbackScreenContent(navigateUp = {})
-//    }
-//}
+@Preview
+@Composable
+fun FeedPreview() {
+    PetPalTheme {
+        FeedbackScreenContent(navigateUp = {}, onSubmitClick = {})
+    }
+}

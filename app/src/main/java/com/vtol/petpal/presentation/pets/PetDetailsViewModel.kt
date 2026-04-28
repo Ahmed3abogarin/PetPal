@@ -41,17 +41,22 @@ class PetDetailsViewModel @Inject constructor(
         }
     }
 
-    fun addWeight(petId: String, weightRecord: WeightRecord) {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+    fun addWeight(petId: String?, weightRecord: WeightRecord) {
+        if (petId != null){
 
-            try {
-                appUseCases.addWeight(petId, weightRecord)
-                _state.update { it.copy(isLoading = false) }
-            } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, error = e.message) }
+            viewModelScope.launch {
+                _state.update { it.copy(isLoading = true) }
+
+                try {
+                    appUseCases.addWeight(petId, weightRecord)
+                    _state.update { it.copy(isLoading = false) }
+                } catch (e: Exception) {
+                    _state.update { it.copy(isLoading = false, error = e.message) }
+                }
             }
+
         }
+
     }
 
 

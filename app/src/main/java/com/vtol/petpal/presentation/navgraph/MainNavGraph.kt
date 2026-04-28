@@ -19,7 +19,7 @@ import com.vtol.petpal.presentation.calender.CalenderScreen
 import com.vtol.petpal.presentation.calender.CalenderViewModel
 import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.explore.NearByScreen
-import com.vtol.petpal.presentation.home.AddTaskScreen
+import com.vtol.petpal.presentation.tasks.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.presentation.add_pet.AddPetScreen
@@ -90,11 +90,12 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         }
         composable(route = Routes.ProfileScreen.route) {
             val profileViewModel = hiltViewModel<ProfileViewModel>()
+            val state by profileViewModel.uiState.collectAsState()
 
 
             ProfileScreen(
                 user = hiltViewModel<UserViewModel>().state.collectAsState().value,
-                state = profileViewModel.uiState.collectAsState().value,
+                state = state,
                 event = profileViewModel::onEvent,
                 petsCount = hiltViewModel<PetViewModel>().state.collectAsState().value.pets.size,
                 doneTasks = hiltViewModel<HomeViewModel>().state.collectAsState().value.completedCount,
@@ -138,7 +139,18 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         ) {
             val petDetailsVM: PetDetailsViewModel = hiltViewModel()
 
-            PetDetailsScreen(petViewModel = petDetailsVM) { navController.navigateUp() }
+            val state by petDetailsVM.state.collectAsState()
+
+            PetDetailsScreen(
+                state = state,
+                navigateUp = { navController.navigateUp() },
+                onCheckedChanged = { id, isCompleted ->
+                    petDetailsVM.toggleCompletion(id, isCompleted)
+                },
+                onAddWeightClicked = {
+                    petDetailsVM.addWeight(state.pet?.id, it)
+                }
+            )
         }
         composable(Routes.AddTaskScreen.route) {
             val pets = hiltViewModel<PetViewModel>().state.collectAsState()
@@ -151,8 +163,12 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
 
         composable(Routes.FeedbackScreen.route) {
+            val viewModel: ProfileViewModel = hiltViewModel()
+
+            val state by viewModel.state.collectAsStateWithLifecycle()
             FeedbackScreen(
-                viewModel = hiltViewModel<ProfileViewModel>(),
+                state = state,
+                onSubmitClick = { viewModel.submitFeedback(it) },
                 navigateUp = { navController.navigateUp() }
             )
         }

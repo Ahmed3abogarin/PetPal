@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.home
+package com.vtol.petpal.presentation.tasks
 
 import android.Manifest
 import android.content.Intent
@@ -65,6 +65,7 @@ import com.vtol.petpal.presentation.components.PetDropDownMenu
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.components.TextFieldVariant
 import com.vtol.petpal.presentation.components.filledTextFieldColors
+import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.presentation.home.components.MyDropDownMenu
 import com.vtol.petpal.presentation.home.components.PermissionRationaleDialog
 import com.vtol.petpal.presentation.home.components.TaskDatePicker
@@ -73,6 +74,7 @@ import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.util.convertDate
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -434,7 +436,7 @@ fun AddTaskScreen(
                     modifier = Modifier.clickable {
                         showNote = true
                         coroutine.launch {
-                            kotlinx.coroutines.yield()
+                            yield()
                             scrollState.animateScrollTo(value = scrollState.maxValue)
                         }
                     },
