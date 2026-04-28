@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -126,6 +127,7 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MainPurple)
+                    .statusBarsPadding()
                     .padding(top = 16.dp, bottom = 62.dp, start = 16.dp)
             ) {
 
@@ -233,7 +235,6 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
                     Spacer(Modifier.height(20.dp))
 
                     SaveButton(
-                        modifier = Modifier.padding(horizontal = 16.dp),
                         text = "Send Feedback", color = MainPurple,
                         enabled = rating > 0
                     ) {
@@ -266,10 +267,16 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
 
 
 @Composable
-fun ChipButton(text: String, textColor: Color, borderColor: Color, onClick: () -> Unit) {
+fun ChipButton(
+    text: String,
+    bgColor: Color = ExtraLightPurple.copy(alpha = 0.1f),
+    textColor: Color,
+    borderColor: Color,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
-            .background(ExtraLightPurple.copy(alpha = 0.1f), CircleShape)
+            .background(bgColor, CircleShape)
             .border(1.dp, color = borderColor, shape = CircleShape)
             .clip(CircleShape)
             .clickable { onClick() }

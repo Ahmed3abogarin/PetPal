@@ -11,6 +11,7 @@ sealed class AddPetEvent {
     class OnWeightUnitChanged(val weightUnit: WeightUnit): AddPetEvent()
     class OnBreedChanged(val breed: String): AddPetEvent()
     class OnSpecieChanged(val specie: String): AddPetEvent()
+    class OnPersonalityChanged(val personality: String): AddPetEvent()
     class OnBirthDateChanged(val birthDate: Long?): AddPetEvent()
     class OnGenderChanged(val gender: PetGender): AddPetEvent()
     object OnSaveClicked: AddPetEvent()

@@ -11,6 +11,7 @@ data class Pet(
     val gender: PetGender = PetGender.Unknown,
     val breed: String? = "",
     val specie: String? = "",
+    val personality: String? = ""
 )
 @Keep
 data class WeightRecord(

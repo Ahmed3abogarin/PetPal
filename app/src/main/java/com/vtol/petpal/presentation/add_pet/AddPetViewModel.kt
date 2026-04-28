@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.add_pet
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
@@ -43,10 +42,9 @@ class AddPetViewModel @Inject constructor(
             is AddPetEvent.OnImageChanged -> _state.update { it.copy(petImage = event.uri) }
             is AddPetEvent.OnBirthDateChanged -> _state.update { it.copy(petBirthDate = event.birthDate) }
             is AddPetEvent.OnSpecieChanged -> _state.update {
-                Log.e("Tag", event.specie)
                 it.copy(petSpecie = event.specie)
             }
-
+            is AddPetEvent.OnPersonalityChanged -> _state.update { it.copy(petPersonality = event.personality) }
             is AddPetEvent.OnSaveClicked -> savePet()
 
         }
@@ -57,16 +55,16 @@ class AddPetViewModel @Inject constructor(
         // Validate first
         val nameResult = validateInput.validateName(currentState.petName)
         val weightResult = validateInput.validateWeight(currentState.petWeight)
-        val breedResult = validateInput.validateBreed(currentState.petBreed)
+        val specieResult = validateInput.validateSpecie(currentState.petSpecie)
 
-        val hasError = listOf(nameResult, weightResult, breedResult).any { !it.successful }
+        val hasError = listOf(nameResult, weightResult, specieResult).any { !it.successful }
 
         if (hasError) {
             _state.update {
                 it.copy(
                     petNameError = nameResult.errorMessage,
                     petWeightError = weightResult.errorMessage,
-                    petBreedError = breedResult.errorMessage
+                    petSpecieError = specieResult.errorMessage
                 )
             }
             return
@@ -80,8 +78,9 @@ class AddPetViewModel @Inject constructor(
                     petName = currentState.petName,
                     gender = currentState.petGender,
                     birthDate = currentState.petBirthDate,
-                    breed = currentState.petBreed
-
+                    breed = currentState.petBreed,
+                    specie = currentState.petSpecie,
+                    personality = currentState.petPersonality
                 )
 
                 val weightRecord = WeightRecord(

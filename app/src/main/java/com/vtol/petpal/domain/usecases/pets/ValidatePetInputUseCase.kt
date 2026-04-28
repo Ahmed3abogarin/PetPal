@@ -8,9 +8,9 @@ class ValidatePetInputUseCase {
         return ValidationResult(true)
     }
 
-    fun validateBreed(breed: String): ValidationResult {
-        if (breed.isBlank()) {
-            return ValidationResult(false, "Species cannot be empty")
+    fun validateSpecie(specie: String): ValidationResult {
+        if (specie.isBlank()) {
+            return ValidationResult(false, "Select a specie")
         }
         return ValidationResult(true)
     }

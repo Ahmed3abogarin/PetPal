@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.pets.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +35,7 @@ fun PetTextField(
     error: String? = null,
     selectedUnit: WeightUnit? = null,
     trailingIcon: ImageVector? = null,
-    leadingIcon: ImageVector? = null,
+    @DrawableRes leadingIcon: Int? = null,
     onTrailingClicked: (() -> Unit)? = null,
     onValueChanged: (String) -> Unit,
 ) {
@@ -66,18 +68,22 @@ fun PetTextField(
             shape = RoundedCornerShape(10.dp),
             leadingIcon = if (leadingIcon != null) {
                 {
-                    Icon(leadingIcon, contentDescription = null)
+                    Icon(
+                        painter = painterResource(leadingIcon),
+                        tint = LightPurple,
+                        contentDescription = null
+                    )
                 }
             } else null,
-            trailingIcon = {
-                trailingIcon?.let {
+            trailingIcon = if (trailingIcon != null) {
+                {
                     IconButton(onClick = {
                         onTrailingClicked?.invoke()
                     }) {
                         Text(selectedUnit?.displayName ?: "", color = LightPurple)
                     }
                 }
-            },
+            } else null,
             supportingText = if (error != null) {
                 {
                     Text(text = error)

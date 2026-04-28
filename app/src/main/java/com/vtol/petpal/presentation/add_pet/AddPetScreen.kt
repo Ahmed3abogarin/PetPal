@@ -55,6 +55,7 @@ import com.vtol.petpal.presentation.add_pet.components.PetDateTextField
 import com.vtol.petpal.presentation.components.BackArrow
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.pets.components.PetTextField
+import com.vtol.petpal.presentation.profile.ChipButton
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightPurple
@@ -69,7 +70,6 @@ fun AddPetScreen(
     navigateUp: () -> Unit
 ) {
 
-    // TODO: Fix the optional and required fields
     val context = LocalContext.current
 
     val gradient = listOf(LightPurple, ExtraLightPurple)
@@ -192,30 +192,38 @@ fun AddPetScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                maxItemsInEachRow = 3,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                species.forEach { (icon, specie) ->
-                    PetChipButton(
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (state.petSpecie == specie) MainPurple else Color.White,
-                        ),
-                        icon = icon,
-                        txt = specie,
-                        tint = if (state.petSpecie == specie) Color.White else LightPurple
-                    ) {
-                        Log.e("Tag", "AddPetScreen: $specie, State: ${state.petSpecie}")
+            Column {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    maxItemsInEachRow = 3,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    species.forEach { (icon, specie) ->
+                        PetChipButton(
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (state.petSpecie == specie) MainPurple else Color.White,
+                            ),
+                            icon = icon,
+                            txt = specie,
+                            tint = if (state.petSpecie == specie) Color.White else LightPurple
+                        ) {
+                            Log.e("Tag", "AddPetScreen: $specie, State: ${state.petSpecie}")
 
-                        event(AddPetEvent.OnSpecieChanged(specie))
+                            event(AddPetEvent.OnSpecieChanged(specie))
+                        }
                     }
+                }
+
+                state.petSpecieError?.let {
+                    Text(text = it, fontSize = 13.sp, color = Color.Red)
                 }
             }
 
+
             PetTextField(
                 label = "Pet Name",
+                leadingIcon = R.drawable.ic_person,
                 placeHolder = "e.g. Buddy, Luna...",
                 value = state.petName,
                 error = state.petNameError
@@ -223,8 +231,8 @@ fun AddPetScreen(
 
             PetTextField(
                 placeHolder = "Breed (optional)",
+                leadingIcon = R.drawable.ic_mark ,
                 value = state.petBreed,
-                error = state.petBreedError
             ) { event(AddPetEvent.OnBreedChanged(it)) }
 
 
@@ -268,8 +276,6 @@ fun AddPetScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-
-
                         val genders = listOf(
                             Pair(R.drawable.ic_male, PetGender.Male),
                             Pair(R.drawable.ic_female, PetGender.Female)
@@ -306,6 +312,39 @@ fun AddPetScreen(
             ) {
                 focusManager.clearFocus()
                 event(AddPetEvent.OnBirthDateChanged(it))
+            }
+
+            Column {
+                Text(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    text = "Personality",
+                    fontSize = 14.sp,
+                    color = LightPurple,
+                    fontWeight = FontWeight.Medium
+                )
+
+                val tags =
+                    listOf("Playful", "Calm", "Energetic", "Shy", "Friendly")
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    maxItemsInEachRow = 4,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+
+                    tags.forEach {
+                        val isSelected = state.petPersonality == it
+                        ChipButton(
+                            text = it,
+                            bgColor = Color.White,
+                            textColor = if (isSelected) MainPurple else ExtraLightPurple,
+                            borderColor = if (isSelected) MainPurple else ExtraLightPurple
+                        ) {
+                            event(AddPetEvent.OnPersonalityChanged(it))
+                        }
+                    }
+                }
             }
 
             // 'Add button': float button or regular button
