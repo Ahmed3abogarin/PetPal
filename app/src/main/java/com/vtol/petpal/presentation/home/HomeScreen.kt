@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -128,9 +127,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = padding.calculateBottomPadding()),
-            contentPadding = PaddingValues(bottom = 72.dp)
-
+                .padding(bottom = padding.calculateBottomPadding())
         ) {
 
             // The header
@@ -237,7 +234,8 @@ fun HomeScreen(
 
 
                 // the list of tasks
-                items(state.value.upcomingTasks) { task ->
+                val tasks = state.value.upcomingTasks
+                items(tasks) { task ->
                     TaskCard(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         task = task,
@@ -246,6 +244,9 @@ fun HomeScreen(
                             viewModel.toggleCompletion(task.id.toInt(), it)
                         }
                     )
+                    if (tasks.last() == task){
+                        Spacer(modifier = Modifier.height(72.dp))
+                    }
                 }
             }
         }

@@ -57,7 +57,7 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                         modifier = Modifier
                             .size(50.dp)
                             .padding(end = 8.dp),
-                        painter = painterResource(R.drawable.logo),
+                        painter = painterResource(R.drawable.ic_logo),
                         contentDescription = ""
                     )
                     Text(text = "PetPal", fontSize = 24.sp, color = Color.White)
@@ -122,24 +122,7 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                 }
-
-                // TODO: add the weather api
-
-//                Card(shape = CircleShape) {
-//                    Row(modifier = Modifier.padding(16.dp)) {
-//                        Text(text = "35° C")
-//                        Spacer(modifier = Modifier.width(6.dp))
-//                        Image(
-//                            painter = painterResource(R.drawable.weather_icon),
-//                            contentDescription = "weather icon"
-//                        )
-//                    }
-//                }
             }
-
         }
-
-
     }
-
 }
