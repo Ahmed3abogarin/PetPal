@@ -56,14 +56,14 @@ fun ProfileInfoCard(
                 Text(
                     modifier = Modifier.padding(bottom = 6.dp),
                     text = petsCount.toString(),
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = MainPurple,
                     fontWeight = FontWeight.Medium
                 )
 
                 Text(
                     text = "Pets",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = Color.Black
                 )
 

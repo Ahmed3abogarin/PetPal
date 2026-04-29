@@ -1,7 +1,6 @@
 package com.vtol.petpal.presentation.profile.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +36,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.vtol.petpal.R
 import com.vtol.petpal.ui.theme.BackgroundColor
-import com.vtol.petpal.ui.theme.LightPurple
+import com.vtol.petpal.ui.theme.CellsBgPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.Red
 
@@ -117,31 +115,14 @@ fun ConfirmationDialog(
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .background(LightPurple.copy(alpha = 0.5f))
+                            .background(CellsBgPurple)
                             .fillMaxWidth()
                             .padding(horizontal = 32.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy((-12).dp)) {
-                            Image(
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .clip(CircleShape),
-                                painter = painterResource(id = R.drawable.ic_launcher_background),
-                                contentDescription = ""
-                            )
-                            Image(
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .clip(CircleShape),
-                                painter = painterResource(id = R.drawable.location_img),
-                                contentScale = ContentScale.Crop,
-                                contentDescription = ""
-                            )
-                        }
                         Text(
-                            text = "Your 2 pets data will stay saved.",
+                            text = "Your pets data will stay saved.",
                             fontSize = 12.sp,
                             lineHeight = 20.sp,
                             color = MainPurple

@@ -126,13 +126,13 @@ fun ProfileScreen(
 
 
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
 
                 // User Image + add icon button
                 Box(
                     modifier = Modifier
-                        .size(152.dp)
+                        .size(124.dp)
                         .clip(CircleShape)
                         .padding(16.dp),
                 ) {
@@ -355,10 +355,7 @@ fun ProfileScreen(
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = "Version name: " + context.packageManager.getPackageInfo(
-                    context.packageName,
-                    0
-                ).versionName,
+                text = "Version name: " + "",
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
                 color = Color.Gray
