@@ -38,6 +38,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.vtol.petpal.R
 import com.vtol.petpal.ui.theme.BackgroundColor
+import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.Red
 
@@ -116,23 +117,23 @@ fun ConfirmationDialog(
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .background(MainPurple.copy(alpha = 0.2f))
+                            .background(LightPurple.copy(alpha = 0.5f))
                             .fillMaxWidth()
-                            .padding(horizontal = 32.dp, vertical = 10.dp),
+                            .padding(horizontal = 32.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy((-12).dp)) {
                             Image(
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(26.dp)
                                     .clip(CircleShape),
                                 painter = painterResource(id = R.drawable.ic_launcher_background),
                                 contentDescription = ""
                             )
                             Image(
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(26.dp)
                                     .clip(CircleShape),
                                 painter = painterResource(id = R.drawable.location_img),
                                 contentScale = ContentScale.Crop,
@@ -141,7 +142,7 @@ fun ConfirmationDialog(
                         }
                         Text(
                             text = "Your 2 pets data will stay saved.",
-                            fontSize = 15.sp,
+                            fontSize = 12.sp,
                             lineHeight = 20.sp,
                             color = MainPurple
                         )

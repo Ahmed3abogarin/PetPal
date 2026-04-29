@@ -68,7 +68,7 @@ class LoginViewModel @Inject constructor(
         }
 
         result
-            .onSuccess { _uiState.update { it.copy(isLoading = false) } }
+            .onSuccess { _uiState.update { it.copy(error = "Welcome back") } }
             .onFailure { throwable ->
                 _uiState.update { it.copy(isLoading = false, error = throwable.message) }
                 Timber.tag("Failure").e(throwable)

@@ -64,8 +64,10 @@ fun PetDetailsScreen(
     val context = LocalContext.current
 
     LaunchedEffect(state.error) {
-        Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
-        navigateUp()
+        if (state.error != null) {
+            Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
+            navigateUp()
+        }
     }
 
     Scaffold(
@@ -173,7 +175,7 @@ fun PetDetailsScreen(
             }
         }
 
-        if (state.isLoading){
+        if (state.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }

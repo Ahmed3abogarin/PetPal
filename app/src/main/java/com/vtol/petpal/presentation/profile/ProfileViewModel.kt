@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -58,7 +59,10 @@ class ProfileViewModel @Inject constructor(
 
             submitFeedBackUseCase(feedback)
                 .onSuccess { _state.value = FeedbackUiState.Success }
-                .onFailure { _state.value = FeedbackUiState.Error }
+                .onFailure {
+                    Timber.tag("feedback").e(it)
+                    _state.value =
+                    FeedbackUiState.Error }
         }
     }
 

@@ -78,7 +78,6 @@ class SignUpViewModel @Inject constructor(
 
 
         useCases.signUp(User(name = _uiState.value.name, email = _uiState.value.email), _uiState.value.password)
-            .onSuccess { _uiState.update { it.copy(isLoading = false) } }
             .onFailure { failure ->
                 _uiState.update {
                     it.copy(isLoading = false, error = failure.message)

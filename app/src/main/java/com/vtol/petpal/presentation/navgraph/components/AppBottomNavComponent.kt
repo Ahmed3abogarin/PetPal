@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,8 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.MainPurple
@@ -52,9 +54,11 @@ fun AppBottomNavComponent(
             .fillMaxWidth()
             .navigationBarsPadding()
     ) {
+
+        // The slider's track
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
-            thickness = 0.7.dp,
+            thickness = 0.3.dp,
             color = ExtraLightPurple
         )
         Box {
@@ -62,7 +66,6 @@ fun AppBottomNavComponent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
-                    .padding(bottom = 4.dp)
             ) {
                 val itemWidth = maxWidth / bottomItems.size
                 val pillWidth = 48.dp
@@ -85,7 +88,7 @@ fun AppBottomNavComponent(
                     Box(
                         modifier = Modifier
                             .offset(animatedOffset)
-                            .height(4.dp)
+                            .height(3.dp)
                             .clip(RoundedCornerShape(percent = 50))
                             .width(pillWidth)
                             .background(MainPurple)
@@ -96,7 +99,8 @@ fun AppBottomNavComponent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White),
+                            .background(Color.White)
+                            .padding(top = 8.dp, bottom = 2.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -114,8 +118,7 @@ fun AppBottomNavComponent(
                                         interactionSource = interactionSource
                                     ) {
                                         onItemClicked(index)
-                                    }
-                                    .padding(vertical = 10.dp),
+                                    },
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(6.dp),
                             ) {
@@ -124,12 +127,15 @@ fun AppBottomNavComponent(
                                     painter = painterResource(if (isSelected) item.filledIcon else item.defaultIcon),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(26.dp)
+                                        .size(22.dp)
                                 )
                                 Text(
                                     text = item.title,
                                     color = if (isSelected) MainPurple else ExtraLightPurple,
-                                    style = MaterialTheme.typography.labelSmall
+                                    fontSize = 10.sp,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.SemiBold,
+                                    lineHeight = 14.sp
                                 )
                             }
                         }

@@ -90,9 +90,14 @@ class AddPetViewModel @Inject constructor(
 
                 useCases.addPet(pet = pet, imageUri = state.value.petImage, weight = weightRecord)
 
+                _state.update { it.copy(isLoading = false) }
+                _uiEffect.send(UiEffects.ShowToastMessage("Added successfully"))
+                _uiEffect.send(UiEffects.NavigateUp)
+
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false) }
                 _uiEffect.send(UiEffects.ShowToastMessage(e.message ?: "Something went wrong"))
+                _uiEffect.send(UiEffects.NavigateUp)
             }
         }
     }

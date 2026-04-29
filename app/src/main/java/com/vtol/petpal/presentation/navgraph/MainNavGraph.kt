@@ -125,7 +125,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 }
             }
 
-            val state by addPetViewModel.state.collectAsStateWithLifecycle()
+            val state by addPetViewModel.state.collectAsState()
             AddPetScreen(
                 state = state,
                 navigateUp = { navController.navigateUp() },

@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.add_pet
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -208,8 +207,6 @@ fun AddPetScreen(
                             txt = specie,
                             tint = if (state.petSpecie == specie) Color.White else LightPurple
                         ) {
-                            Log.e("Tag", "AddPetScreen: $specie, State: ${state.petSpecie}")
-
                             event(AddPetEvent.OnSpecieChanged(specie))
                         }
                     }
