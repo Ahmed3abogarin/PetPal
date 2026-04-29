@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.pets.tabs
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +11,7 @@ import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.presentation.pets.components.AddWeightBottomSheet
 import com.vtol.petpal.presentation.pets.components.VetsList
+import timber.log.Timber
 
 @Composable
 fun HealthTab(
@@ -21,7 +21,7 @@ fun HealthTab(
 ) {
 
     weightList.forEach {
-        Log.v("WeightList", it.weight.toString())
+        Timber.tag("WeightList").v(it.weight.toString())
     }
     var showBottomSheet by remember { mutableStateOf(false) }
 

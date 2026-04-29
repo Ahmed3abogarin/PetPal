@@ -38,13 +38,25 @@ class AddPetViewModel @Inject constructor(
                     it.copy(petWeight = event.weight)
                 } else it
             }
+
             is AddPetEvent.OnWeightUnitChanged -> _state.update { it.copy(petWeightUnit = event.weightUnit) }
             is AddPetEvent.OnImageChanged -> _state.update { it.copy(petImage = event.uri) }
             is AddPetEvent.OnBirthDateChanged -> _state.update { it.copy(petBirthDate = event.birthDate) }
             is AddPetEvent.OnSpecieChanged -> _state.update {
                 it.copy(petSpecie = event.specie)
             }
-            is AddPetEvent.OnPersonalityChanged -> _state.update { it.copy(petPersonality = event.personality) }
+
+            is AddPetEvent.OnPersonalityChanged -> _state.update {
+                val current = state.value.petPersonalities
+                val updated = if (event.personality in current) {
+                    current - event.personality
+                } else {
+                    current + event.personality
+                }
+                it.copy(petPersonalities = updated)
+
+            }
+
             is AddPetEvent.OnSaveClicked -> savePet()
 
         }
@@ -80,7 +92,7 @@ class AddPetViewModel @Inject constructor(
                     birthDate = currentState.petBirthDate,
                     breed = currentState.petBreed,
                     specie = currentState.petSpecie,
-                    personality = currentState.petPersonality
+                    personality = currentState.petPersonalities
                 )
 
                 val weightRecord = WeightRecord(

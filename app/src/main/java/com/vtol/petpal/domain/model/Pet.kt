@@ -11,7 +11,10 @@ data class Pet(
     val gender: PetGender = PetGender.Unknown,
     val breed: String? = "",
     val specie: String? = "",
-    val personality: String? = ""
+    val personality: List<String> = emptyList(),
+    val isActive: Boolean = true,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 )
 @Keep
 data class WeightRecord(

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.firestore.FieldValue
 import com.vtol.petpal.presentation.common.components.ChipButton
-import com.vtol.petpal.presentation.components.BackArrow
+import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.presentation.profile.components.StarRatingBar
@@ -128,7 +128,7 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
                     .padding(top = 16.dp, bottom = 62.dp, start = 16.dp)
             ) {
 
-                BackArrow(
+                AppIconButton(
                     modifier = Modifier.align(Alignment.TopStart),
                     tint = Color.White
                 ) {

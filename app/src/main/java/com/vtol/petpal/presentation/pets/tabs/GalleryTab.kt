@@ -24,23 +24,37 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vtol.petpal.ui.theme.DarkGold
 import com.vtol.petpal.ui.theme.Gold
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.ui.theme.TextPurple
 
 @Composable
-fun GalleryTab(modifier: Modifier = Modifier, isPremium: Boolean, onUpgradeClicked: () -> Unit) {
+fun GalleryTab(isPremium: Boolean, onUpgradeClicked: () -> Unit) {
 
     if (isPremium) {
 
 
     } else {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "Upgrade to premium to access the gallery")
+                Text(
+                    text = "Upgrade to premium to access the gallery", fontSize = 17.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    color = TextPurple
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     shape = RoundedCornerShape(16.dp),
@@ -56,13 +70,16 @@ fun GalleryTab(modifier: Modifier = Modifier, isPremium: Boolean, onUpgradeClick
                             border = BorderStroke(width = 2.dp, color = Color.White)
                         ) {
                             Icon(
-                                modifier = Modifier.size(32.dp).padding(6.dp),
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .padding(6.dp),
                                 imageVector = Icons.Default.StarBorder,
                                 contentDescription = "icon"
                             )
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

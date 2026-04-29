@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.WeightUnit
+import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import java.text.SimpleDateFormat
@@ -79,7 +80,7 @@ fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
                 .height(220.dp),
             contentAlignment = androidx.compose.ui.Alignment.Center
         ) {
-            Text(text = "No weight records yet")
+            Text(text = "No weight records yet", color = LightPurple)
         }
         return
     }

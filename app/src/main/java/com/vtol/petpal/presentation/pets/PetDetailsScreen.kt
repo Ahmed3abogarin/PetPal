@@ -11,20 +11,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,15 +37,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.WeightRecord
-import com.vtol.petpal.presentation.components.BackArrow
+import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
 import com.vtol.petpal.presentation.pets.tabs.OverviewTab
+import com.vtol.petpal.ui.theme.BackgroundColor
+import com.vtol.petpal.ui.theme.CellsBgPurple
+import com.vtol.petpal.ui.theme.ExtraLightPurple
+import com.vtol.petpal.ui.theme.LightPurple
+import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.showToast
 import com.vtol.petpal.util.toAgeString
 
@@ -59,6 +65,7 @@ fun PetDetailsScreen(
     navigateUp: () -> Unit,
     onCheckedChanged: (id: Int, isCompleted: Boolean) -> Unit,
     onAddWeightClicked: (WeightRecord) -> Unit,
+    onAddTaskClick: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -70,42 +77,40 @@ fun PetDetailsScreen(
         }
     }
 
-    Scaffold(
-        containerColor = Color(0XFFF8F4FF),
-        floatingActionButton = {
-            FloatingActionButton(onClick = { context.showToast() }, shape = CircleShape) {
-                Icon(Icons.Default.Edit, contentDescription = null)
-            }
-        }
-    ) { _ ->
 
-        if (state.pet != null) {
+    if (state.pet != null) {
 
-            val pet = state.pet
+        val pet = state.pet
 
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundColor)
+        ) {
             Column(
                 modifier = modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                    .background(petPalGradient)
+                    .statusBarsPadding()
+                    .padding(16.dp)
+                    .padding(bottom = 28.dp),
+
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    BackArrow {
+                    AppIconButton {
                         navigateUp()
                     }
 
-                    IconButton(onClick = {
-                        context.showToast()
-                    }) {
-                        Icon(
-                            modifier = Modifier.size(42.dp),
-                            imageVector = Icons.Filled.Share,
-                            contentDescription = ""
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        AppIconButton(icon = R.drawable.ic_pet_card) { context.showToast() }
+                        AppIconButton(icon = R.drawable.ic_edit) { context.showToast() }
                     }
                 }
 
@@ -113,55 +118,129 @@ fun PetDetailsScreen(
 
                 Box(
                     modifier = Modifier
-                        .size(152.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
-                        .border(2.dp, Color.Gray, CircleShape)
                 ) {
                     AsyncImage(
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .size(122.dp)
+                            .clip(CircleShape)
+                            .background(Color.LightGray)
+                            .border(3.dp, Color.White, CircleShape),
                         model = ImageRequest.Builder(context).data(pet.imagePath).build(),
                         error = painterResource(R.drawable.pet_placeholder),
                         contentDescription = "pet profile image",
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(R.drawable.pet_placeholder)
                     )
+
+                    Box(
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .clip(CircleShape)
+                            .background(if (pet.isActive) Color.Green else Color.Gray)
+                            .border(width = 2.dp, color = Color.White, shape = CircleShape)
+                            .size(24.dp)
+                            .align(Alignment.BottomEnd),
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = pet.petName,
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 )
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(text = pet.birthDate.toAgeString())
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = pet.birthDate.toAgeString(),
+                        fontSize = 14.sp,
+                        color = CellsBgPurple
+                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(5.dp)
+                            .background(ExtraLightPurple)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(ExtraLightPurple)
+                            .padding(horizontal = 8.dp, vertical = 1.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${pet.specie} • ${pet.gender.name}",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp
+                        )
+                    }
+
+                }
+            }
 
 
-                // ------------------------- Tabs ---------------------------------
-                Spacer(modifier = Modifier.height(20.dp))
-                var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-                val tabs = listOf("Overview", "Health", "Gallery")
+            // ------------------------- Tabs ---------------------------------
+            var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+            val tabs = listOf("Overview", "Health", "Gallery")
 
-                // A column will act as a container for the tabs
+            // A column will act as a container for the tabs
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .offset(y = (-22).dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color.White)
+            ) {
+
                 PrimaryTabRow(
                     modifier = Modifier.fillMaxWidth(),
                     containerColor = Color.Transparent,
-                    selectedTabIndex = selectedTabIndex
+                    selectedTabIndex = selectedTabIndex,
+                    indicator = {
+                        TabRowDefaults.PrimaryIndicator(
+                            width = 90.dp,
+                            modifier = Modifier.tabIndicatorOffset(
+                                matchContentSize = true,
+                                selectedTabIndex = selectedTabIndex
+                            ),
+                            color = MainPurple
+                        )
+                    }
                 ) {
                     tabs.forEachIndexed { index, title ->
+                        val isSelected = selectedTabIndex == index
                         Tab(
-                            selected = selectedTabIndex == index,
+                            selected = isSelected,
                             onClick = { selectedTabIndex = index },
-                            text = { Text(title) }
+                            text = {
+                                Text(
+                                    title,
+                                    color = if (isSelected) MainPurple else LightPurple
+                                )
+                            }
                         )
                     }
                 }
 
                 when (selectedTabIndex) {
                     0 -> OverviewTab(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         state = state,
-                        onCheckedChanged = { id, isCompleted -> onCheckedChanged(id, isCompleted) }
+                        onAddTaskClick = onAddTaskClick,
+                        onCheckedChanged = { id, isCompleted ->
+                            onCheckedChanged(
+                                id,
+                                isCompleted
+                            )
+                        }
                     )
 
                     1 -> HealthTab(
@@ -174,11 +253,27 @@ fun PetDetailsScreen(
                 }
             }
         }
+    }
 
-        if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+    if (state.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
+    }
+}
+
+
+@Preview
+@Composable
+fun PetScreenPreview() {
+    PetPalTheme {
+
+        PetDetailsScreen(
+            state = DetailsState(),
+            onAddWeightClicked = {},
+            onCheckedChanged = { _, _ -> },
+            navigateUp = {},
+            onAddTaskClick = {}
+        )
     }
 }

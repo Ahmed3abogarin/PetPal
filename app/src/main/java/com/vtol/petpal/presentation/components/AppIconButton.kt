@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,16 +22,23 @@ import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun BackArrow(modifier: Modifier = Modifier,tint: Color = Color.White, navigateUp: () -> Unit) {
-    Card (
+fun AppIconButton(
+    modifier: Modifier = Modifier,
+    @DrawableRes icon: Int = R.drawable.ic_arrow,
+    tint: Color = Color.White,
+    navigateUp: () -> Unit
+) {
+    Card(
         modifier = modifier,
         shape = CircleShape,
         colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.2f)),
         onClick = { navigateUp() }
     ) {
         Icon(
-            modifier = Modifier.padding(14.dp).size(14.dp),
-            painter = painterResource(R.drawable.ic_arrow) ,
+            modifier = Modifier
+                .padding(14.dp)
+                .size(14.dp),
+            painter = painterResource(icon),
             tint = tint,
             contentDescription = ""
         )
@@ -40,10 +48,16 @@ fun BackArrow(modifier: Modifier = Modifier,tint: Color = Color.White, navigateU
 
 @Preview
 @Composable
-fun ArrowPre(){
+fun ArrowPre() {
     PetPalTheme {
-        Box(modifier = Modifier.fillMaxSize().background(MainPurple)){
-            BackArrow(modifier = Modifier.align(Alignment.TopStart).padding(start = 16.dp,top =16.dp)) { }
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(MainPurple)) {
+            AppIconButton(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 16.dp, top = 16.dp)
+            ) { }
         }
 
     }

@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
@@ -41,7 +43,10 @@ import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.presentation.pets.DetailsState
+import com.vtol.petpal.ui.theme.CellsBgPurple
 import com.vtol.petpal.ui.theme.LightPurple
+import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.TextPurple
 import com.vtol.petpal.util.toDateTimeString
 import com.vtol.petpal.util.toRelativeTime
 import timber.log.Timber
@@ -52,7 +57,7 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
         state.tasks.filter { it.type == TaskType.VET }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
 
 
         when {
@@ -75,22 +80,29 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "Weight", style = MaterialTheme.typography.headlineMedium)
-                            FilledIconButton(
+                            Text(
+                                text = "Weight",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = TextPurple
+                            )
+
+                            FilledIconButton (
+                                colors = IconButtonDefaults.filledIconButtonColors(containerColor = CellsBgPurple),
                                 onClick = {
                                     onAddWeightClicked()
                                 }, shape = CircleShape
                             ) {
-                                Icon(Icons.Default.Add, contentDescription = null)
+                                Icon(Icons.Default.Add, tint = MainPurple,contentDescription = null)
                             }
                         }
                         val lastUpdated = remember(weightList) {
                             weightList.maxByOrNull { it.timestamp }?.timestamp
                         }
                         Text(
-                            modifier = Modifier.padding(start = 12.dp),
                             text = lastUpdated?.toRelativeTime() ?: "Keep track of your pet's weight",
                             color = Color.LightGray,
                             fontSize = 12.sp

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -129,7 +130,19 @@ class PetDetailsViewModel @Inject constructor(
 data class DetailsState(
     val tasks: List<Task> = emptyList(),
     val lastTask: Task? = null,
-    val pet: Pet? = null,
+    val pet: Pet? =  Pet(
+        id = "pet_001",
+        petName = "Buddy",
+        imagePath = "",
+        birthDate = 1672531200000L, // 2023-01-01
+        gender = PetGender.Male,
+        breed = "Golden Retriever",
+        specie = "Dog",
+        personality = listOf("Friendly", "Playful", "Energetic"),
+        isActive = true,
+        createdAt = System.currentTimeMillis(),
+        updatedAt = System.currentTimeMillis()
+    ),
 
     // This will work in both OverView and Health tabs, since it in overview will just take the last sorted one, which the last weight the user updated so it represent the current pet's weight :)
     val lastWeight: List<WeightRecord> = emptyList(),

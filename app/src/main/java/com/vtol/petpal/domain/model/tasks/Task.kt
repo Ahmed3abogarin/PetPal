@@ -13,7 +13,8 @@ data class Task(
     val dateTime: Long,
     val isCompleted: Boolean = false,
     val repeatInterval: RepeatInterval? = null,
-    val details: String? = null
+    val details: String? = null,
+    val syncStatus: SyncStatus = SyncStatus.PENDING,
 )
 
 enum class RepeatInterval {

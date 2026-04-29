@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.ui.theme.ExtraLightPurple
@@ -20,6 +22,8 @@ fun ChipButton(
     text: String,
     bgColor: Color = ExtraLightPurple.copy(alpha = 0.1f),
     textColor: Color,
+    fontWeight: FontWeight = FontWeight.Normal,
+    fontSize: TextUnit = 12.sp,
     borderColor: Color,
     onClick: () -> Unit
 ) {
@@ -35,7 +39,8 @@ fun ChipButton(
         Text(
             text = text,
             color = textColor,
-            fontSize = 12.sp
+            fontWeight = fontWeight,
+            fontSize = fontSize
         )
 
     }

@@ -52,7 +52,7 @@ import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.add_pet.components.PetChipButton
 import com.vtol.petpal.presentation.add_pet.components.PetDateTextField
 import com.vtol.petpal.presentation.common.components.ChipButton
-import com.vtol.petpal.presentation.components.BackArrow
+import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.BackgroundColor
@@ -112,7 +112,7 @@ fun AddPetScreen(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    BackArrow(modifier = Modifier.padding(start = 16.dp)) { navigateUp() }
+                    AppIconButton(modifier = Modifier.padding(start = 16.dp)) { navigateUp() }
                     Text(
                         modifier = Modifier.align(Alignment.Center),
                         text = "Add Pet",
@@ -330,15 +330,15 @@ fun AddPetScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
 
-                    tags.forEach {
-                        val isSelected = state.petPersonality == it
+                    tags.forEach { tag ->
+                        val isSelected = tag in state.petPersonalities
                         ChipButton(
-                            text = it,
+                            text = tag,
                             bgColor = Color.White,
                             textColor = if (isSelected) MainPurple else ExtraLightPurple,
                             borderColor = if (isSelected) MainPurple else ExtraLightPurple
                         ) {
-                            event(AddPetEvent.OnPersonalityChanged(it))
+                            event(AddPetEvent.OnPersonalityChanged(tag))
                         }
                     }
                 }

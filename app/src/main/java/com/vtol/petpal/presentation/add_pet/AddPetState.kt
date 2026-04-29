@@ -10,7 +10,7 @@ data class AddPetState(
     val petNameError: String? = null,
     val petBreed: String = "",
     val petSpecie: String = "",
-    val petPersonality: String = "",
+    val petPersonalities: List<String> = emptyList(),
     val petSpecieError: String? = null,
     val petWeight: String = "",
     val petWeightError: String? = null,

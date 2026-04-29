@@ -12,6 +12,9 @@ val ExtraLightPurple = Color(0xFFD7BDFF)
 
 //val MainPurple2 = Color(0xFF8638FE)
 val MainPurple = Color(0xFF8638FE) //
+
+val CellsBgPurple = Color(0xFFF5F3FF) //
+val TextPurple = Color(0xFF3E348E) //
 val SemiTransparentPurple = Color(0x1D8638FE) //
 val Gold = Color(0xFFFEBC2F)
 val DarkGold = Color(0xFFD79200)

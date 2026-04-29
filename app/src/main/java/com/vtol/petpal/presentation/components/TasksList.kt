@@ -85,10 +85,7 @@ fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null,
                             fontSize = 10.sp
                         )
                     }
-
                 }
-
-
             }
 
             Spacer(modifier = Modifier.weight(1f))
