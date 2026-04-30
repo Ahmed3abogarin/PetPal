@@ -63,7 +63,7 @@ fun SettingsButton(
 
             Text(
                 text = buttonTxt,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 color = txtColor,
                 fontWeight = FontWeight.Normal
             )

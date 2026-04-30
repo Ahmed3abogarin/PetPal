@@ -57,6 +57,7 @@ import com.vtol.petpal.ui.theme.Red
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.ShareManager
+import com.vtol.petpal.util.getVersionName
 import com.vtol.petpal.util.showToast
 
 @Composable
@@ -316,8 +317,6 @@ fun ProfileScreen(
                 color = MainPurple.copy(0.3f),
                 thickness = 0.2.dp
             )
-
-
         }
 
         // Sign out Button
@@ -355,7 +354,7 @@ fun ProfileScreen(
             )
             Text(
                 modifier = Modifier.weight(1f),
-                text = "Version name: " + "",
+                text = "Version name: ${context.getVersionName()}",
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
                 color = Color.Gray
@@ -366,10 +365,7 @@ fun ProfileScreen(
                     .weight(1f),
                 color = Color.Gray.copy(0.2f)
             )
-
         }
-
-
         Spacer(modifier = Modifier.height(16.dp))
     }
 
@@ -382,7 +378,6 @@ fun ProfileScreen(
             event(ProfileEvents.SignOut)
         }
     )
-
 }
 
 

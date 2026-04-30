@@ -48,6 +48,7 @@ import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.getVersionName
 import kotlinx.coroutines.delay
 import java.util.Locale
 
@@ -88,7 +89,6 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
     var visible by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
-    val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
 
     val country = Locale.getDefault().displayCountry
     val language = Locale.getDefault().displayLanguage
@@ -240,7 +240,7 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
                             "message" to message,
                             "rating" to rating.toString(),
                             "tag" to tag,
-                            "appVersion" to appVersion,
+                            "appVersion" to context.getVersionName(),
                             "androidVersion" to androidVersion,
                             "deviceModel" to deviceModel,
                             "country" to country,

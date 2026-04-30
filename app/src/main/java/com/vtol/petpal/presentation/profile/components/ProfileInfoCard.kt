@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.TextPurple
 
 @Composable
 fun ProfileInfoCard(
@@ -86,13 +87,13 @@ fun ProfileInfoCard(
                 Text(
                     modifier = Modifier.padding(bottom = 6.dp),
                     text = doneTasks.toString(),
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = MainPurple
                 )
 
                 Text(
                     text = "Tasks done",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = Color.Black
                 )
 
@@ -114,19 +115,17 @@ fun ProfileInfoCard(
                 Text(
                     modifier = Modifier.padding(bottom = 6.dp),
                     text = vetVisits.toString(),
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = MainPurple
                 )
 
                 Text(
                     text = "Vet visits",
-                    fontSize = 16.sp,
-                    color = Color.Black
+                    fontSize = 14.sp,
+                    color = TextPurple
                 )
 
             }
-
-
         }
     }
 }

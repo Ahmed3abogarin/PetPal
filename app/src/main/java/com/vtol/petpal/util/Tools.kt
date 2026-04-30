@@ -83,3 +83,8 @@ fun Context.showToast() {
     Toast.makeText(this, "Not available yet", Toast.LENGTH_SHORT).show()
 
 }
+
+fun Context.getVersionName(): String{
+    val packageInfo = packageManager.getPackageInfo(packageName, 0)
+    return packageInfo.versionName ?: "Unknown"
+}
