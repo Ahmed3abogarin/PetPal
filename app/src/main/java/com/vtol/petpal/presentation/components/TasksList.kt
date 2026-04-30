@@ -43,8 +43,8 @@ fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null,
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.elevatedCardElevation(3.dp),
-        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.elevatedCardElevation(2.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
 
@@ -74,7 +74,7 @@ fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null,
 
                     Text(
                         text = taskType,
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium)
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium)
                     )
 
 
@@ -82,7 +82,7 @@ fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null,
                     petName?.let {
                         Text(
                             text = it,
-                            fontSize = 10.sp
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -93,7 +93,7 @@ fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null,
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = task.dateTime.toTimeString(),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium)
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Box(modifier = Modifier.size(24.dp)) {

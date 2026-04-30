@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -51,6 +49,7 @@ import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.components.TaskCard
 import com.vtol.petpal.presentation.home.components.HomePetsList
 import com.vtol.petpal.presentation.home.components.HomeScreenHeader
+import com.vtol.petpal.presentation.home.components.HomeShimmer
 import com.vtol.petpal.presentation.home.components.ProgressCard
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
@@ -252,14 +251,7 @@ fun HomeScreen(
         }
 
         if (state.value.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            HomeShimmer()
         }
     }
 }

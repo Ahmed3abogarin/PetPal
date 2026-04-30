@@ -50,7 +50,7 @@ fun HomePetsList(
                         .clip(CircleShape)
                         .border(2.dp, Color.Gray, CircleShape)
                         .clickable { onPetClicked(it.id) },
-                    model = ImageRequest.Builder(context).data(it.imagePath).build(),
+                    model = ImageRequest.Builder(context).data(it.imagePath).crossfade(true).build(),
                     placeholder = painterResource(R.drawable.pet_placeholder),
                     error = painterResource(R.drawable.pet_placeholder),
                     contentDescription = "pet image",

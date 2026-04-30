@@ -311,12 +311,6 @@ fun ProfileScreen(
                 )
                 context.startActivity(intent)
             }
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                color = MainPurple.copy(0.3f),
-                thickness = 0.2.dp
-            )
         }
 
         // Sign out Button
@@ -350,12 +344,13 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                color = Color.Gray.copy(0.2f)
+                color = Color.Gray.copy(0.2f),
+                thickness = 0.5.dp
             )
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Version name: ${context.getVersionName()}",
-                fontSize = 12.sp,
+                fontSize = 11.sp,
                 textAlign = TextAlign.Center,
                 color = Color.Gray
             )
@@ -363,7 +358,8 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                color = Color.Gray.copy(0.2f)
+                color = Color.Gray.copy(0.2f),
+                thickness = 0.5.dp
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
