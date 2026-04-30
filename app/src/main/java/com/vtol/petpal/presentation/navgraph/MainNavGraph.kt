@@ -60,9 +60,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             )
         }
         composable(Routes.PetsScreen.route) {
+            val viewmodel: PetViewModel = hiltViewModel()
+            val state by viewmodel.state.collectAsState()
 
             PetsScreen(
-                viewModel = hiltViewModel<PetViewModel>(),
+                state = state,
                 navigateToAddPetScreen = {
                     navController.navigate(Routes.AddPetScreen.route)
                 },

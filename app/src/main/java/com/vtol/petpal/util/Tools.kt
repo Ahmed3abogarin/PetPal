@@ -79,8 +79,8 @@ fun Long.toRelativeTime(): String {
 
 
 
-fun Context.showToast() {
-    Toast.makeText(this, "Not available yet", Toast.LENGTH_SHORT).show()
+fun Context.showToast(text: String = "Not available yet") {
+    Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 
 }
 

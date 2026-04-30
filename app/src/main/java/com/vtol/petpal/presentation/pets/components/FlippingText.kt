@@ -1,0 +1,80 @@
+package com.vtol.petpal.presentation.pets.components
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.TextPurple
+import kotlinx.coroutines.delay
+
+@Composable
+fun FlippingText(
+    texts: List<String>,
+    interval: Long = 2000L
+) {
+    if (texts.isEmpty()) return
+
+    var index by remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(interval)
+            index = (index + 1) % texts.size
+        }
+    }
+
+    AnimatedContent(
+        targetState = texts[index],
+        transitionSpec = {
+            (slideInVertically { it } + fadeIn()) togetherWith
+                    (slideOutVertically { -it } + fadeOut())
+        },
+        label = "text_switch"
+    ) { text ->
+        val isSpecie = text.startsWith("Specie: ")
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            if (isSpecie) {
+                Text(
+                    text = "Specie:",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPurple
+                )
+
+                Text(
+                    modifier = Modifier.padding(start = 3.dp),
+                    text = text.removePrefix("Specie: "),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MainPurple
+                )
+            } else {
+                Text(
+                    text = text,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MainPurple
+                )
+            }
+        }
+    }
+}

@@ -210,7 +210,11 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
 
                     OutlinedTextField(
                         value = message,
-                        onValueChange = { message = it },
+                        onValueChange = {
+                            if (it.length <= 300) {
+                                message = it
+                            }
+                        },
                         shape = RoundedCornerShape(16.dp),
                         minLines = 6,
                         colors = OutlinedTextFieldDefaults.colors(

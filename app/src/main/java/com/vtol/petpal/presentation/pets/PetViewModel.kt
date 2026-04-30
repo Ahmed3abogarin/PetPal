@@ -1,36 +1,28 @@
 package com.vtol.petpal.presentation.pets
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
-import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
-import com.vtol.petpal.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PetViewModel @Inject constructor(
     private val appUseCases: AppUseCases
-): ViewModel() {
-
-    private val _addPetState = MutableStateFlow<Resource<Unit>?>(null)
-    val addPetState = _addPetState.asStateFlow()
-
+) : ViewModel() {
     private val _state = MutableStateFlow(PetsState())
     val state = _state.asStateFlow()
 
@@ -39,15 +31,6 @@ class PetViewModel @Inject constructor(
         observePets()
     }
 
-    // TODO: CREATE THE STATE CLASS FOR THE PETS
-
-    fun addPet(pet: Pet,imageUri: Uri?, weight: WeightRecord){
-        viewModelScope.launch {
-            _addPetState.value = Resource.Loading
-            _addPetState.value =  appUseCases.addPet(pet = pet, imageUri = imageUri, weight = weight)
-
-        }
-    }
 
 //    fun getPetsV2(){
 //        appUseCases.getPets()
@@ -76,30 +59,46 @@ class PetViewModel @Inject constructor(
 //            .launchIn(viewModelScope)
 //    }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observePets() {
-        appUseCases.getPets() // The infinite stream from Firestore
-            .map { pets ->
-                // Whenever pets change, fetch their tasks concurrently
-                val tasksMap = coroutineScope {
-                    pets.map { pet ->
-                        async {
-                            pet.id to appUseCases.getTasksById(pet.id).firstOrNull()?.firstOrNull()
-                        }
-                    }.awaitAll().toMap()
+        appUseCases.getPets()
+            .flatMapLatest { pets ->
+
+                if (pets.isEmpty()) {
+                    return@flatMapLatest flowOf(
+                        PetsState(
+                            pets = emptyList(),
+                            firstTasks = emptyMap(),
+                            isLoading = false
+                        )
+                    )
                 }
-                // Return combined result
-                PetsState(pets = pets, firstTasks = tasksMap, isLoading = false)
+
+                val taskFlows = pets.map { pet ->
+                    appUseCases.getTasksById(pet.id)
+                        .map { tasks ->
+                            val now = System.currentTimeMillis()
+
+                            pet.id to tasks
+                                .filter { !it.isCompleted && it.dateTime > now }
+                                .minByOrNull { it.dateTime }
+                        }
+                }
+
+                combine(taskFlows) { pairs ->
+                    PetsState(
+                        pets = pets,
+                        firstTasks = pairs.toMap(),
+                        isLoading = false
+                    )
+                }
             }
             .onStart { emit(PetsState(isLoading = true)) }
             .catch { emit(PetsState(error = it.message)) }
-            .onEach { _state.value = it } // Update UI
+            .onEach { _state.value = it }
             .launchIn(viewModelScope)
     }
-
-
 }
-
-
 
 
 data class PetsState(
