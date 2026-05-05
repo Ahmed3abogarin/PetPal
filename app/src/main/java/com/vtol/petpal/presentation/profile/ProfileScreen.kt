@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.profile
 
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -56,7 +55,8 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.Red
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.Resource
-import com.vtol.petpal.util.ShareManager
+import com.vtol.petpal.util.ShareManager.openWebsite
+import com.vtol.petpal.util.ShareManager.shareApp
 import com.vtol.petpal.util.getVersionName
 import com.vtol.petpal.util.showToast
 
@@ -72,9 +72,6 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     var showDialog by remember { mutableStateOf(false) }
-
-    val shareManager = remember { ShareManager(context) }
-
 
     Column(
         modifier = Modifier
@@ -205,8 +202,6 @@ fun ProfileScreen(
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-
-
             }
 
             ProfileInfoCard(
@@ -215,8 +210,6 @@ fun ProfileScreen(
                 vetVisits = state.vetVisits,
                 doneTasks = doneTasks
             )
-
-
         }
 
 
@@ -286,7 +279,7 @@ fun ProfileScreen(
                 buttonTxt = "Invite friends",
                 bgColor = Color(0XFFE6F5E8),
                 icon = R.drawable.ic_invite
-            ) { shareManager.shareApp() }
+            ) { shareApp(context) }
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -305,11 +298,7 @@ fun ProfileScreen(
                 thickness = 0.2.dp
             )
             SettingsButton(buttonTxt = "Terms & Privacy", icon = R.drawable.ic_terms) {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    "https://ahmed3abogarin.github.io/PetPal-privacy-policy".toUri()
-                )
-                context.startActivity(intent)
+                openWebsite(context,"https://ahmed3abogarin.github.io/PetPal-privacy-policy".toUri())
             }
         }
 

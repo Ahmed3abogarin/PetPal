@@ -2,11 +2,10 @@ package com.vtol.petpal.util
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 
-class ShareManager(
-    private val context: Context
-) {
-    fun shareApp() {
+object ShareManager {
+    fun shareApp(context: Context) {
         val packageName = context.packageName
 
         val text = """
@@ -25,5 +24,20 @@ class ShareManager(
         context.startActivity(
             Intent.createChooser(intent, "Invite Friends")
         )
+    }
+
+    // Inside your UI layer (e.g., an Activity or Composable)
+    fun openWebsite(context: Context, url: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = url
+        }
+        context.startActivity(intent)
+    }
+
+    fun openDialer(context: Context, phoneNumber: String) {
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:$phoneNumber")
+        }
+        context.startActivity(intent)
     }
 }

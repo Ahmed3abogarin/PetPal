@@ -166,7 +166,7 @@ fun VetItem(task: Task, date: String) {
             ) {
                 Image(
                     modifier = Modifier.size(32.dp),
-                    painter = painterResource(R.drawable.ic_vet),
+                    painter = painterResource(R.drawable.ic_vets),
                     contentDescription = ""
                 )
 

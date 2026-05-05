@@ -78,6 +78,14 @@ fun Long.toRelativeTime(): String {
 }
 
 
+fun Float.toFormattedDistance(): String {
+    return if (this >= 1000) {
+        String.format("%.1f km", this / 1000) // e.g., "2.4 km"
+    } else {
+        String.format("%.0f m", this) // e.g., "850 m"
+    }
+}
+
 
 fun Context.showToast(text: String = "Not available yet") {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()

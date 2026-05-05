@@ -201,7 +201,6 @@ fun HomeScreen(
                             text = "Today",
                             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     // The tasks list (today)
@@ -227,7 +226,6 @@ fun HomeScreen(
                             text = "Upcoming",
                             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
 

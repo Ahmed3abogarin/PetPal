@@ -1,63 +1,1 @@
-package com.vtol.petpal.data.repository
-
-import android.content.Context
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.CircularBounds
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.api.net.SearchNearbyRequest
-import com.google.android.libraries.places.api.net.SearchNearbyResponse
-import com.vtol.petpal.BuildConfig
-import com.vtol.petpal.domain.model.map.PlaceCategory
-import com.vtol.petpal.domain.model.map.VetAddress
-import com.vtol.petpal.domain.repository.MapsRepository
-import kotlinx.coroutines.tasks.await
-
-class MapsRepositoryImpl(
-     context: Context,
-) : MapsRepository {
-    private val placesClient: PlacesClient by lazy {
-        if (!Places.isInitialized()) {
-            Places.initializeWithNewPlacesApiEnabled(context.applicationContext, BuildConfig.MAPS_API_KEY)
-        }
-        Places.createClient(context.applicationContext)
-    }
-
-    override suspend fun getNearLocations(userLocation: LatLng,category: PlaceCategory): List<VetAddress> {
-        // Define what fields we want back
-        val fields = listOf(
-            Place.Field.DISPLAY_NAME,
-            Place.Field.LOCATION,
-            Place.Field.FORMATTED_ADDRESS,
-            Place.Field.TYPES
-        )
-
-        // Define the search area — e.g., 5000 m radius around userLocation
-        val bounds = CircularBounds.newInstance(userLocation, 4000.0)
-
-        // Build the SearchNearbyRequest
-        val request = SearchNearbyRequest
-            .builder(bounds, fields)
-            .setIncludedTypes(listOf(category.apiType))
-            .setMaxResultCount(20)
-            .setRankPreference(SearchNearbyRequest.RankPreference.POPULARITY)
-            .build()
-        
-        // Execute the request
-        val response: SearchNearbyResponse = placesClient.searchNearby(request).await()
-
-
-        // Map the result to domain model
-        return response.places.mapNotNull { place ->
-            place.location?.let { latLng ->
-                VetAddress(
-                    name = place.displayName ?: "Vet",
-                    lat = latLng.latitude,
-                    lng = latLng.longitude,
-                    address = place.formattedAddress
-                )
-            }
-        }
-    }
-}
+package com.vtol.petpal.data.repositoryimport android.content.Contextimport android.location.Locationimport com.google.android.gms.maps.model.LatLngimport com.google.android.libraries.places.api.Placesimport com.google.android.libraries.places.api.model.CircularBoundsimport com.google.android.libraries.places.api.model.Periodimport com.google.android.libraries.places.api.model.Placeimport com.google.android.libraries.places.api.net.FetchResolvedPhotoUriRequestimport com.google.android.libraries.places.api.net.IsOpenRequestimport com.google.android.libraries.places.api.net.PlacesClientimport com.google.android.libraries.places.api.net.SearchNearbyRequestimport com.google.android.libraries.places.api.net.SearchNearbyResponseimport com.vtol.petpal.BuildConfigimport com.vtol.petpal.domain.model.map.OpeningStatusimport com.vtol.petpal.domain.model.map.PlaceCategoryimport com.vtol.petpal.domain.model.map.PlaceAddressimport com.vtol.petpal.domain.repository.MapsRepositoryimport kotlinx.coroutines.asyncimport kotlinx.coroutines.awaitAllimport kotlinx.coroutines.coroutineScopeimport kotlinx.coroutines.tasks.awaitclass MapsRepositoryImpl(    context: Context,) : MapsRepository {    private val placesClient: PlacesClient by lazy {        if (!Places.isInitialized()) {            Places.initializeWithNewPlacesApiEnabled(                context.applicationContext,                BuildConfig.MAPS_API_KEY            )        }        Places.createClient(context.applicationContext)    }    override suspend fun getNearLocations(        userLocation: LatLng,        category: PlaceCategory    ): List<PlaceAddress> {        val fields = listOf(            Place.Field.ID,            Place.Field.DISPLAY_NAME,            Place.Field.LOCATION,            Place.Field.RATING,            Place.Field.USER_RATING_COUNT,            Place.Field.OPENING_HOURS,            Place.Field.UTC_OFFSET,            Place.Field.BUSINESS_STATUS,            Place.Field.INTERNATIONAL_PHONE_NUMBER,            Place.Field.WEBSITE_URI,            Place.Field.PHOTO_METADATAS        )        val bounds = CircularBounds.newInstance(userLocation, 4000.0)        val request = SearchNearbyRequest            .builder(bounds, fields)            .setIncludedTypes(listOf(category.apiType))            .setMaxResultCount(20)            .setRankPreference(SearchNearbyRequest.RankPreference.POPULARITY)            .build()        val response: SearchNearbyResponse = placesClient.searchNearby(request).await()        return coroutineScope {            response.places.map { place ->                async {                    place.location?.let { latLng ->                        val distanceResults = FloatArray(1)                        Location.distanceBetween(                            userLocation.latitude,                            userLocation.longitude,                            latLng.latitude,                            latLng.longitude,                            distanceResults                        )                        val distance = distanceResults[0]                        // 1. Create the IsOpenRequest for the current place                        val openRequest = IsOpenRequest.newInstance(place)                        // 2. Fetch the response (evaluates locally and instantly because of the fields provided above)                        val openResponse = placesClient.isOpen(openRequest).await()                        val closingTime = getOpeningStatus(place)                        val photoUri = place.photoMetadatas?.firstOrNull()?.let { metadata ->                            val photoRequest = FetchResolvedPhotoUriRequest.builder(metadata)                                .setMaxWidth(400)                                .setMaxHeight(400)                                .build()                            placesClient.fetchResolvedPhotoUri(photoRequest).await().uri                        }                        PlaceAddress(                            id = place.id ?: return@async null,                            name = place.displayName ?: "Vet",                            url = place.websiteUri,                            lat = latLng.latitude,                            lng = latLng.longitude,                            openingHours = place.openingHours,                            phoneNumber = place.internationalPhoneNumber,                            rating = place.rating,                            totalRating = place.userRatingCount,                            isOpen = openResponse.isOpen, // 3. Extract the boolean                            distance = distance,                            openingStatus = closingTime,                            photo = photoUri                        )                    }                }            }.awaitAll().filterNotNull()        }    }    private fun getOpeningStatus(place: Place): OpeningStatus {        val currentHours = place.openingHours ?: return OpeningStatus()        val periods = currentHours.periods ?: return OpeningStatus()        val now = java.util.Calendar.getInstance()        val currentDay = now.get(java.util.Calendar.DAY_OF_WEEK) - 1        val currentTime = now.get(java.util.Calendar.HOUR_OF_DAY) * 100 +                now.get(java.util.Calendar.MINUTE)        var activePeriod: Period? = null        var nextPeriod: Period? = null        for (period in periods) {            val open = period.open ?: continue            val close = period.close            val openDay = open.day.ordinal            val openTime = open.time.hours * 100 + open.time.minutes            val closeDay = close?.day?.ordinal            val closeTime = close?.time?.let { it.hours * 100 + it.minutes }            val isOvernight = closeDay != null && openDay != closeDay            val isActive = if (!isOvernight) {                openDay == currentDay && currentTime in openTime until (closeTime ?: 2400)            } else {                (currentDay == openDay && currentTime >= openTime) ||                        (currentDay == closeDay && currentTime < (closeTime ?: 0))            }            if (isActive) {                activePeriod = period                break            }            // Track next opening            if (openDay == currentDay && currentTime < openTime) {                if (nextPeriod == null || openTime < (nextPeriod.open!!.time.hours * 100 + nextPeriod.open!!.time.minutes)) {                    nextPeriod = period                }            }        }        // After the for loop, before the "Open now" check        if (activePeriod == null && nextPeriod == null) {            for (period in periods) {                val open = period.open ?: continue                val openDay = open.day.ordinal                val daysAhead = (openDay - currentDay + 7) % 7                if (daysAhead > 0) {                    val currentNextDaysAhead = nextPeriod?.open?.let {                        (it.day.ordinal - currentDay + 7) % 7                    } ?: Int.MAX_VALUE                    if (daysAhead < currentNextDaysAhead) {                        nextPeriod = period                    }                }            }        }        // ✅ Open now        if (activePeriod != null) {            val close = activePeriod.close ?: return OpeningStatus(                is24Hours = true            )            val hour = close.time.hours            val minute = close.time.minutes            val formatted = formatTime(hour, minute)            return OpeningStatus(                closingTime = formatted            )        }        // ❌ Closed → show next opening        val nextOpen = nextPeriod?.open        if (nextOpen != null) {            val daysAhead = (nextOpen.day.ordinal - currentDay + 7) % 7            val dayLabel = when (daysAhead) {                0 -> null // today, no label needed                1 -> "Tomorrow"                else -> nextOpen.day.name.lowercase().replaceFirstChar { it.uppercase() }            }            return OpeningStatus(                nextOpeningTime = formatTime(nextOpen.time.hours, nextOpen.time.minutes),                nextOpeningDay = dayLabel            )        }        return OpeningStatus()    }    private fun formatTime(hour: Int, minute: Int): String {        val amPm = if (hour >= 12) "PM" else "AM"        val displayHour = when {            hour == 0 -> 12            hour > 12 -> hour - 12            else -> hour        }        return "%d:%02d %s".format(displayHour, minute, amPm)    }}

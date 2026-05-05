@@ -73,7 +73,6 @@ fun PetsScreen(
                     .padding(bottom = 32.dp, top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -101,8 +100,6 @@ fun PetsScreen(
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }
-
-
         }
 
         when {
@@ -152,7 +149,6 @@ fun PetsScreen(
                                 Spacer(modifier = Modifier.height(22.dp))
                                 SecondaryButton(buttonTxt = "Add Pet") { navigateToAddPetScreen() }
                             }
-
                         }
                     }
                 }

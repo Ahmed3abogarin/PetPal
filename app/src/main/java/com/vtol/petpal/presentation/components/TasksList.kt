@@ -35,10 +35,10 @@ import com.vtol.petpal.util.toTimeString
 fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null, onCheckedChange: (Boolean) -> Unit) {
 
     val (taskType, taskImg) = when (task.type) {
-        TaskType.VET -> "Vet" to R.drawable.ic_vet
+        TaskType.VET -> "Vet" to R.drawable.ic_vets
         TaskType.FEED -> "Feed" to R.drawable.ic_fed
-        TaskType.MEDICATION -> "Medicine" to R.drawable.ic_pill
-        TaskType.WALK -> "Walk" to R.drawable.ic_walk
+        TaskType.MEDICATION -> "Medicine" to R.drawable.ic_pharmacy
+        TaskType.WALK -> "Walk" to R.drawable.ic_parks
     }
 
     Card(

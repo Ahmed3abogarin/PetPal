@@ -18,13 +18,14 @@ import androidx.navigation.navigation
 import com.vtol.petpal.presentation.calender.CalenderScreen
 import com.vtol.petpal.presentation.calender.CalenderViewModel
 import com.vtol.petpal.presentation.common.UserViewModel
-import com.vtol.petpal.presentation.explore.NearByScreen
+import com.vtol.petpal.presentation.explore.ExploreScreen
 import com.vtol.petpal.presentation.tasks.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
 import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.presentation.add_pet.AddPetScreen
 import com.vtol.petpal.presentation.add_pet.AddPetViewModel
 import com.vtol.petpal.presentation.add_pet.UiEffects
+import com.vtol.petpal.presentation.explore.ExploreViewModel
 import com.vtol.petpal.presentation.pets.PetDetailsScreen
 import com.vtol.petpal.presentation.pets.PetDetailsViewModel
 import com.vtol.petpal.presentation.pets.PetViewModel
@@ -38,7 +39,6 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         startDestination = Routes.HomeScreen.route,
         route = Routes.MainGraph.route
     ) {
-
         composable(Routes.HomeScreen.route) {
             val homeViewModel: HomeViewModel = hiltViewModel()
             val userViewModel: UserViewModel = hiltViewModel()
@@ -88,7 +88,15 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 //                popExitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
             route = Routes.NearbyScreen.route
         ) {
-            NearByScreen()
+            val viewModel: ExploreViewModel = hiltViewModel()
+
+            val state by viewModel.uiState.collectAsState()
+            ExploreScreen(
+                onCategoryClicked = {
+                    viewModel.onCategorySelected(it)
+                },
+                state = state
+            )
         }
         composable(route = Routes.ProfileScreen.route) {
             val profileViewModel = hiltViewModel<ProfileViewModel>()

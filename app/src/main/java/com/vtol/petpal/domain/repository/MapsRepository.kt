@@ -2,8 +2,8 @@ package com.vtol.petpal.domain.repository
 
 import com.google.android.gms.maps.model.LatLng
 import com.vtol.petpal.domain.model.map.PlaceCategory
-import com.vtol.petpal.domain.model.map.VetAddress
+import com.vtol.petpal.domain.model.map.PlaceAddress
 
 interface MapsRepository {
-    suspend fun getNearLocations(userLocation: LatLng, category: PlaceCategory): List<VetAddress>
+    suspend fun getNearLocations(userLocation: LatLng, category: PlaceCategory): List<PlaceAddress>
 }
