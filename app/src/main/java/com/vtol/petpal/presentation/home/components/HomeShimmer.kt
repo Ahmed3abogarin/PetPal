@@ -1,11 +1,5 @@
 package com.vtol.petpal.presentation.home.components
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,46 +18,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.AppColors.bodyColors
+import com.vtol.petpal.util.AppColors.cardColors
+import com.vtol.petpal.util.AppColors.headerColors
+import com.vtol.petpal.util.rememberShimmerBrush
 
 @Composable
 fun HomeShimmer() {
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val translateAnim by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1400, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "shimmerAnim"
-    )
+    val headerBrush = rememberShimmerBrush(headerColors)
 
-    val headerBrush = Brush.linearGradient(
-        colors = listOf(Color(0x26FFFFFF), Color(0x4DFFFFFF), Color(0x26FFFFFF)),
-        start = Offset(translateAnim - 200f, 0f),
-        end = Offset(translateAnim, 0f)
-    )
-    val bodyBrush = Brush.linearGradient(
-        colors = listOf(Color(0xFFE0DAFA), Color(0xFFF0EEFF), Color(0xFFE0DAFA)),
-        start = Offset(translateAnim - 200f, 0f),
-        end = Offset(translateAnim, 0f)
-    )
-    val cardBrush = Brush.linearGradient(
-        colors = listOf(Color(0xFFECECEC), Color(0xFFF8F8F8), Color(0xFFECECEC)),
-        start = Offset(translateAnim - 200f, 0f),
-        end = Offset(translateAnim, 0f)
-    )
+    val bodyBrush = rememberShimmerBrush(bodyColors)
+
+    val cardBrush = rememberShimmerBrush(cardColors)
 
     Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF0EEFF))) {
         // Header shimmer

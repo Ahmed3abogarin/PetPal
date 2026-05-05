@@ -1,12 +1,9 @@
 package com.vtol.petpal.presentation.explore
 
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.model.OpeningHours
 import com.vtol.petpal.domain.LocationProvider
-import com.vtol.petpal.domain.model.map.OpeningStatus
 import com.vtol.petpal.domain.model.map.PlaceCategory
 import com.vtol.petpal.domain.model.map.PlaceAddress
 import com.vtol.petpal.domain.usecases.MapsUseCases
@@ -78,68 +75,7 @@ class ExploreViewModel @Inject constructor(
 
 data class UiState(
     val location: LatLng? = null,
-    val locations: List<PlaceAddress> = listOf(
-        PlaceAddress(
-            url = "".toUri(),
-            openingHours = OpeningHours.builder().build(),
-            rating = 4.7,
-            name = "TailWaggers Clinic",
-            lat = 0.0,
-            lng = 0.0,
-            phoneNumber = "+20123456789",
-            isOpen = true,
-            distance = 0.0f,
-            totalRating = 0,
-            photo = null,
-            id = "",
-            openingStatus = OpeningStatus("10:00 AM", false, "10:00 AM", "Tomorrow")
-        ),
-        PlaceAddress(
-            url = "".toUri(),
-            openingHours = OpeningHours.builder().build(),
-            rating = 4.7,
-            name = "TailWaggers Clinic",
-            lat = 0.0,
-            lng = 0.0,
-            phoneNumber = "+20123456789",
-            isOpen = true,
-            distance = 0.0f,
-            totalRating = 0,
-            photo = null,
-            id = "",
-            openingStatus = OpeningStatus("10:00 AM", false, "10:00 AM", "Tomorrow")
-        ),
-        PlaceAddress(
-            url = "".toUri(),
-            openingHours = OpeningHours.builder().build(),
-            rating = 4.7,
-            name = "TailWaggers Clinic",
-            lat = 0.0,
-            lng = 0.0,
-            phoneNumber = "+20123456789",
-            isOpen = true,
-            distance = 0.0f,
-            totalRating = 0,
-            photo = null,
-            id = "",
-            openingStatus = OpeningStatus("10:00 AM", false, "10:00 AM", "Tomorrow")
-        ),
-        PlaceAddress(
-            url = "".toUri(),
-            openingHours = OpeningHours.builder().build(),
-            rating = 4.7,
-            name = "TailWaggers Clinic",
-            lat = 0.0,
-            lng = 0.0,
-            phoneNumber = "+20123456789",
-            isOpen = true,
-            distance = 0.0f,
-            totalRating = 0,
-            photo = null,
-            id = "",
-            openingStatus = OpeningStatus("10:00 AM", false, "10:00 AM", "Tomorrow")
-        )
-    ),
+    val locations: List<PlaceAddress> = emptyList(),
     val category: PlaceCategory = PlaceCategory.VETS,
     val isLoading: Boolean = false,
     val error: String? = null

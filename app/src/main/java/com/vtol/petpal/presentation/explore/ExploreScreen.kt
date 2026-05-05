@@ -1,7 +1,11 @@
 package com.vtol.petpal.presentation.explore
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +27,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,15 +41,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.vtol.petpal.R
@@ -53,6 +57,8 @@ import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.explore.components.CategoryList
 import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.presentation.explore.components.PlaceCard
+import com.vtol.petpal.presentation.explore.components.PlaceMarker
+import com.vtol.petpal.presentation.explore.components.UserLocationMarker
 import com.vtol.petpal.presentation.explore.util.MapsIntentHelper.openGoogleMaps
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
@@ -60,6 +66,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.ShareManager.openDialer
 import com.vtol.petpal.util.ShareManager.openWebsite
+import com.vtol.petpal.util.showToast
 
 
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -71,8 +78,7 @@ fun ExploreScreenContent(
 
     /*
     TODO:
-    1- Create custom location marker
-    2- Create custom location for the current location
+    - Create shimmer effect and better handling for loading state
      */
 
     val cameraPositionState = rememberCameraPositionState()
@@ -116,8 +122,9 @@ fun ExploreScreenContent(
                     )
 
                     AppIconButton(
-                        icon = R.drawable.ic_add,
+                        icon = R.drawable.ic_search,
                     ) {
+                        context.showToast("Search is not available yet")
 
                     }
                 }
@@ -163,11 +170,11 @@ fun ExploreScreenContent(
                     ) {
 
                         // first display the user location
-                        Marker(state = cLocation)
+                        UserLocationMarker(state = cLocation)
 
                         state.locations.forEach { place ->
                             // then shows the near selected locations
-                            Marker(state = MarkerState(LatLng(place.lat, place.lng)))
+                            PlaceMarker(state = MarkerState(LatLng(place.lat, place.lng)), place = place)
                         }
                     }
                 }
@@ -237,29 +244,56 @@ fun ExploreScreen(
     onCategoryClicked: (PlaceCategory) -> Unit
 ) {
     val context = LocalContext.current
+    val activity = context as Activity
 
     var hasLocationPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
+                context, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         )
     }
+
+    var showRationale by remember { mutableStateOf(false) }
+    var permanentlyDenied by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        hasLocationPermission =
-            permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+        when {
+            granted -> {
+                hasLocationPermission = true
+                showRationale = false
+                permanentlyDenied = false
+            }
+
+            // User denied but can be asked again → show rationale
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                activity, Manifest.permission.ACCESS_FINE_LOCATION
+            ) -> {
+                showRationale = true
+            }
+
+            // User denied with "Don't ask again" → send to settings
+            else -> {
+                permanentlyDenied = true
+            }
+        }
     }
 
-    LaunchedEffect(true) {
+    val settingsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        // Re-check permission when user returns from Settings
+        hasLocationPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    LaunchedEffect(Unit) {
         if (!hasLocationPermission) {
             permissionLauncher.launch(
                 arrayOf(
@@ -272,24 +306,58 @@ fun ExploreScreen(
 
     when {
         hasLocationPermission -> {
-
             ExploreScreenContent(
                 onCategoryClicked = onCategoryClicked,
                 state = state
             )
         }
 
+        showRationale -> {
+            // Explain WHY you need location, then let them retry
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("We need your location to show nearby pet-friendly places.")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(onClick = {
+                        permissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            )
+                        )
+                    }) {
+                        Text("Try Again")
+                    }
+                }
+            }
+        }
+
+        permanentlyDenied -> {
+            // Can no longer request — must go to Settings
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Location permission was permanently denied. Please enable it in Settings.")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(onClick = {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        settingsLauncher.launch(intent)
+                    }) {
+                        Text("Open Settings")
+                    }
+                }
+            }
+        }
+
         else -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    textAlign = TextAlign.Center,
-                    text = "Please grant location permission to see nearby places"
-                )
+                Text("Please grant location permission to see nearby places.")
             }
         }
     }
 }
+
 
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
 @Preview

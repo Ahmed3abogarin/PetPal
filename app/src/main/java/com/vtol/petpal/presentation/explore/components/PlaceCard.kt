@@ -61,7 +61,7 @@ fun PlaceCard(
             "until ${place.openingStatus.closingTime}"
         place.isOpen == false && place.openingStatus.nextOpeningTime != null ->
             "Opens ${place.openingStatus.nextOpeningDay ?: ""} ${place.openingStatus.nextOpeningTime}".trim()
-        else -> null
+        else -> "Unknown"
     }
 
     Column(
@@ -204,8 +204,8 @@ fun PlaceButton(
 ) {
     Row(
         modifier = modifier
-            .clickable(enabled) { onClick() }
             .clip(RoundedCornerShape(10.dp))
+            .clickable(enabled) { onClick() }
             .background(if (enabled) CellsBgPurple else ButtonLightGray)
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
