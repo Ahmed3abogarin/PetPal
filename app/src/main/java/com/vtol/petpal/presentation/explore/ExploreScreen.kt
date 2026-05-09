@@ -10,8 +10,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +25,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,17 +52,19 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.map.PlaceCategory
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.explore.components.CategoryList
-import com.vtol.petpal.presentation.explore.components.LoadingIndicator
+import com.vtol.petpal.presentation.explore.components.GPSNotGrantedScreen
 import com.vtol.petpal.presentation.explore.components.PlaceCard
+import com.vtol.petpal.presentation.explore.components.PlaceCardShimmer
 import com.vtol.petpal.presentation.explore.components.PlaceMarker
 import com.vtol.petpal.presentation.explore.components.UserLocationMarker
 import com.vtol.petpal.presentation.explore.util.MapsIntentHelper.openGoogleMaps
 import com.vtol.petpal.ui.theme.BackgroundColor
-import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.AppColors.cardColors
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.ShareManager.openDialer
 import com.vtol.petpal.util.ShareManager.openWebsite
+import com.vtol.petpal.util.rememberShimmerBrush
 import com.vtol.petpal.util.showToast
 
 
@@ -76,15 +75,8 @@ fun ExploreScreenContent(
     state: UiState
 ) {
 
-    /*
-    TODO:
-    - Create shimmer effect and better handling for loading state
-     */
-
     val cameraPositionState = rememberCameraPositionState()
-
     val context = LocalContext.current
-
 
 
     LaunchedEffect(state.location) {
@@ -125,11 +117,11 @@ fun ExploreScreenContent(
                         icon = R.drawable.ic_search,
                     ) {
                         context.showToast("Search is not available yet")
-
                     }
                 }
 
                 CategoryList(
+                    enabled = !state.isLoading,
                     modifier = Modifier.padding(start = 16.dp),
                     onCategoryClicked = {
                         onCategoryClicked(it)
@@ -142,7 +134,10 @@ fun ExploreScreenContent(
             Spacer(modifier = Modifier.height(14.dp))
         }
 
+
         item {
+            var mapLoading by remember { mutableStateOf(true) }
+
             // Maps window
             Column(
                 modifier = Modifier
@@ -153,7 +148,7 @@ fun ExploreScreenContent(
                         shape = RoundedCornerShape(12.dp)
                     )
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MainPurple)
+                    .background(petPalGradient)
                     .height(252.dp)
                     .fillMaxWidth()
             ) {
@@ -165,18 +160,25 @@ fun ExploreScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         cameraPositionState = cameraPositionState,
                         onMapLoaded = {
-
+                            mapLoading = false
                         }
                     ) {
-
                         // first display the user location
                         UserLocationMarker(state = cLocation)
 
                         state.locations.forEach { place ->
                             // then shows the near selected locations
-                            PlaceMarker(state = MarkerState(LatLng(place.lat, place.lng)), place = place)
+                            PlaceMarker(
+                                state = MarkerState(LatLng(place.lat, place.lng)),
+                                place = place
+                            )
                         }
                     }
+                }
+
+                if (mapLoading) {
+                    val brush = rememberShimmerBrush(cardColors)
+                    Box(modifier = Modifier.fillMaxSize().background(brush))
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -185,12 +187,7 @@ fun ExploreScreenContent(
         when {
             state.isLoading -> {
                 item {
-                    AnimatedVisibility(
-                        visible = true,
-                        exit = fadeOut()
-                    ) {
-                        LoadingIndicator()
-                    }
+                    PlaceCardShimmer(modifier = Modifier.padding(horizontal = 16.dp))
                 }
             }
 
@@ -225,7 +222,9 @@ fun ExploreScreenContent(
                 if (state.locations.isEmpty()) {
                     item {
                         Box(
-                            modifier = Modifier.height(200.dp).fillMaxWidth(),
+                            modifier = Modifier
+                                .height(200.dp)
+                                .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(text = "No places found")
@@ -314,45 +313,37 @@ fun ExploreScreen(
 
         showRationale -> {
             // Explain WHY you need location, then let them retry
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("We need your location to show nearby pet-friendly places.")
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Button(onClick = {
-                        permissionLauncher.launch(
-                            arrayOf(
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION
-                            )
-                        )
-                    }) {
-                        Text("Try Again")
-                    }
-                }
+            GPSNotGrantedScreen {
+                permissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
             }
         }
 
         permanentlyDenied -> {
             // Can no longer request — must go to Settings
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Location permission was permanently denied. Please enable it in Settings.")
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Button(onClick = {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                        }
-                        settingsLauncher.launch(intent)
-                    }) {
-                        Text("Open Settings")
-                    }
+            GPSNotGrantedScreen(
+                buttonTxt = "Open settings",
+                message = "Location permission was permanently denied. Please enable it in Settings."
+            ) {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", context.packageName, null)
                 }
+                settingsLauncher.launch(intent)
             }
         }
 
         else -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Please grant location permission to see nearby places.")
+            GPSNotGrantedScreen {
+                permissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
             }
         }
     }

@@ -25,7 +25,7 @@ class LocationProvider @Inject constructor(
         val request = CurrentLocationRequest.Builder()
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .setMaxUpdateAgeMillis(0) // force fresh location
-            .setDurationMillis(3000) // wait up to 3 seconds
+            .setDurationMillis(10000) // wait up to 3 seconds
             .build()
 
         val freshLocation = fusedLocationClient.getCurrentLocation(request, null).await()

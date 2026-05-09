@@ -12,7 +12,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-// util/ShimmerBrush.kt
 @Composable
 fun rememberShimmerBrush(
     colors: List<Color> = listOf(Color(0xFFECECEC), Color(0xFFF8F8F8), Color(0xFFECECEC))

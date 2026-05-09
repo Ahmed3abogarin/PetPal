@@ -32,6 +32,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 fun CategoryList(
     modifier: Modifier = Modifier,
     selectCategory: PlaceCategory,
+    enabled: Boolean = true,
     onCategoryClicked: (PlaceCategory) -> Unit,
 ) {
     LazyRow(
@@ -50,6 +51,7 @@ fun CategoryList(
             )
 //            FilterChip()
             Card(
+                enabled = enabled ,
                 onClick = { onCategoryClicked(it) },
                 colors = CardDefaults.cardColors(containerColor = bgColor),
                 shape = CircleShape
