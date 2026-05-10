@@ -20,6 +20,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 
 class AppRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -64,10 +65,11 @@ class AppRepositoryImpl @Inject constructor(
 
             // Save pet
             petRef.set(newPet).await()
-
+            val dayKey = LocalDate.now().toString()
             // Save initial weight
             petRef.collection(WEIGHT_COLLECTION)
-                .add(weight)
+                .document(dayKey)
+                .set(weight)
                 .await()
 
             Resource.Success(Unit)
@@ -147,12 +149,15 @@ class AppRepositoryImpl @Inject constructor(
     override suspend fun addWeight(petId: String, weightRecord: WeightRecord) {
         val uid = auth.currentUser?.uid
         uid?.let {
+            val dayKey = LocalDate.now().toString()
+
             firestore.collection(USERS_COLLECTION)
                 .document(it)
                 .collection(PETS_COLLECTION)
                 .document(petId)
                 .collection(WEIGHT_COLLECTION)
-                .add(weightRecord)
+                .document(dayKey)
+                .set(weightRecord)
                 .await()
         }
     }

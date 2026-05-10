@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +26,7 @@ import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.WeightConverter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +78,7 @@ fun AddWeightBottomSheet(
 
                     if (!isValid) return@SaveButton
 
-                    onSave(WeightRecord(weight = weight.toDouble(), unit = selectWUnit))
+                    onSave(WeightRecord(weight = WeightConverter.toGrams(weight.toFloat(), unit = selectWUnit)))
                 },
                 modifier = Modifier.fillMaxWidth()
             )

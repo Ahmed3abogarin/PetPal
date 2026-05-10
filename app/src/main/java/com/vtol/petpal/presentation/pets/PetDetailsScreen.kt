@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.vtol.petpal.R
+import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
@@ -63,6 +64,7 @@ fun PetDetailsScreen(
     modifier: Modifier = Modifier,
     state: DetailsState,
     navigateUp: () -> Unit,
+    onRangeChanged: (WeightRange) -> Unit,
     onCheckedChanged: (id: Int, isCompleted: Boolean) -> Unit,
     onAddWeightClicked: (WeightRecord) -> Unit,
     onAddTaskClick: () -> Unit
@@ -244,8 +246,11 @@ fun PetDetailsScreen(
                     )
 
                     1 -> HealthTab(
-                        onAddWeightClicked = { onAddWeightClicked(it) },
+                        onAddWeightClicked = { record -> onAddWeightClicked(record) },
                         weightList = state.lastWeight,
+                        onRangedChanged = {
+                            onRangeChanged(it)
+                        },
                         state = state
                     )
 
@@ -273,7 +278,8 @@ fun PetScreenPreview() {
             onAddWeightClicked = {},
             onCheckedChanged = { _, _ -> },
             navigateUp = {},
-            onAddTaskClick = {}
+            onAddTaskClick = {},
+            onRangeChanged = {}
         )
     }
 }

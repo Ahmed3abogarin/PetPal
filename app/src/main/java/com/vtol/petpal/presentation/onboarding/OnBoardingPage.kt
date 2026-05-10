@@ -4,25 +4,30 @@ import androidx.annotation.DrawableRes
 import com.vtol.petpal.R
 
 data class OnBoardingPage (
-    val title : String,
+    val titleBold : String,
+    val titleLight : String,
     val description: String,
-    @DrawableRes val img: Int
+    @param:DrawableRes val img: Int
 )
 
 val onBoardingPages = listOf(
     OnBoardingPage(
-        title = "Easily care for your pet’s\n daily needs",
-        description = "Track feeding, health, and activities in one place",
+        titleBold = "Pet Care",
+        titleLight = "Companion",
+        description = "Keep your furry friend healthy, happy, and loved with everything you need in one simple place.",
         img = R.drawable.onboarding_1
     ),
     OnBoardingPage(
-        title = "Never miss a vet visit or feeding time",
-        description = "Set reminders and keep all your pet’s records at your fingertips",
-        img = R.drawable.onboarding_3
+        titleBold = "Daily pet care",
+        titleLight = "made easy",
+        description = "Track routines, manage appointments, set reminders, and stay organized without the stress.",
+        img = R.drawable.onboarding_2
     ),
     OnBoardingPage(
-        title = "Enjoy every moment with your pet",
-        description = "From health tracking to daily care, everything your pet needs is here",
-        img = R.drawable.onboarding_2
+        titleBold = "Every pet",
+        titleLight = "deserves great care",
+        description = "Start your journey with PetPal and make every moment with your companion more meaningful.",
+        img = R.drawable.onboarding_3
     )
+
 )

@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
@@ -32,10 +31,8 @@ import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.vtol.petpal.domain.model.WeightRecord
-import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -150,16 +147,16 @@ fun AppChart(modifier: Modifier = Modifier, records: List<WeightRecord>) {
 }
 
 
-@Preview
-@Composable
-fun MyPreview2() {
-    PetPalTheme {
-        val testWeights = listOf(
-            WeightRecord(weight = 3.2, unit = WeightUnit.KG, timestamp = 1700010800000),
-        )
-        AppChart(
-            records = testWeights
-        )
-
-    }
-}
+//@Preview
+//@Composable
+//fun MyPreview2() {
+//    PetPalTheme {
+//        val testWeights = listOf(
+//            WeightRecord(weight = 3.2, unit = WeightUnit.KG, timestamp = 1700010800000),
+//        )
+//        AppChart(
+//            records = testWeights
+//        )
+//
+//    }
+//}

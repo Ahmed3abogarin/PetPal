@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -23,9 +24,7 @@ class PetDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val petId: String = checkNotNull(savedStateHandle["petId"])
-
-//    private val _petState = MutableStateFlow<Resource<Pet?>>(Resource.Loading)
-//    val petState = _petState.asStateFlow()
+    private val _range = MutableStateFlow(WeightRange.DAYS_7)
 
     private val _state = MutableStateFlow(DetailsState(isLoading = true))
     val state = _state.asStateFlow()
@@ -46,7 +45,6 @@ class PetDetailsViewModel @Inject constructor(
 
             viewModelScope.launch {
                 _state.update { it.copy(isLoading = true) }
-
                 try {
                     appUseCases.addWeight(petId, weightRecord)
                     _state.update { it.copy(isLoading = false) }
@@ -54,9 +52,7 @@ class PetDetailsViewModel @Inject constructor(
                     _state.update { it.copy(isLoading = false, error = e.message) }
                 }
             }
-
         }
-
     }
 
 
@@ -69,12 +65,16 @@ class PetDetailsViewModel @Inject constructor(
 
                 combine(
                     appUseCases.getTasksById(petId),
-                    appUseCases.getWeights(petId)
-                ) { tasks, weights ->
+                    appUseCases.getWeights(petId),
+                    _range
+                ) { tasks, weights, range ->
+                    val filtered = filterWeights(weights, range)
+
                     DetailsState(
                         pet = pet,
                         tasks = tasks.sortedBy { it.dateTime },
-                        lastWeight = weights,
+                        lastWeight = filtered,
+                        range = range,
                         lastTask = tasks.filter { !it.isCompleted }.maxByOrNull { it.dateTime }
                     )
                 }
@@ -95,10 +95,12 @@ class PetDetailsViewModel @Inject constructor(
                     )
                 }
             }
-
         }
+    }
 
 
+    fun updateWeightFilter(range: WeightRange){
+        _range.value = range
     }
 
 //    fun getTask() {
@@ -126,6 +128,31 @@ class PetDetailsViewModel @Inject constructor(
 
 }
 
+fun filterWeights(
+    entries: List<WeightRecord>,
+    range: WeightRange
+): List<WeightRecord> {
+
+    if (range == WeightRange.ALL) return entries
+
+    val now = System.currentTimeMillis()
+
+    val rangeMillis = when (range) {
+        WeightRange.DAYS_7 -> 7L * 24 * 60 * 60 * 1000
+        WeightRange.DAYS_30 -> 30L * 24 * 60 * 60 * 1000
+        WeightRange.MONTHS_6 -> 180L * 24 * 60 * 60 * 1000
+        WeightRange.YEAR_1 -> 365L * 24 * 60 * 60 * 1000
+        else -> Long.MAX_VALUE
+    }
+
+    return entries
+        .filter { record ->
+            val diff = now - record.timestamp
+            diff in 0..rangeMillis   // 🔥 safer than <= only
+        }
+        .sortedByDescending { it.timestamp } // 🔥 important for UI correctness
+}
+
 data class DetailsState(
     val tasks: List<Task> = emptyList(),
     val lastTask: Task? = null,
@@ -134,4 +161,5 @@ data class DetailsState(
     val lastWeight: List<WeightRecord> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
+    val range: WeightRange = WeightRange.DAYS_7
 )

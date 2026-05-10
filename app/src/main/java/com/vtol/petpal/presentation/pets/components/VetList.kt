@@ -34,10 +34,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.vtol.petpal.R
+import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
@@ -46,18 +48,27 @@ import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.ui.theme.CellsBgPurple
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.TextPurple
 import com.vtol.petpal.util.toDateTimeString
 import com.vtol.petpal.util.toRelativeTime
 import timber.log.Timber
 
 @Composable
-fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightClicked: () -> Unit) {
+fun VetsList(
+    state: DetailsState, weightList: List<WeightRecord>,
+    onAddWeightClicked: () -> Unit,
+    onRangeChanged: (WeightRange) -> Unit
+) {
     val vetTasks = remember(state.tasks) {
         state.tasks.filter { it.type == TaskType.VET }
     }
 
-    Box(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
 
 
         when {
@@ -90,23 +101,34 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
                                 color = TextPurple
                             )
 
-                            FilledIconButton (
+                            FilledIconButton(
+                                modifier = Modifier.size(34.dp),
                                 colors = IconButtonDefaults.filledIconButtonColors(containerColor = CellsBgPurple),
                                 onClick = {
                                     onAddWeightClicked()
                                 }, shape = CircleShape
                             ) {
-                                Icon(Icons.Default.Add, tint = MainPurple,contentDescription = null)
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = Icons.Default.Add,
+                                    tint = MainPurple,
+                                    contentDescription = null
+                                )
                             }
                         }
                         val lastUpdated = remember(weightList) {
                             weightList.maxByOrNull { it.timestamp }?.timestamp
                         }
+                        val txt = if(lastUpdated == null) "Keep track of your pet's weight" else  "Last updated: " + lastUpdated.toRelativeTime()
                         Text(
-                            text = lastUpdated?.toRelativeTime() ?: "Keep track of your pet's weight",
+                            text = txt,
                             color = Color.LightGray,
                             fontSize = 12.sp
                         )
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        WeightRangeList(state.range) { onRangeChanged(it) }
+
 //                        Text(
 //                            text = "Keep track of your pets' weight",
 //                            color = Color.LightGray,
@@ -119,11 +141,14 @@ fun VetsList(state: DetailsState, weightList: List<WeightRecord>, onAddWeightCli
                          */
 
                         AppChart(records = weightList.sortedBy { it.timestamp })
-                        Timber.e( weightList.size.toString())
+                        Timber.e(weightList.size.toString())
 
-                        if (vetTasks.isNotEmpty()){
+                        if (vetTasks.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(16.dp))
-                            Text(text = "Vet Visits", style = MaterialTheme.typography.headlineMedium)
+                            Text(
+                                text = "Vet Visits",
+                                style = MaterialTheme.typography.headlineMedium
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
 
                         }
@@ -200,5 +225,13 @@ fun VetItem(task: Task, date: String) {
             Spacer(modifier = Modifier.width(3.dp))
             Text(text = "visit date: $date", fontSize = 12.sp)
         }
+    }
+}
+
+@Preview
+@Composable
+fun PrelistRange() {
+    PetPalTheme {
+        VetsList(state = DetailsState(), weightList = listOf(), onAddWeightClicked = {}, onRangeChanged = {})
     }
 }

@@ -162,6 +162,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 },
                 onAddTaskClick = {
                     navController.navigate(Routes.AddTaskScreen.route)
+                },
+                onRangeChanged = {
+                    petDetailsVM.updateWeightFilter(it)
                 }
             )
         }
@@ -173,7 +176,6 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 navigateUp = { navController.navigateUp() }
             )
         }
-
 
         composable(Routes.FeedbackScreen.route) {
             val viewModel: ProfileViewModel = hiltViewModel()

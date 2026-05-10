@@ -6,6 +6,7 @@ import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.pets.ValidatePetInputUseCase
+import com.vtol.petpal.util.WeightConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,9 +96,10 @@ class AddPetViewModel @Inject constructor(
                     personality = currentState.petPersonalities
                 )
 
+                val petWeight = WeightConverter.toGrams(currentState.petWeight.toFloat(), unit = currentState.petWeightUnit)
+
                 val weightRecord = WeightRecord(
-                    weight = currentState.petWeight.toDouble(),
-                    unit = currentState.petWeightUnit
+                    weight = petWeight,
                 )
 
                 useCases.addPet(pet = pet, imageUri = state.value.petImage, weight = weightRecord)

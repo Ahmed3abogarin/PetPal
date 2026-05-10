@@ -18,7 +18,6 @@ data class Pet(
 )
 @Keep
 data class WeightRecord(
-    val weight: Double = 0.0,
-    val unit: WeightUnit = WeightUnit.G,
+    val weight: Int = 0,
     val timestamp: Long = System.currentTimeMillis(),
 )
