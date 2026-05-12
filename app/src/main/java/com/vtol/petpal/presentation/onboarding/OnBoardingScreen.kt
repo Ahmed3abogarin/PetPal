@@ -107,7 +107,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
             Text(
                 modifier = Modifier
                     .alpha(if (currentPage != onBoardingPages.lastIndex) 1f else 0f)
-                    .clickable { onFinish() }, text = "Skip"
+                    .clickable(enabled = currentPage != onBoardingPages.lastIndex) { onFinish() }, text = "Skip"
             )
 
             PageIndicator(currentPage = currentPage, totalPages = pagerState.pageCount)
