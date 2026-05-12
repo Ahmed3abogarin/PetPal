@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
@@ -102,17 +103,23 @@ fun OnboardingScreen(onFinish: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(modifier = Modifier.clickable { onFinish() }, text = "Skip")
-            PageIndicator(currentPage = pagerState.currentPage, totalPages = pagerState.pageCount)
+            val currentPage = pagerState.currentPage
+            Text(
+                modifier = Modifier
+                    .alpha(if (currentPage != onBoardingPages.lastIndex) 1f else 0f)
+                    .clickable { onFinish() }, text = "Skip"
+            )
+
+            PageIndicator(currentPage = currentPage, totalPages = pagerState.pageCount)
 
 
             FilledIconButton(
                 onClick = {
-                    if (pagerState.currentPage == onBoardingPages.lastIndex){
+                    if (currentPage == onBoardingPages.lastIndex) {
                         onFinish()
                     } else {
                         coroutine.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            pagerState.animateScrollToPage(currentPage + 1)
                         }
                     }
                 },
