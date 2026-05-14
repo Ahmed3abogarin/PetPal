@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +42,7 @@ fun AppTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     errorTxt: String? = null,
     password: Boolean = false,
+    leadingIcon: ImageVector? = null,
     isOneLine: Boolean = false,
     onValueChanged: (String) -> Unit,
 ) {
@@ -81,6 +84,17 @@ fun AppTextField(
                     }
                 }
             } else null,
+
+            leadingIcon = if (leadingIcon != null) {
+                {
+                    Icon(
+                        imageVector = leadingIcon,
+                        tint = Color.Gray,
+                        contentDescription = "leading icon"
+                    )
+                }
+
+            } else null,
             modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
@@ -102,7 +116,7 @@ fun filledTextFieldColors() = TextFieldDefaults.colors(
     errorIndicatorColor = Color.Transparent,
     errorContainerColor = Color.White,
     errorPlaceholderColor = Color.Gray,
-    errorTextColor =  Color.Gray
+    errorTextColor = Color.Gray
 )
 
 
@@ -110,6 +124,6 @@ fun filledTextFieldColors() = TextFieldDefaults.colors(
 @Composable
 fun Ddsg() {
     PetPalTheme {
-        AppTextField(value = "", placeHolder = "", errorTxt = "Email Cannot be empty") { }
+        AppTextField(value = "", placeHolder = "", errorTxt = "Email Cannot be empty", leadingIcon = Icons.Default.Lock) { }
     }
 }

@@ -1,5 +1,7 @@
 package com.vtol.petpal.presentation.navgraph
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -17,8 +19,11 @@ fun NavGraphBuilder.authNavGraph(navController: NavController) {
     ) {
         composable(Routes.LoginScreen.route) {
             val loginVm: LoginViewModel = hiltViewModel()
+            val state by loginVm.uiState.collectAsState()
+
             LoginScreen(
-                viewModel = loginVm,
+                state = state,
+                event = loginVm::onEvent,
                 navigateToSignUp = {
                     navController.navigate(Routes.SignUpScreen.route)
                 }

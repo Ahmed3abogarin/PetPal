@@ -47,6 +47,8 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginEvent.LoginClicked -> login()
+            is LoginEvent.GoogleClicked -> {}
+            is LoginEvent.FacebookClicked -> {}
         }
     }
 
