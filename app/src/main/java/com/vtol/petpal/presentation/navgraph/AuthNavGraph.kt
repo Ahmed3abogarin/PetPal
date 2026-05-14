@@ -32,8 +32,11 @@ fun NavGraphBuilder.authNavGraph(navController: NavController) {
 
         composable(Routes.SignUpScreen.route) {
             val signUpVm: SignUpViewModel = hiltViewModel()
+            val state by signUpVm.uiState.collectAsState()
+
             SignUpScreen(
-                viewModel = signUpVm,
+                state = state,
+                event = signUpVm::onEvent,
                 navigateToLogin = {
                     navController.navigate(Routes.LoginScreen.route)
                 }
