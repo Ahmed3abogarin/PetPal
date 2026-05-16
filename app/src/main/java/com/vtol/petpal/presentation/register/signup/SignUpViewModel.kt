@@ -53,6 +53,9 @@ class SignUpViewModel @Inject constructor(
                     )
                 }
             }
+            is SignUpEvent.ErrorShown -> {
+                _uiState.update { it.copy(error = null) }
+            }
 
             is SignUpEvent.SignUpClicked -> register()
             is SignUpEvent.GoogleClicked -> signInWithGoogle(event.context)

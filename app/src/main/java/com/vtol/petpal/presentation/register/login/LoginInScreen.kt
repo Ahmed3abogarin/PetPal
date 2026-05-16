@@ -70,8 +70,7 @@ fun LoginScreen(
     LaunchedEffect(state.error) {
         state.error?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-
-            // TODO: Clear the error state
+            event(LoginEvent.ErrorShown)
         }
     }
 
@@ -170,6 +169,7 @@ fun LoginContent(
 
         Column(
             modifier = Modifier
+                .offset(y = 22.dp)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

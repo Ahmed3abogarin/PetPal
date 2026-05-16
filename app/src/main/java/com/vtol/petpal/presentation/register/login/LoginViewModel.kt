@@ -45,6 +45,9 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
+            is LoginEvent.ErrorShown -> {
+                _uiState.update { it.copy(error = null) }
+            }
 
             is LoginEvent.LoginClicked -> login()
             is LoginEvent.GoogleClicked -> signInWithGoogle(event.context)

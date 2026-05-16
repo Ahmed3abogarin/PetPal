@@ -6,6 +6,9 @@ sealed class LoginEvent {
     data class EmailChanged(val value: String) : LoginEvent()
     data class PasswordChanged(val value: String) : LoginEvent()
     object LoginClicked : LoginEvent()
+
+    object ErrorShown: LoginEvent()
+
     data class GoogleClicked(val context: Context): LoginEvent()
     data class FacebookClicked(val idToken: String) : LoginEvent()
 }
