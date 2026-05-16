@@ -1,9 +1,11 @@
 package com.vtol.petpal.presentation.register.signup
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
+import com.vtol.petpal.presentation.register.GoogleAuthUiClient
 import com.vtol.petpal.util.ValidationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val useCases: AuthUseCases
+    private val useCases: AuthUseCases,
+    private val googleAuthUiClient: GoogleAuthUiClient
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
@@ -40,7 +43,6 @@ class SignUpViewModel @Inject constructor(
                         emailError = ValidationUtils.validateEmail(event.value)
                     )
                 }
-
             }
 
             is SignUpEvent.PasswordChanged -> {
@@ -50,37 +52,46 @@ class SignUpViewModel @Inject constructor(
                         passwordError = ValidationUtils.validatePassword(event.value)
                     )
                 }
-
             }
 
             is SignUpEvent.SignUpClicked -> register()
-            is SignUpEvent.GoogleClicked -> loginWithGoogle(event.token)
-            is SignUpEvent.FacebookClicked -> loginWithFacebook(event.token)
+            is SignUpEvent.GoogleClicked -> signInWithGoogle(event.context)
+            is SignUpEvent.FacebookClicked -> signInWithFacebook(event.token)
         }
     }
 
-    private fun loginWithFacebook(idToken: String) {
+    private fun signInWithFacebook(idToken: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
-
-            useCases.signInWithFacebook(idToken = idToken).onFailure {
-                _uiState.update {
-                    it.copy(isLoading = false, error = it.error)
+            useCases.signInWithFacebook(idToken)
+                .onSuccess {
+                    _uiState.update { it.copy(isLoading = false, error = null) }
                 }
-            }
+                .onFailure { throwable ->
+                    _uiState.update { it.copy(isLoading = false, error = throwable.message) }
+                }
         }
     }
 
-    private fun loginWithGoogle(idToken: String) {
+
+    fun signInWithGoogle(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            useCases.signInWithGoogle(idToken = idToken).onFailure {
-                _uiState.update {
-                    it.copy(isLoading = false, error = it.error)
-                }
+            val token = googleAuthUiClient.signIn(context)
+
+            if (token == null) {
+                _uiState.update { it.copy(isLoading = false, error = "Something went wrong") }
+                return@launch
             }
 
+            useCases.signInWithGoogle(token)
+                .onSuccess {
+                    _uiState.update { it.copy(isLoading = false, error = null) }
+                }
+                .onFailure { throwable ->
+                    _uiState.update { it.copy(isLoading = false, error = throwable.message) }
+                }
         }
     }
 

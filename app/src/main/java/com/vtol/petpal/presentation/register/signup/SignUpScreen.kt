@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +53,8 @@ fun SignUpScreen(
     event: (SignUpEvent) -> Unit,
     navigateToLogin: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(state.isLoading) {
@@ -191,7 +194,7 @@ fun SignUpScreen(
 
 
             SocialLoginRow(
-                onGoogleClicked = { event(SignUpEvent.GoogleClicked("")) },
+                onGoogleClicked = { event(SignUpEvent.GoogleClicked(context)) },
                 onFacebookClicked = {
                     // TODO
                 }
