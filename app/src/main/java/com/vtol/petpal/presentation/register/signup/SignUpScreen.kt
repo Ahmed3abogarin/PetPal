@@ -1,6 +1,7 @@
 package com.vtol.petpal.presentation.register.signup
 
-import androidx.compose.foundation.Canvas
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,35 +18,39 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.vtol.petpal.R
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
+import com.vtol.petpal.presentation.components.secondFilledTextFieldColors
 import com.vtol.petpal.presentation.register.components.SocialLoginRow
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.ui.theme.SemiTransparentPurple
 
 @Composable
 fun SignUpScreen(
@@ -63,6 +68,44 @@ fun SignUpScreen(
         }
     }
 
+    val callbackManager = remember { CallbackManager.Factory.create() }
+    val loginLauncher = rememberLauncherForActivityResult(
+        contract = LoginManager.getInstance().createLogInActivityResultContract(callbackManager)
+    ) { _ -> }
+
+    DisposableEffect(Unit) {
+        LoginManager.getInstance().registerCallback(
+            callbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onSuccess(result: LoginResult) {
+                    event(SignUpEvent.FacebookClicked(result.accessToken.token))
+                }
+                override fun onCancel() {}
+                override fun onError(error: FacebookException) {}
+            }
+        )
+        onDispose { LoginManager.getInstance().unregisterCallback(callbackManager) }
+    }
+
+    SignUpContent(
+        state = state,
+        event = event,
+        navigateToLogin = navigateToLogin,
+        onGoogleClicked = { event(SignUpEvent.GoogleClicked(context)) },
+        onFacebookClicked = { loginLauncher.launch(listOf("email", "public_profile")) }
+    )
+
+}
+
+@Composable
+fun SignUpContent(
+    state: SignUpUiState,
+    event: (SignUpEvent) -> Unit,
+    navigateToLogin: () -> Unit,
+    onGoogleClicked: () -> Unit,
+    onFacebookClicked: () -> Unit
+) {
+
     Box(
         modifier = Modifier
             .background(BackgroundColor)
@@ -71,70 +114,79 @@ fun SignUpScreen(
             .imePadding(),
         contentAlignment = Alignment.Center
     ) {
-        // Background top right circles
-        Canvas(modifier = Modifier.align(Alignment.TopEnd)) {
-            drawCircle(color = LightPurple.copy(alpha = 0.3f), radius = 500f)
-            drawCircle(
-                color = LightPurple.copy(alpha = 0.3f),
-                radius = 540f,
-                style = Stroke(width = (1.dp).toPx())
-            )
-        }
-
-        // Background bottom start squares
-        Canvas(
-            modifier = Modifier
-                .size(180.dp)
-                .align(Alignment.BottomStart)
-                .offset(x = (-62).dp)
-                .rotate(25f)
-        ) {
-            drawRect(
-                color = LightPurple.copy(alpha = 0.5f),
-                style = Stroke(width = (1.dp).toPx())
-            )
-        }
-        Canvas(
-            modifier = Modifier
-                .size(180.dp)
-                .align(Alignment.BottomStart)
-                .offset(x = (-62).dp)
-                .rotate(70f)
-        ) {
-            drawRect(
-                color = LightPurple.copy(alpha = 0.5f),
-                style = Stroke(width = (1.dp).toPx())
-            )
-        }
-
 
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(top = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(56.dp),
+                painter = painterResource(R.drawable.ic_logo),
+                contentDescription = "app logo"
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "PetPal",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MainPurple
+            )
+        }
+
+
+        Icon(
+            modifier = Modifier
+                .size(32.dp)
+                .align(alignment = Alignment.TopEnd)
+                .offset(y = (118).dp, x = (-22).dp)
+                .rotate(45f),
+            painter = painterResource(R.drawable.ic_pets_filled),
+            tint = LightPurple.copy(alpha = 0.4f),
+            contentDescription = null
+        )
+
+        Icon(
+            modifier = Modifier
+                .size(32.dp)
+                .align(alignment = Alignment.TopStart)
+                .offset(y = (100).dp, x = (22).dp)
+                .rotate(-45f),
+            painter = painterResource(R.drawable.ic_pets_filled),
+            tint = LightPurple.copy(alpha = 0.4f),
+            contentDescription = null
+        )
+
+        Column(
+            modifier = Modifier
+                .offset(y = 32.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
             Text(
                 "Create Account",
                 color = MainPurple,
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.SemiBold)
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Medium)
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 "Create an account to continue and manage your pet’s care easily",
-                color = Color.Black,
+                color = Color.Gray,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
             )
 
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             AppTextField(
                 value = state.name,
-                leadingIcon = Icons.Default.Person,
+                leadingIcon = R.drawable.ic_person_v2,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Name",
                 errorTxt = state.nameError,
@@ -144,7 +196,7 @@ fun SignUpScreen(
 
             AppTextField(
                 value = state.email,
-                leadingIcon = Icons.Default.Email,
+                leadingIcon = R.drawable.ic_mail,
                 colors = secondFilledTextFieldColors(),
                 isOneLine = true,
                 errorTxt = state.emailError,
@@ -154,7 +206,7 @@ fun SignUpScreen(
 
             AppTextField(
                 value = state.password,
-                leadingIcon = Icons.Default.Lock,
+                leadingIcon = R.drawable.ic_lock,
                 colors = secondFilledTextFieldColors(),
                 placeHolder = "Password",
                 errorTxt = state.passwordError,
@@ -163,7 +215,7 @@ fun SignUpScreen(
                 onValueChanged = { event(SignUpEvent.PasswordChanged(it)) }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             SaveButton(
                 text = "Sign Up",
@@ -173,7 +225,7 @@ fun SignUpScreen(
                 event(SignUpEvent.SignUpClicked)
 
             }
-            Spacer(modifier = Modifier.height(34.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
 
             Row(
@@ -189,21 +241,20 @@ fun SignUpScreen(
                 )
                 HorizontalDivider(modifier = Modifier.weight(1f))
             }
-            Spacer(modifier = Modifier.height(14.dp))
-
-
 
             SocialLoginRow(
-                onGoogleClicked = { event(SignUpEvent.GoogleClicked(context)) },
-                onFacebookClicked = {
-                    // TODO
-                }
+                onGoogleClicked = onGoogleClicked,
+                onFacebookClicked = onFacebookClicked
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Row(horizontalArrangement = Arrangement.Center) {
-                Text("Already have an account? ", fontWeight = FontWeight.Medium)
+                Text(
+                    "Already have an account? ",
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Medium
+                )
                 Text(
                     modifier = Modifier.clickable { navigateToLogin() },
                     text = "Sign In", color = MainPurple, fontWeight = FontWeight.SemiBold
@@ -211,6 +262,7 @@ fun SignUpScreen(
             }
         }
     }
+
 
     if (state.isLoading) {
         Box(
@@ -222,30 +274,17 @@ fun SignUpScreen(
             CircularProgressIndicator()
         }
     }
+
 }
-
-
-@Composable
-fun secondFilledTextFieldColors() = TextFieldDefaults.colors(
-    disabledTextColor = Color.Black,
-    disabledContainerColor = SemiTransparentPurple,
-    focusedContainerColor = SemiTransparentPurple,
-    unfocusedContainerColor = SemiTransparentPurple,
-    disabledIndicatorColor = Color.Transparent,
-    focusedIndicatorColor = Color.Transparent,
-    unfocusedIndicatorColor = Color.Transparent,
-    errorIndicatorColor = Color.Transparent,
-    errorContainerColor = SemiTransparentPurple,
-    errorPlaceholderColor = Color.Black,
-    errorTextColor = Color.Black,
-    errorLabelColor = Color.Black,
-)
 
 @Preview
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen(
+    SignUpContent(
         state = SignUpUiState(),
-        event = {}
-    ) {}
+        event = {},
+        navigateToLogin = {},
+        onGoogleClicked = {},
+        onFacebookClicked = {}
+    )
 }

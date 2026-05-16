@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.register.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -17,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vtol.petpal.R
 
@@ -32,10 +32,7 @@ fun SocialLoginRow(
         Button(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(14.dp),
-            border = BorderStroke(
-                width = 0.5.dp,
-                color = Color.LightGray
-            ),
+            elevation = ButtonDefaults.buttonElevation(2.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             onClick = onFacebookClicked
         ) {
@@ -55,10 +52,7 @@ fun SocialLoginRow(
         Button(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(14.dp),
-            border = BorderStroke(
-                width = 0.5.dp,
-                color = Color.LightGray
-            ),
+            elevation = ButtonDefaults.buttonElevation(2.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             onClick = onGoogleClicked
         ) {
@@ -75,4 +69,13 @@ fun SocialLoginRow(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SocialLoginRowPreview() {
+    SocialLoginRow(
+        onFacebookClicked = {},
+        onGoogleClicked = {}
+    )
 }
