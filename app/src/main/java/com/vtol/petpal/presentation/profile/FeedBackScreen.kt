@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.firestore.FieldValue
 import com.vtol.petpal.presentation.common.components.ChipButton
+import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.components.SaveButton
-import com.vtol.petpal.presentation.explore.components.LoadingIndicator
 import com.vtol.petpal.presentation.profile.components.StarRatingBar
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.ExtraLightPurple

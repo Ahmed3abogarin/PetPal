@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +45,7 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.vtol.petpal.R
+import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.components.secondFilledTextFieldColors
@@ -112,31 +111,30 @@ fun LoginContent(
     onGoogleClicked: () -> Unit,
     onFacebookClicked: () -> Unit
 ) {
-
     Box(
         modifier = Modifier
             .background(BackgroundColor)
             .fillMaxSize()
             .statusBarsPadding()
-            .imePadding(),
-        contentAlignment = Alignment.Center
+            .imePadding()
     ) {
+
+        // Decorative paw icons
         Icon(
             modifier = Modifier
+                .padding(top = 80.dp, end = 22.dp)
                 .size(32.dp)
-                .align(alignment = Alignment.TopEnd)
-                .offset(y = (118).dp, x = (-22).dp)
+                .align(Alignment.TopEnd)
                 .rotate(45f),
             painter = painterResource(R.drawable.ic_pets_filled),
             tint = LightPurple.copy(alpha = 0.4f),
             contentDescription = null
         )
-
         Icon(
             modifier = Modifier
+                .padding(top = 32.dp, start = 22.dp)
                 .size(32.dp)
-                .align(alignment = Alignment.TopStart)
-                .offset(y = (100).dp, x = (22).dp)
+                .align(Alignment.TopStart)
                 .rotate(-45f),
             painter = painterResource(R.drawable.ic_pets_filled),
             tint = LightPurple.copy(alpha = 0.4f),
@@ -145,44 +143,33 @@ fun LoginContent(
 
         Column(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .padding(top = 10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+                .padding(top = 24.dp, bottom = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
             Image(
-                modifier = Modifier
-                    .size(56.dp),
+                modifier = Modifier.size(56.dp),
                 painter = painterResource(R.drawable.ic_logo),
-                contentDescription = "app logo"
+                contentDescription = "App logo"
             )
-            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "PetPal",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 color = MainPurple
             )
 
-        }
+            Spacer(modifier = Modifier.height(16.dp))
 
-
-
-        Column(
-            modifier = Modifier
-                .offset(y = 22.dp)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-
+            // Heading
             Text(
                 "Welcome back!",
                 color = MainPurple,
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.SemiBold)
             )
-
-
             Text(
                 "We missed you and your pets.",
                 color = Color.Gray,
@@ -190,9 +177,9 @@ fun LoginContent(
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-
+            // Fields
             AppTextField(
                 value = state.email,
                 leadingIcon = R.drawable.ic_mail,
@@ -202,7 +189,6 @@ fun LoginContent(
                 errorTxt = state.emailError,
                 onValueChanged = { event(LoginEvent.EmailChanged(it)) }
             )
-
             AppTextField(
                 value = state.password,
                 leadingIcon = R.drawable.ic_lock,
@@ -213,8 +199,8 @@ fun LoginContent(
                 errorTxt = state.passwordError,
                 onValueChanged = { event(LoginEvent.PasswordChanged(it)) }
             )
-            Spacer(modifier = Modifier.height(2.dp))
 
+            // Fixed typo + wired event
             Text(
                 modifier = Modifier
                     .align(Alignment.End)
@@ -222,30 +208,21 @@ fun LoginContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ) {
-
                     },
-                text = "Forget your password?",
+                text = "Forgot your password?",
                 color = MainPurple,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
-            Spacer(modifier = Modifier.height(2.dp))
 
-
-            SaveButton(
-                text = "Sign in",
-                color = MainPurple,
-            ) {
+            SaveButton(text = "Sign in", color = MainPurple) {
                 event(LoginEvent.LoginClicked)
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-
                 HorizontalDivider(modifier = Modifier.weight(1f))
                 Text(
                     text = "Or continue with",
@@ -260,29 +237,23 @@ fun LoginContent(
                 onFacebookClicked = onFacebookClicked
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
+            // Sign up link
             Row(horizontalArrangement = Arrangement.Center) {
                 Text("Don't have an account? ", color = Color.Gray, fontWeight = FontWeight.Medium)
                 Text(
                     modifier = Modifier.clickable { navigateToSignUp() },
-                    text = "Create account", color = MainPurple, fontWeight = FontWeight.SemiBold
+                    text = "Create account",
+                    color = MainPurple,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
     }
 
+    // Loading overlay
     if (state.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        LoadingIndicator()
     }
-
 }
 
 @Preview

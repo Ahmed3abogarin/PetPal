@@ -1,14 +1,10 @@
 package com.vtol.petpal.presentation.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -23,10 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -35,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.vtol.petpal.R
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
-import com.vtol.petpal.ui.theme.SemiTransparentPurple
 
 
 @Composable
@@ -64,12 +56,11 @@ fun AppTextField(
         isError = errorTxt != null,
         keyboardOptions = keyboardOptions,
         maxLines = if (isOneLine) 1 else Int.MAX_VALUE,
-        supportingText = if (errorTxt != null) {
-            {
-                Text(text = errorTxt)
+        supportingText = {
+            if (errorTxt != null) {
+                Text(errorTxt)
             }
-
-        } else null,
+        },
         visualTransformation = if (password && !isPasswordVisible)
             PasswordVisualTransformation()
         else
@@ -102,11 +93,7 @@ fun AppTextField(
             }
 
         } else null,
-        modifier = modifier
-            .shadow(elevation = 2.dp, shape = RoundedCornerShape(10.dp))
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-
+        modifier = modifier.fillMaxWidth()
     )
 }
 
@@ -139,7 +126,7 @@ fun secondFilledTextFieldColors() = TextFieldDefaults.colors(
     focusedIndicatorColor = Color.Transparent,
     unfocusedIndicatorColor = Color.Transparent,
     errorIndicatorColor = Color.Transparent,
-    errorContainerColor = SemiTransparentPurple,
+    errorContainerColor = Color.White,
     errorPlaceholderColor = Color.Black,
     errorTextColor = Color.Black,
     errorLabelColor = Color.Black,

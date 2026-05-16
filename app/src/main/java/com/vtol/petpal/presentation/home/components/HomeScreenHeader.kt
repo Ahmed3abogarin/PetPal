@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.ui.theme.MainPurple
@@ -41,6 +46,16 @@ import com.vtol.petpal.util.showToast
 
 @Composable
 fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.greeting_anim),
+    )
+
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = 1,
+        restartOnPlay = false
+    )
+
     Card(
         colors = CardDefaults.cardColors(containerColor = MainPurple),
         shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
@@ -55,13 +70,14 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White),
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.White),
                         contentAlignment = Alignment.Center
-                    ){
+                    ) {
                         Image(
                             modifier = Modifier
                                 .size(34.dp),
@@ -111,13 +127,20 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                         }
 
                         is Resource.Success -> {
-                            Text(
-                                modifier = Modifier.padding(start = 3.dp),
-                                text = state.data.name,
-                                fontSize = 28.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Row(verticalAlignment = Alignment.Bottom) {
+                                Text(
+                                    modifier = Modifier.padding(start = 3.dp),
+                                    text = state.data.name,
+                                    fontSize = 28.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                LottieAnimation(
+                                    modifier = Modifier.size(38.dp),
+                                    composition = composition,
+                                    progress = { progress }
+                                )
+                            }
                         }
 
                         is Resource.Error -> {

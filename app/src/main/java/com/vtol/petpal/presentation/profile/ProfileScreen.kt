@@ -143,6 +143,8 @@ fun ProfileScreen(
 
                     Image(
                         modifier = Modifier
+                            .size(28.dp)
+                            .padding(3.dp)
                             .align(Alignment.BottomEnd)
                             .clip(CircleShape)
                             .clickable { context.showToast() },

@@ -24,7 +24,7 @@ import com.vtol.petpal.ui.theme.BackgroundColor
 import kotlinx.coroutines.delay
 
 @Composable
-fun FeedbackSuccessScreen(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
+fun FeedbackSuccessScreen(navigateUp: () -> Unit) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.success_anim)
     )
@@ -51,13 +51,7 @@ fun FeedbackSuccessScreen(modifier: Modifier = Modifier, navigateUp: () -> Unit)
             style = MaterialTheme.typography.bodyLarge,
             text = "Thanks for your feedback \uD83D\uDC3E\n\nSubmitted successfully "
         )
-
-
     }
-
-
-
-
 }
 
 

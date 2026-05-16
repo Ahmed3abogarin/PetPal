@@ -73,7 +73,7 @@ fun VetsList(
 
         when {
             state.isLoading -> {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = MainPurple)
             }
 
             state.error != null -> {

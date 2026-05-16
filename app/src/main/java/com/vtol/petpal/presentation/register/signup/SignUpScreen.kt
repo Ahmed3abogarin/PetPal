@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +44,7 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.vtol.petpal.R
+import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.components.secondFilledTextFieldColors
@@ -119,31 +119,8 @@ fun SignUpContent(
             .background(BackgroundColor)
             .fillMaxSize()
             .statusBarsPadding()
-            .imePadding(),
-        contentAlignment = Alignment.Center
+            .imePadding()
     ) {
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .padding(top = 10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(56.dp),
-                painter = painterResource(R.drawable.ic_logo),
-                contentDescription = "app logo"
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "PetPal",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                color = MainPurple
-            )
-        }
-
 
         Icon(
             modifier = Modifier
@@ -169,13 +146,26 @@ fun SignUpContent(
 
         Column(
             modifier = Modifier
-                .offset(y = 38.dp)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
-                .align(Alignment.Center),
+                .padding(top = 24.dp, bottom = 26.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            Image(
+                modifier = Modifier
+                    .size(56.dp),
+                painter = painterResource(R.drawable.ic_logo),
+                contentDescription = "app logo"
+            )
+            Text(
+                text = "PetPal",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MainPurple
+            )
+
+            Spacer(modifier= Modifier.height(16.dp))
 
             Text(
                 "Create Account",
@@ -223,7 +213,6 @@ fun SignUpContent(
                 onValueChanged = { event(SignUpEvent.PasswordChanged(it)) }
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
 
             SaveButton(
                 text = "Sign Up",
@@ -233,7 +222,6 @@ fun SignUpContent(
                 event(SignUpEvent.SignUpClicked)
 
             }
-            Spacer(modifier = Modifier.height(8.dp))
 
 
             Row(
@@ -255,7 +243,6 @@ fun SignUpContent(
                 onFacebookClicked = onFacebookClicked
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
 
             Row(horizontalArrangement = Arrangement.Center) {
                 Text(
@@ -273,14 +260,7 @@ fun SignUpContent(
 
 
     if (state.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        LoadingIndicator()
     }
 
 }
