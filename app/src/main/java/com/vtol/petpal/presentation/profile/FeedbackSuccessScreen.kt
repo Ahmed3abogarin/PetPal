@@ -57,6 +57,6 @@ fun FeedbackSuccessScreen(navigateUp: () -> Unit) {
 
 @Preview
 @Composable
-fun FeedbackSuccessScreenP(modifier: Modifier = Modifier) {
-    FeedbackSuccessScreen(){}
+fun FeedbackSuccessScreenP() {
+    FeedbackSuccessScreen{}
 }
