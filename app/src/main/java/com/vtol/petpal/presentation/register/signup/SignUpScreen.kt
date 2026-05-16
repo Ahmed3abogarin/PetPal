@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.register.signup
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -65,6 +66,13 @@ fun SignUpScreen(
     LaunchedEffect(state.isLoading) {
         if (state.isLoading) {
             focusManager.clearFocus()
+        }
+    }
+
+    LaunchedEffect(state.error) {
+        state.error?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            event(SignUpEvent.ErrorShown)
         }
     }
 
@@ -161,7 +169,7 @@ fun SignUpContent(
 
         Column(
             modifier = Modifier
-                .offset(y = 32.dp)
+                .offset(y = 38.dp)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
                 .align(Alignment.Center),
