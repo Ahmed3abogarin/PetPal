@@ -86,14 +86,6 @@ fun HomeScreen(
         }
     }
 
-//    Image(
-//        painter = painterResource(R.drawable.header_img),
-//        contentDescription = "",
-//        modifier = Modifier.align(
-//            Alignment.TopEnd
-//        ).size(200.dp)
-//    )
-
     Scaffold(
         modifier = modifier,
         containerColor = BackgroundColor,

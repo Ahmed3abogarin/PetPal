@@ -1,6 +1,7 @@
 package com.vtol.petpal.presentation.register.login
 
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +28,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,6 +43,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.register.components.SocialLoginRow
@@ -70,6 +77,26 @@ fun LoginScreen(
         state.error?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    val callbackManager = remember { CallbackManager.Factory.create() }
+    val loginLauncher = rememberLauncherForActivityResult(
+        contract = LoginManager.getInstance().createLogInActivityResultContract(callbackManager)
+    ) { _ ->// result is null on cancel
+    }
+
+    DisposableEffect(Unit) {
+        LoginManager.getInstance().registerCallback(
+            callbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onSuccess(result: LoginResult) {
+                    event(LoginEvent.FacebookClicked(result.accessToken.token))
+                }
+                override fun onCancel() {}
+                override fun onError(error: FacebookException) {}
+            }
+        )
+        onDispose { LoginManager.getInstance().unregisterCallback(callbackManager) }
     }
 
     Box(
@@ -209,8 +236,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(14.dp))
 
             SocialLoginRow(
-                onGoogleClicked = { event(LoginEvent.FacebookClicked) },
-                onFacebookClicked = { event(LoginEvent.GoogleClicked) }
+                onGoogleClicked = {
+                    event(LoginEvent.GoogleClicked(context))
+                },
+                onFacebookClicked = {
+                    loginLauncher.launch(listOf("email", "public_profile"))
+                }
             )
 
             Spacer(modifier = Modifier.height(24.dp))

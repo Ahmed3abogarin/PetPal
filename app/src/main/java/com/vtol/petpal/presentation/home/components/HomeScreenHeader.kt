@@ -2,7 +2,9 @@ package com.vtol.petpal.presentation.home.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,15 +24,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.showToast
 
@@ -42,10 +47,7 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
         elevation = CardDefaults.cardElevation(6.dp),
     ) {
         val context = LocalContext.current
-        Column(
-            modifier = modifier.padding(horizontal = 12.dp)
-
-        ) {
+        Column(modifier = modifier.padding(horizontal = 12.dp)) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -53,13 +55,21 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .padding(end = 8.dp),
-                        painter = painterResource(R.drawable.ic_logo),
-                        contentDescription = ""
-                    )
+                    Box(modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Image(
+                            modifier = Modifier
+                                .size(34.dp),
+                            painter = painterResource(R.drawable.ic_logo),
+                            contentDescription = ""
+                        )
+                    }
+
                     Text(text = "PetPal", fontSize = 24.sp, color = Color.White)
                 }
 
@@ -124,5 +134,13 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun Preview() {
+    PetPalTheme {
+        HomeScreenHeader(state = Resource.Success(User("Ahmed", "Ahmed", "Ahmed", "Ahmed")))
     }
 }

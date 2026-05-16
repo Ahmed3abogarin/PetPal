@@ -52,11 +52,14 @@ import com.vtol.petpal.domain.usecases.register.ReadAppEntry
 import com.vtol.petpal.domain.usecases.register.Register
 import com.vtol.petpal.domain.usecases.register.SaveAppEntry
 import com.vtol.petpal.domain.usecases.register.SignIn
+import com.vtol.petpal.domain.usecases.register.SignInWithFacebook
+import com.vtol.petpal.domain.usecases.register.SignInWithGoogle
 import com.vtol.petpal.domain.usecases.tasks.GetSpecificTasks
 import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
 import com.vtol.petpal.domain.usecases.tasks.ToggleTask
+import com.vtol.petpal.presentation.register.GoogleAuthUiClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,6 +71,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+
+    @Provides
+    @Singleton
+    fun provideGoogleAuthUiClient(
+        @ApplicationContext context: Context
+    ): GoogleAuthUiClient = GoogleAuthUiClient(context)
+
 
     @Provides
     @Singleton
@@ -183,7 +194,9 @@ object AppModule {
             logout = Logout(repository),
             getAuthState = GetAuthState(repository),
             readAppEntry = ReadAppEntry(repository),
-            saveAppEntry = SaveAppEntry(repository)
+            saveAppEntry = SaveAppEntry(repository),
+            signInWithGoogle = SignInWithGoogle(repository),
+            signInWithFacebook = SignInWithFacebook(repository)
         )
 
 

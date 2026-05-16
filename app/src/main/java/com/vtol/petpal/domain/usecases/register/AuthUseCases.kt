@@ -6,5 +6,8 @@ data class AuthUseCases(
     val logout: Logout,
     val getAuthState: GetAuthState,
     val readAppEntry: ReadAppEntry,
-    val saveAppEntry: SaveAppEntry
+    val saveAppEntry: SaveAppEntry,
+
+    val signInWithGoogle: SignInWithGoogle,
+    val signInWithFacebook: SignInWithFacebook
 )

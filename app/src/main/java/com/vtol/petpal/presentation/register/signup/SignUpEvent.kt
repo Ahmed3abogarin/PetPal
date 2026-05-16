@@ -5,6 +5,6 @@ sealed class SignUpEvent {
     data class EmailChanged(val value: String) : SignUpEvent()
     data class PasswordChanged(val value: String) : SignUpEvent()
     object SignUpClicked : SignUpEvent()
-    object GoogleClicked : SignUpEvent()
-    object FacebookClicked : SignUpEvent()
+    data class GoogleClicked(val token: String) : SignUpEvent()
+    data class FacebookClicked(val token: String) : SignUpEvent()
 }

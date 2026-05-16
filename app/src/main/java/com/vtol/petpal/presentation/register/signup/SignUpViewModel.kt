@@ -54,6 +54,33 @@ class SignUpViewModel @Inject constructor(
             }
 
             is SignUpEvent.SignUpClicked -> register()
+            is SignUpEvent.GoogleClicked -> loginWithGoogle(event.token)
+            is SignUpEvent.FacebookClicked -> loginWithFacebook(event.token)
+        }
+    }
+
+    private fun loginWithFacebook(idToken: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            useCases.signInWithFacebook(idToken = idToken).onFailure {
+                _uiState.update {
+                    it.copy(isLoading = false, error = it.error)
+                }
+            }
+        }
+    }
+
+    private fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            useCases.signInWithGoogle(idToken = idToken).onFailure {
+                _uiState.update {
+                    it.copy(isLoading = false, error = it.error)
+                }
+            }
+
         }
     }
 
@@ -77,7 +104,10 @@ class SignUpViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, error = null) }
 
 
-        useCases.signUp(User(name = _uiState.value.name, email = _uiState.value.email), _uiState.value.password)
+        useCases.signUp(
+            User(name = _uiState.value.name, email = _uiState.value.email),
+            _uiState.value.password
+        )
             .onFailure { failure ->
                 _uiState.update {
                     it.copy(isLoading = false, error = failure.message)

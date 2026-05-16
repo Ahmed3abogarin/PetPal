@@ -12,7 +12,20 @@
           "package_name": "com.vtol.petpal"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1007685405239-h7le3aj5188or6cpcc16qjhruopqk975.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vtol.petpal",
+            "certificate_hash": "bea06363453f54ae69008b045fa11bf3bd222e05"
+          }
+        },
+        {
+          "client_id": "1007685405239-6ov6a20o6mf9hdq1ttdlioccph27948f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBFtP2UZmh8xjIlThArSjeOXrnLOVjUBIs"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007685405239-6ov6a20o6mf9hdq1ttdlioccph27948f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

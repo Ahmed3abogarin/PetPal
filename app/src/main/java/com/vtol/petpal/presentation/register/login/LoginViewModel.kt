@@ -1,8 +1,10 @@
 package com.vtol.petpal.presentation.register.login
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
+import com.vtol.petpal.presentation.register.GoogleAuthUiClient
 import com.vtol.petpal.util.ValidationUtils.validateEmail
 import com.vtol.petpal.util.ValidationUtils.validatePassword
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,11 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val useCases: AuthUseCases
+    private val useCases: AuthUseCases,
+    private val googleAuthUiClient: GoogleAuthUiClient
 ) : ViewModel() {
-
-
-
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
@@ -47,8 +47,42 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginEvent.LoginClicked -> login()
-            is LoginEvent.GoogleClicked -> {}
-            is LoginEvent.FacebookClicked -> {}
+            is LoginEvent.GoogleClicked -> signInWithGoogle(event.context)
+            is LoginEvent.FacebookClicked -> signInWithFacebook(event.idToken)
+        }
+    }
+
+    private fun signInWithFacebook(idToken: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            useCases.signInWithFacebook(idToken)
+                .onSuccess {
+                    _uiState.update { it.copy(isLoading = false, error = null) }
+                }
+                .onFailure { throwable ->
+                    _uiState.update { it.copy(isLoading = false, error = throwable.message) }
+                }
+        }
+    }
+
+    fun signInWithGoogle(context: Context) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            val token = googleAuthUiClient.signIn(context)
+
+            if (token == null) {
+                _uiState.update { it.copy(isLoading = false, error = "Something went wrong") }
+                return@launch
+            }
+
+            useCases.signInWithGoogle(token)
+                .onSuccess {
+                    _uiState.update { it.copy(isLoading = false, error = null) }
+                }
+                .onFailure { throwable ->
+                    _uiState.update { it.copy(isLoading = false, error = throwable.message) }
+                }
         }
     }
 

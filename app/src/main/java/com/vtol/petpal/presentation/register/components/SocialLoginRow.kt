@@ -33,7 +33,7 @@ fun SocialLoginRow(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(14.dp),
             border = BorderStroke(
-                width = 1.dp,
+                width = 0.5.dp,
                 color = Color.LightGray
             ),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
@@ -56,7 +56,7 @@ fun SocialLoginRow(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(14.dp),
             border = BorderStroke(
-                width = 1.dp,
+                width = 0.5.dp,
                 color = Color.LightGray
             ),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),

@@ -191,8 +191,11 @@ fun SignUpScreen(
 
 
             SocialLoginRow(
-                onGoogleClicked = { event(SignUpEvent.GoogleClicked) },
-                onFacebookClicked = { event(SignUpEvent.FacebookClicked) })
+                onGoogleClicked = { event(SignUpEvent.GoogleClicked("")) },
+                onFacebookClicked = {
+                    // TODO
+                }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 

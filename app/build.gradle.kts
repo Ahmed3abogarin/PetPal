@@ -94,6 +94,10 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.config)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -148,5 +152,9 @@ dependencies {
 
     // Lottie animation
     implementation(libs.lottie.compose)
+
+
+    // Facebook SDK
+    implementation("com.facebook.android:facebook-android-sdk:18.2.3")
 
 }
