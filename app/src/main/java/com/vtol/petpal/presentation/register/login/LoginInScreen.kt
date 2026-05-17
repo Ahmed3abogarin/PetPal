@@ -19,10 +19,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -49,11 +52,13 @@ import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppTextField
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.components.secondFilledTextFieldColors
+import com.vtol.petpal.presentation.register.components.ForgotPasswordSheetContent
 import com.vtol.petpal.presentation.register.components.SocialLoginRow
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     state: LoginUiState,
@@ -62,6 +67,27 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+
+    if (state.forgetPasswordSuccess) {
+        ModalBottomSheet(
+            onDismissRequest = { event(LoginEvent.ClearForgotPasswordState) },
+            sheetState = sheetState
+        ) {
+            ForgotPasswordSheetContent(email = state.email) {
+                event(LoginEvent.ClearForgotPasswordState)
+            }
+        }
+    }
+
+    state.forgotPasswordError?.let { error ->
+        LaunchedEffect(error) {
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+            event(LoginEvent.ClearForgotPasswordState)
+        }
+    }
 
     LaunchedEffect(state.isLoading) {
         if (state.isLoading) focusManager.clearFocus()
@@ -208,6 +234,7 @@ fun LoginContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ) {
+                        event(LoginEvent.RestPasswordClicked)
                     },
                 text = "Forgot your password?",
                 color = MainPurple,

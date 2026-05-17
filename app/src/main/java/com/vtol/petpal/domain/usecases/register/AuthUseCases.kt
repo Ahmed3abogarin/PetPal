@@ -9,5 +9,7 @@ data class AuthUseCases(
     val saveAppEntry: SaveAppEntry,
 
     val signInWithGoogle: SignInWithGoogle,
-    val signInWithFacebook: SignInWithFacebook
+    val signInWithFacebook: SignInWithFacebook,
+
+    val resetPassword: RestPasswordUseCase
 )

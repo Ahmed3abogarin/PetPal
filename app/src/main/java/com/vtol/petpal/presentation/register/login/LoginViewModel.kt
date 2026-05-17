@@ -45,14 +45,46 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
+
             is LoginEvent.ErrorShown -> {
                 _uiState.update { it.copy(error = null) }
             }
+
+            is LoginEvent.RestPasswordClicked -> restPassword()
+            is LoginEvent.ClearForgotPasswordState -> clearForgotPasswordState()
 
             is LoginEvent.LoginClicked -> login()
             is LoginEvent.GoogleClicked -> signInWithGoogle(event.context)
             is LoginEvent.FacebookClicked -> signInWithFacebook(event.idToken)
         }
+    }
+
+    private fun restPassword() {
+        viewModelScope.launch {
+            val emailError = validateEmail(_uiState.value.email)
+
+            if (emailError != null) {
+                _uiState.update {
+                    it.copy(emailError = emailError)
+                    return@launch
+                }
+            }
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+
+            useCases.resetPassword(_uiState.value.email.trim())
+                .onSuccess {
+                    _uiState.update {
+                        it.copy(isLoading = false, forgetPasswordSuccess = true)
+                    }
+
+                }.onFailure { e ->
+                    _uiState.update {
+                        it.copy(isLoading = false, error = e.message)
+                    }
+                }
+        }
+
     }
 
     private fun signInWithFacebook(idToken: String) {
@@ -113,6 +145,15 @@ class LoginViewModel @Inject constructor(
                 Timber.tag("Failure").e(throwable)
             }
     }
+
+    private fun clearForgotPasswordState(){
+        _uiState.update {
+            it.copy(
+                forgetPasswordSuccess = false,
+                forgotPasswordError = null
+            )
+        }
+    }
 }
 
 
@@ -122,5 +163,7 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val emailError: String? = null,
-    val passwordError: String? = null
+    val passwordError: String? = null,
+    val forgetPasswordSuccess: Boolean = false,
+    val forgotPasswordError: String? = null
 )

@@ -51,6 +51,7 @@ import com.vtol.petpal.domain.usecases.register.GetAuthState
 import com.vtol.petpal.domain.usecases.register.Logout
 import com.vtol.petpal.domain.usecases.register.ReadAppEntry
 import com.vtol.petpal.domain.usecases.register.Register
+import com.vtol.petpal.domain.usecases.register.RestPasswordUseCase
 import com.vtol.petpal.domain.usecases.register.SaveAppEntry
 import com.vtol.petpal.domain.usecases.register.SignIn
 import com.vtol.petpal.domain.usecases.register.SignInWithFacebook
@@ -212,7 +213,8 @@ object AppModule {
             readAppEntry = ReadAppEntry(repository),
             saveAppEntry = SaveAppEntry(repository),
             signInWithGoogle = SignInWithGoogle(repository),
-            signInWithFacebook = SignInWithFacebook(repository)
+            signInWithFacebook = SignInWithFacebook(repository),
+            resetPassword = RestPasswordUseCase(repository)
         )
 
 

@@ -66,6 +66,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun resetPassword(
+        email: String
+    ): Result<Unit> {
+        return runCatching { auth.sendPasswordResetEmail(email).await() }
+    }
+
 
     override suspend fun signInWithGoogle(idToken: String): Result<Unit> {
         return try {
