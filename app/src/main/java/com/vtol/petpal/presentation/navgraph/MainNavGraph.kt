@@ -104,7 +104,6 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
 
             ProfileScreen(
-                user = hiltViewModel<UserViewModel>().state.collectAsState().value,
                 state = state,
                 event = profileViewModel::onEvent,
                 petsCount = hiltViewModel<PetViewModel>().state.collectAsState().value.pets.size,

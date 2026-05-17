@@ -1,11 +1,15 @@
 package com.vtol.petpal.presentation.profile
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.UpdateUserImageUseCase
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
+import com.vtol.petpal.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +25,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val submitFeedBackUseCase: SubmitFeedBackUseCase,
     private val appUseCases: AppUseCases,
-    private val authUseCases: AuthUseCases
+    private val authUseCases: AuthUseCases,
+    private val updateUserImageUseCase: UpdateUserImageUseCase
 ) : ViewModel() {
 
 
@@ -33,6 +38,7 @@ class ProfileViewModel @Inject constructor(
 
 
     init {
+        getUser()
         getVetVisits()
     }
 
@@ -40,9 +46,9 @@ class ProfileViewModel @Inject constructor(
     fun onEvent(event: ProfileEvents) {
         when (event) {
             is ProfileEvents.SignOut -> signOut()
+            is ProfileEvents.UpdateImage -> updateUserImage(event.uri)
         }
     }
-
 
     private fun signOut() {
         viewModelScope.launch {
@@ -50,6 +56,61 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+
+    private fun getUser() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isUserLoading = true) }
+            when (val result = appUseCases.getUser()) {
+                is Resource.Success -> _uiState.update {
+                    it.copy(
+                        user = result.data,
+                        isUserLoading = false
+                    )
+                }
+
+                is Resource.Error -> _uiState.update {
+                    it.copy(
+                        error = result.message,
+                        isUserLoading = false
+                    )
+                }
+
+                else -> _uiState.update { it.copy(isUserLoading = false) }
+            }
+        }
+    }
+
+    private fun getVetVisits() {
+        _uiState.update { it.copy(isVetVisitsLoading = true) }
+        appUseCases.getSpecificTasks(TaskType.VET)
+            .onEach { tasks ->
+                _uiState.update { it.copy(vetVisits = tasks.size, isVetVisitsLoading = false) }
+            }.launchIn(viewModelScope)
+    }
+
+    fun updateUserImage(uri: Uri) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isImageUploading = true) }
+
+
+            val result = updateUserImageUseCase(uri)
+
+            result
+                .onSuccess { imagePath ->
+                    Timber.d(">>> onSuccess called")
+                    _uiState.update {
+                        it.copy(
+                            isImageUploading = false,
+                            user = it.user?.copy(imgPath = imagePath)
+                        )
+                    }
+                }
+                .onFailure { e ->
+                    Timber.e(">>> onFailure called: ${e.message}")
+                    _uiState.update { it.copy(isImageUploading = false, error = e.message) }
+                }
+        }
+    }
 
 
     fun submitFeedback(feedback: HashMap<String, Any>) {
@@ -62,23 +123,17 @@ class ProfileViewModel @Inject constructor(
                 .onFailure {
                     Timber.tag("feedback").e(it)
                     _state.value =
-                    FeedbackUiState.Error }
+                        FeedbackUiState.Error
+                }
         }
     }
-
-    fun getVetVisits() {
-        _uiState.update { it.copy(loading = true) }
-
-        appUseCases.getSpecificTasks(TaskType.VET)
-            .onEach { tasks ->
-                _uiState.update { it.copy(vetVisits = tasks.size, loading = false) }
-        }.launchIn(viewModelScope)
-
-
-    }
-
 }
+
 data class ProfileUiState(
-    val loading: Boolean = true,
+    val isUserLoading: Boolean = false,
+    val isVetVisitsLoading: Boolean = false,
+    val isImageUploading: Boolean = false,
+    val user: User? = null,
+    val error: String? = null,
     val vetVisits: Int = 0,
 )

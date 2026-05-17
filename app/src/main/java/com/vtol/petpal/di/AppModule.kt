@@ -23,6 +23,7 @@ import com.vtol.petpal.data.repository.NotificationRepositoryImpl
 import com.vtol.petpal.data.repository.UpdateRepositoryImpl
 import com.vtol.petpal.data.repository.UserPreferencesRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
+import com.vtol.petpal.data.util.ImageCompressorImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
@@ -59,6 +60,7 @@ import com.vtol.petpal.domain.usecases.tasks.GetTasksById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
 import com.vtol.petpal.domain.usecases.tasks.ToggleTask
+import com.vtol.petpal.domain.util.ImageCompressor
 import com.vtol.petpal.presentation.register.GoogleAuthUiClient
 import dagger.Module
 import dagger.Provides
@@ -92,14 +94,24 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppRepository(firestore: FirebaseFirestore, tasksDao: TasksDao, auth: FirebaseAuth, storage: FirebaseStorage): AppRepository =
+    fun provideAppRepository(
+        firestore: FirebaseFirestore,
+        tasksDao: TasksDao,
+        auth: FirebaseAuth,
+        storage: FirebaseStorage
+    ): AppRepository =
         AppRepositoryImpl(firestore, tasksDao, auth, storage)
 
 
     @Provides
     @Singleton
-    fun provideAuthRepository(auth: FirebaseAuth,firestore: FirebaseFirestore, datastore: DataStore<Preferences>, db: TasksDB): AuthRepository =
-        AuthRepositoryImpl(auth, firestore,datastore,db)
+    fun provideAuthRepository(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+        datastore: DataStore<Preferences>,
+        db: TasksDB
+    ): AuthRepository =
+        AuthRepositoryImpl(auth, firestore, datastore, db)
 
 
     @Provides
@@ -139,14 +151,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(firestore: FirebaseFirestore, auth: FirebaseAuth): UserRepository =
-        UserRepositoryImpl(firestore,auth)
+    fun provideUserRepository(
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth,
+        storage: FirebaseStorage
+    ): UserRepository =
+        UserRepositoryImpl(firestore, auth, storage)
 
 
     @Provides
     @Singleton
-    fun provideUpdateRepository(remoteConfig: FirebaseRemoteConfig): UpdateRepository = UpdateRepositoryImpl(remoteConfig)
-
+    fun provideUpdateRepository(remoteConfig: FirebaseRemoteConfig): UpdateRepository =
+        UpdateRepositoryImpl(remoteConfig)
 
 
     @Provides
@@ -157,7 +173,7 @@ object AppModule {
         updateRepository: UpdateRepository,
         preferencesRepository: UserPreferencesRepository,
         notificationRepository: NotificationRepository
-        ) =
+    ) =
         AppUseCases(
             addPet = AddPet(appRepository),
             getPets = GetPets(appRepository),
@@ -246,4 +262,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideValidateUseCase(): ValidatePetInputUseCase = ValidatePetInputUseCase()
+
+
+    @Provides
+    @Singleton
+    fun provideImageCompressor(
+        @ApplicationContext context: Context
+    ): ImageCompressor =
+        ImageCompressorImpl(context)
 }

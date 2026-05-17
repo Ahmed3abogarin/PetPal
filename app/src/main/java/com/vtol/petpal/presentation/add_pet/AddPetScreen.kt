@@ -1,5 +1,7 @@
 package com.vtol.petpal.presentation.add_pet
 
+import android.app.Activity
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -61,6 +63,8 @@ import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.AppColors.petPalGradient
+import com.yalantis.ucrop.UCrop
+import java.io.File
 
 @Composable
 fun AddPetScreen(
@@ -80,10 +84,38 @@ fun AddPetScreen(
         Pair(R.drawable.ic_pets, "Other"),
     )
 
-    // Image picker
+    // Crop launcher — receives the cropped URI result
+    val cropLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val croppedUri = UCrop.getOutput(result.data!!)
+            event(AddPetEvent.OnImageChanged(croppedUri))
+        }
+    }
+
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri -> event(AddPetEvent.OnImageChanged(uri)) }
+    ) { uri ->
+        uri?.let {
+            val destUri = Uri.fromFile(
+                File(context.cacheDir, "cropped_pet_${System.currentTimeMillis()}.jpg")
+            )
+            val options = UCrop.Options().apply {
+                setCircleDimmedLayer(true)
+                setShowCropGrid(false)
+                setShowCropFrame(false)
+            }
+
+            val cropIntent = UCrop.of(it, destUri)
+                .withAspectRatio(1f, 1f)
+                .withMaxResultSize(512, 512)
+                .withOptions(options)
+                .getIntent(context)
+
+            cropLauncher.launch(cropIntent)
+        }
+    }
 
     val pickImage = { imagePickerLauncher.launch("image/*") }
 

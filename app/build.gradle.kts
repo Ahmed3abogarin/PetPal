@@ -155,6 +155,13 @@ dependencies {
 
 
     // Facebook SDK
-    implementation("com.facebook.android:facebook-android-sdk:18.2.3")
+    implementation(libs.facebook.android.sdk)
+
+    // Image compression library
+    implementation(libs.compressor)
+
+    // Image Crop library
+    implementation("com.github.yalantis:ucrop:2.2.11")
+
 
 }

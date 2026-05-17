@@ -5,4 +5,6 @@ import com.vtol.petpal.util.Resource
 
 interface UserRepository {
     suspend fun getUser(): Resource<User>
+
+    suspend fun updateUserProfileImage(bytes: ByteArray): Result<String>
 }

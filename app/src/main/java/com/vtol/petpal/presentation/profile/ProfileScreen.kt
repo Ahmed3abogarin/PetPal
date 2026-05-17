@@ -1,8 +1,14 @@
 package com.vtol.petpal.presentation.profile
 
+import android.app.Activity
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,25 +51,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.ui.theme.BackgroundColor
 import androidx.core.net.toUri
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.vtol.petpal.domain.model.user.User
+import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.profile.components.ConfirmationDialog
 import com.vtol.petpal.presentation.profile.components.SettingsButton
 import com.vtol.petpal.presentation.profile.components.ProfileInfoCard
+import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.Red
 import com.vtol.petpal.util.AppColors.petPalGradient
-import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.ShareManager.openWebsite
 import com.vtol.petpal.util.ShareManager.shareApp
 import com.vtol.petpal.util.getVersionName
 import com.vtol.petpal.util.showToast
+import com.yalantis.ucrop.UCrop
+import java.io.File
 
 @Composable
 fun ProfileScreen(
-    user: Resource<User>,
     state: ProfileUiState,
     petsCount: Int = 0,
     doneTasks: Int = 0,
@@ -73,12 +84,64 @@ fun ProfileScreen(
 
     var showDialog by remember { mutableStateOf(false) }
 
+
+    // Crop launcher — receives the cropped URI result
+    val cropLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val croppedUri = UCrop.getOutput(result.data!!)
+            croppedUri?.let {
+                event(ProfileEvents.UpdateImage(it))
+            }
+        }
+    }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            val destUri = Uri.fromFile(
+                File(context.cacheDir, "cropped_pet_${System.currentTimeMillis()}.jpg")
+            )
+            val cropIntent = UCrop.of(it, destUri)
+                .withAspectRatio(1f, 1f)
+                .withOptions(UCrop.Options().apply {
+                    setCircleDimmedLayer(true)       // circular crop overlay
+                    setShowCropGrid(false)
+                    setShowCropFrame(false)
+                    setToolbarTitle("Crop Profile Photo")
+                    setCompressionQuality(100)
+                })
+                .withMaxResultSize(512, 512)
+                .getIntent(context)
+
+            cropLauncher.launch(cropIntent)
+        }
+    }
+
+    if (state.isUserLoading) {
+        LoadingIndicator()
+        return
+    }
+
+    state.error?.let {
+        LaunchedEffect(it) {
+            Toast.makeText(
+                context,
+                it,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     Column(
         modifier = Modifier
             .background(BackgroundColor)
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
+
         Column {
             // Top content
             Column(
@@ -122,86 +185,81 @@ fun ProfileScreen(
                     }
                 }
 
-
-
                 Spacer(modifier = Modifier.height(8.dp))
 
-
-                // User Image + add icon button
-                Box(
-                    modifier = Modifier
-                        .size(124.dp)
-                        .clip(CircleShape)
-                        .padding(16.dp),
-                ) {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(R.drawable.img_profile_ph),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "profile image"
-                    )
-
-                    Image(
+                state.user?.let {
+                    // User Image + add icon button
+                    Box(
                         modifier = Modifier
-                            .size(28.dp)
-                            .padding(3.dp)
-                            .align(Alignment.BottomEnd)
-                            .clip(CircleShape)
-                            .clickable { context.showToast() },
-                        painter = painterResource(R.drawable.ic_profile_add),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "profile image"
+                            .padding(16.dp)
+                            .size(110.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape)
+                                .border(width = 1.dp, color= Color.DarkGray, shape = CircleShape)
+                                .background(LightPurple),
+                            model = ImageRequest.Builder(context)
+                                .data(it.imgPath)
+                                .crossfade(true)
+                                .build(),
+                            placeholder = painterResource(R.drawable.img_profile_ph),
+                            error = painterResource(R.drawable.img_profile_ph),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Profile image"
+                        )
+
+                        // Upload overlay
+                        if (state.isImageUploading) {
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                                    .background(
+                                        Color.Black.copy(alpha = 0.45f)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+
+                                LoadingIndicator()
+                            }
+                        }
+
+                        // Add image button
+                        if (it.imgPath.isEmpty() && !state.isImageUploading) {
+                            Image(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        imagePickerLauncher.launch("image/*")
+                                    },
+                                painter = painterResource(R.drawable.ic_profile_add),
+                                contentDescription = "Change image"
+                            )
+                        }
+                    }
+
+
+                    // Username
+                    Text(
+                        text = it.name,
+                        fontSize = 24.sp,
+                        color = Color.White
                     )
-                }
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                when (user) {
-                    is Resource.Loading -> {
-                        Text(
-                            text = "Loading",
-                            fontSize = 24.sp,
-                            color = Color.White
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-
-                        // User email
-                        Text(
-                            text = "Loading",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W300,
-                            color = Color.White
-                        )
-                    }
-
-                    is Resource.Success -> {
-                        // Username
-                        Text(
-                            text = user.data.name,
-                            fontSize = 24.sp,
-                            color = Color.White
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-
-                        // User email
-                        Text(
-                            text = user.data.email,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W300,
-                            color = Color.White
-                        )
-
-                    }
-
-                    is Resource.Error -> {
-                        Text(
-                            modifier = Modifier.padding(start = 3.dp),
-                            text = "Guest",
-                            fontSize = 28.sp,
-                            color = Color.Gray,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    // User email
+                    Text(
+                        text = it.email,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.W300,
+                        color = Color.White
+                    )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
@@ -300,7 +358,10 @@ fun ProfileScreen(
                 thickness = 0.2.dp
             )
             SettingsButton(buttonTxt = "Terms & Privacy", icon = R.drawable.ic_terms) {
-                openWebsite(context,"https://ahmed3abogarin.github.io/PetPal-privacy-policy".toUri())
+                openWebsite(
+                    context,
+                    "https://ahmed3abogarin.github.io/PetPal-privacy-policy".toUri()
+                )
             }
         }
 
@@ -353,8 +414,10 @@ fun ProfileScreen(
                 thickness = 0.5.dp
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
     }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
 
 
     ConfirmationDialog(
@@ -373,14 +436,14 @@ fun ProfileScreen(
 fun SettingsButtonPreview() {
     PetPalTheme {
         ProfileScreen(
-            state = ProfileUiState(),
-            event = { },
-            user = Resource.Success(
-                User(
+            state = ProfileUiState(
+                user = User(
+                    imgPath = "",
                     name = "John Doe",
-                    email = "johnson.mckinley@examplepetstore.com"
+                    email = "john.c.calhoun@examplepetstore.com"
                 )
             ),
+            event = { },
             navigateToFeedBack = {}
         )
     }

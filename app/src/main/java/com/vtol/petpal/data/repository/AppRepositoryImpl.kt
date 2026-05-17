@@ -13,7 +13,7 @@ import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.util.Constants.PETS_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
 import com.vtol.petpal.util.Constants.WEIGHT_COLLECTION
-import com.vtol.petpal.util.PetStoragePaths.petProfileStoragePath
+import com.vtol.petpal.util.AppStoragePaths.petProfileStoragePath
 import com.vtol.petpal.util.Resource
 import jakarta.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
@@ -106,20 +106,6 @@ class AppRepositoryImpl @Inject constructor(
             listener.remove()
         }
     }
-
-
-//        return try {
-//            val pets =firestore.collection(USERS_COLLECTION)
-//                .document("userId")
-//                .collection(PETS_COLLECTION)
-//                .get().await()
-//                .toObjects(Pet::class.java)
-//            Resource.Success(pets)
-//
-//        } catch (e: Exception){
-//            Resource.Error(e.message ?: "Unknown error")
-//        }
-
 
     override suspend fun getPet(id: String): Pet {
         val uid = auth.currentUser?.uid
