@@ -33,6 +33,8 @@ import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.presentation.profile.ProfileViewModel
+import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
+import com.vtol.petpal.presentation.tasks.AddTaskViewModel
 
 fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     navigation(
@@ -168,10 +170,24 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             )
         }
         composable(Routes.AddTaskScreen.route) {
-            val pets = hiltViewModel<PetViewModel>().state.collectAsState()
+            val viewModel: AddTaskViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+
+            val context = LocalContext.current
+
+            LaunchedEffect(Unit) {
+                viewModel.uiEffect.collect {
+                    when (it) {
+                        is AddTaskUiEffect.NavigateUp -> navController.navigateUp()
+                        is AddTaskUiEffect.ShowSnackbar -> {
+                            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
             AddTaskScreen(
-                viewModel = hiltViewModel<HomeViewModel>(),
-                petsList = pets.value.pets,
+                state = state,
+                event = viewModel::onIntent,
                 navigateUp = { navController.navigateUp() }
             )
         }

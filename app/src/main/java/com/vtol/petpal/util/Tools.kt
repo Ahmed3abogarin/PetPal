@@ -5,6 +5,7 @@ import android.widget.Toast
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -34,8 +35,11 @@ fun Long?.toAgeString(): String {
     }
 }
 
+fun LocalTime.convertTime(): String{
+    return this.format(DateTimeFormatter.ofPattern("hh:mm a"))
+}
 fun LocalDate.convertDate(): String{
-    return this.format(DateTimeFormatter.ofPattern("EEE, dd MMM yyyy"))
+    return this.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
 }
 
 fun Long.toLocalDate(): LocalDate =
@@ -80,9 +84,9 @@ fun Long.toRelativeTime(): String {
 
 fun Float.toFormattedDistance(): String {
     return if (this >= 1000) {
-        String.format("%.1f km", this / 1000) // e.g., "2.4 km"
+        String.format(Locale.US,"%.1f km", this / 1000) // e.g., "2.4 km"
     } else {
-        String.format("%.0f m", this) // e.g., "850 m"
+        String.format(Locale.US,"%.0f m", this) // e.g., "850 m"
     }
 }
 

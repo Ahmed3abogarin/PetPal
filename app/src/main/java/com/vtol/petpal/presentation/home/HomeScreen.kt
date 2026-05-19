@@ -1,10 +1,5 @@
 package com.vtol.petpal.presentation.home
 
-import android.app.AlarmManager
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.components.TaskCard
@@ -71,7 +65,6 @@ fun HomeScreen(
 
     val scaffoldState = remember { SnackbarHostState() }
 
-    val permissionRequired by viewModel.permissionRequired.collectAsState()
 
     LaunchedEffect(state.value.error) {
         state.value.error?.let {
@@ -79,12 +72,6 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(permissionRequired) {
-        if (permissionRequired) {
-            requestExactAlarmPermissionIfNeeded(context)
-            viewModel.onPermissionHandled()
-        }
-    }
 
     Scaffold(
         modifier = modifier,
@@ -137,7 +124,7 @@ fun HomeScreen(
                     pets = petsList,
                     onPetClicked = { onPetClicked(it) },
                     onAddPetClicked = {
-                        if (petsList.size < 2) {
+                        if (petsList.size < 4) {
                             onAddPetClicked()
                         } else {
                             Toast.makeText(context, "Upgrade to premium", Toast.LENGTH_SHORT).show()
@@ -242,18 +229,6 @@ fun HomeScreen(
 
         if (state.value.isLoading) {
             HomeShimmer()
-        }
-    }
-}
-
-fun requestExactAlarmPermissionIfNeeded(context: Context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // API 31+
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (!alarmManager.canScheduleExactAlarms()) {
-            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                data = "package:${context.packageName}".toUri()
-            }
-            context.startActivity(intent)
         }
     }
 }

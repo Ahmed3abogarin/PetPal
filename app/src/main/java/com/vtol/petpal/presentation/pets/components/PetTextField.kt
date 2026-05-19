@@ -24,6 +24,7 @@ import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.R
 
 @Composable
 fun PetTextField(
@@ -33,6 +34,7 @@ fun PetTextField(
     placeHolder: String,
     value: String,
     error: String? = null,
+    minLines: Int = 1,
     selectedUnit: WeightUnit? = null,
     trailingIcon: ImageVector? = null,
     @DrawableRes leadingIcon: Int? = null,
@@ -62,7 +64,7 @@ fun PetTextField(
                 focusedBorderColor = MainPurple
             ),
             isError = error != null,
-            maxLines = 1,
+            minLines = minLines,
             onValueChange = { onValueChanged(it) },
             placeholder = { Text(text = placeHolder, color = LightPurple) },
             shape = RoundedCornerShape(10.dp),
@@ -100,6 +102,7 @@ fun PetTextField(
 @Composable
 fun MyPreview() {
     PetPalTheme {
-        PetTextField(placeHolder = "Pet Name", value = "", onValueChanged = {})
+        PetTextField(placeHolder = "Pet Name", value = "",
+            leadingIcon = R.drawable.ic_location, onValueChanged = {})
     }
 }
