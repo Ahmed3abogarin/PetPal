@@ -22,8 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kizitonwose.calendar.core.CalendarDay
-import com.vtol.petpal.domain.model.tasks.Task
-import com.vtol.petpal.ui.theme.LightPurple
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.ui.theme.MainPurple
 import java.time.LocalDate
 
@@ -31,15 +30,16 @@ import java.time.LocalDate
 fun CalendarDayCell(
     day: CalendarDay,
     selectedDate: LocalDate,
-    tasks: List<Task>,
+    tasks: List<TaskUi>,
     onDateClicked: (LocalDate) -> Unit
 ) {
+    val isSelected = day.date == selectedDate
     Column(
         modifier = Modifier
             .aspectRatio(1f)
             .padding(4.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(color = if (day.date == selectedDate) LightPurple else Color.Transparent)
+            .background(color = if (isSelected) MainPurple else Color.Transparent)
             .clickable {
                 // show day's tasks highlight
                 onDateClicked(day.date)
@@ -48,6 +48,7 @@ fun CalendarDayCell(
     ) {
         Text(
             text = day.date.dayOfMonth.toString(),
+            color = if (isSelected) Color.White else Color.Black,
             fontSize = 14.sp
         )
 
@@ -61,7 +62,7 @@ fun CalendarDayCell(
                             .clip(CircleShape)
                             .background(
                                 if (tasks.any { it.isCompleted }) Color.Gray
-                                else MainPurple
+                                else Color.Green
                             )
                     )
                 }

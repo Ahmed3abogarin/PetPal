@@ -100,3 +100,5 @@ fun Context.getVersionName(): String{
     val packageInfo = packageManager.getPackageInfo(packageName, 0)
     return packageInfo.versionName ?: "Unknown"
 }
+
+fun String.truncate(limit: Int) = if (length > limit) take(limit) + "…" else this

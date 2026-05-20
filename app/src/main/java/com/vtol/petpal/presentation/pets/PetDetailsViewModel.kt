@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
-import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.usecases.AppUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -154,8 +154,8 @@ fun filterWeights(
 }
 
 data class DetailsState(
-    val tasks: List<Task> = emptyList(),
-    val lastTask: Task? = null,
+    val tasks: List<TaskUi> = emptyList(),
+    val lastTask: TaskUi? = null,
     val pet: Pet? =  null,
     // This will work in both OverView and Health tabs, since it in overview will just take the last sorted one, which the last weight the user updated so it represent the current pet's weight :)
     val lastWeight: List<WeightRecord> = emptyList(),

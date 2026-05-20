@@ -3,7 +3,7 @@ package com.vtol.petpal.presentation.pets
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
-import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.usecases.AppUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -104,6 +104,6 @@ class PetViewModel @Inject constructor(
 data class PetsState(
     val pets: List<Pet> = emptyList(),
     val isLoading: Boolean = false,
-    val firstTasks: Map<String, Task?> = emptyMap(),
+    val firstTasks: Map<String, TaskUi?> = emptyMap(),
     val error: String? = null
 )

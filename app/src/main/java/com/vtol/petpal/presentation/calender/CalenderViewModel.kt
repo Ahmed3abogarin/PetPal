@@ -4,17 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
-import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.SyncStatus
+import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.tasks.TaskUi
+import com.vtol.petpal.domain.model.tasks.details.WalkDetails
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -24,11 +27,6 @@ import javax.inject.Inject
 class CalenderViewModel @Inject constructor(
     private val appUseCases: AppUseCases
 ): ViewModel() {
-
-    private val _calendarTasks =
-        MutableStateFlow<Map<LocalDate, List<Task>>>(emptyMap())
-    val calendarTasks: StateFlow<Map<LocalDate, List<Task>>> = _calendarTasks
-
     private val _state = MutableStateFlow(CalendarState())
     val state = _state.asStateFlow()
 
@@ -65,18 +63,20 @@ class CalenderViewModel @Inject constructor(
             appUseCases.getTasks().collect { tasks ->
                 val start = YearMonth.now().minusMonths(3).atDay(1)
                 val end = YearMonth.now().plusMonths(3).atEndOfMonth()
-                _calendarTasks.value = generateCalendarTasks(tasks, start, end)
+                _state.update {
+                    it.copy(tasks = generateCalendarTasks(tasks, start, end))
+                }
             }
         }
     }
 
     fun generateCalendarTasks(
-        tasks: List<Task>,
+        tasks: List<TaskUi>,
         start: LocalDate,
         end: LocalDate
-    ): Map<LocalDate, List<Task>> {
+    ): Map<LocalDate, List<TaskUi>> {
 
-        val result = mutableMapOf<LocalDate, MutableList<Task>>()
+        val result = mutableMapOf<LocalDate, MutableList<TaskUi>>()
 
         tasks.forEach { task ->
             val taskDate = task.dateTime.toLocalDate()
@@ -122,7 +122,73 @@ class CalenderViewModel @Inject constructor(
 
 }
 
+val previewTasks = mapOf(
+    LocalDate.of(2026, 5, 20) to listOf(
+        TaskUi(
+            id = 5L,
+            petId = "dog_01",
+            title = "Quick Walk",
+            note = null,
+            type = TaskType.WALK,
+            dateTime = 1779287687000L, // Static timestamp matching date
+            isCompleted = false,
+            repeatInterval = null,
+            details = WalkDetails( 22, "Neighborhood Block"),
+            syncStatus = SyncStatus.SYNCED
+        ),
+        TaskUi(
+            id = 5L,
+            petId = "dog_01",
+            title = "Quick Walk",
+            note = null,
+            type = TaskType.WALK,
+            dateTime = 1779287687000L, // Static timestamp matching date
+            isCompleted = false,
+            repeatInterval = null,
+            details = WalkDetails( 22, "Neighborhood Block"),
+            syncStatus = SyncStatus.SYNCED
+        ),
+        TaskUi(
+            id = 5L,
+            petId = "dog_01",
+            title = "Quick Walk",
+            note = null,
+            type = TaskType.WALK,
+            dateTime = 1779287687000L, // Static timestamp matching date
+            isCompleted = false,
+            repeatInterval = null,
+            details = WalkDetails( 22, "Neighborhood Block"),
+            syncStatus = SyncStatus.SYNCED
+        ),
+        TaskUi(
+            id = 5L,
+            petId = "dog_01",
+            title = "Quick Walk",
+            note = null,
+            type = TaskType.WALK,
+            dateTime = 1779287687000L, // Static timestamp matching date
+            isCompleted = false,
+            repeatInterval = null,
+            details = WalkDetails( 22, "Neighborhood Block"),
+            syncStatus = SyncStatus.SYNCED
+        ),
+        TaskUi(
+            id = 5L,
+            petId = "dog_01",
+            title = "Quick Walk",
+            note = null,
+            type = TaskType.WALK,
+            dateTime = 1779287687000L, // Static timestamp matching date
+            isCompleted = false,
+            repeatInterval = null,
+            details = WalkDetails( 22, "Neighborhood Block"),
+            syncStatus = SyncStatus.SYNCED
+        )
+    ),
+)
+
 data class CalendarState(
+    val tasks: Map<LocalDate, List<TaskUi>> = previewTasks,
     val pets: List<Pet> = emptyList(),
     val isLoading: Boolean = false,
     val petMap: Map<String, String> = emptyMap(),

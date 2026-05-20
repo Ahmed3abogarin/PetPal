@@ -19,6 +19,9 @@ val CellsBgPurple = Color(0xFFF5F3FF) //
 val TextPurple = Color(0xFF3E348E) //
 val SemiTransparentPurple = Color(0x1D8638FE) //
 val Gold = Color(0xFFFEBC2F)
+
+val Orange = Color(0xFFFD892F)
+val LightOrange = Color(0xFFFFE1C9)
 val DarkGold = Color(0xFFD79200)
 
 val ButtonLightGray = Color(0xFFEAEAEA)

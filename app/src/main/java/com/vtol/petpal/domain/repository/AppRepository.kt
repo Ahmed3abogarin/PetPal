@@ -5,6 +5,7 @@ import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -17,9 +18,9 @@ interface AppRepository {
 
     suspend fun insertTask(task: Task): Long
 
-    fun getAllTasks(): Flow<List<Task>>
+    fun getAllTasks(): Flow<List<TaskUi>>
 
-    fun getTask(petId: String): Flow<List<Task>>
+    fun getTask(petId: String): Flow<List<TaskUi>>
 
     suspend fun addWeight(petId: String,weightRecord: WeightRecord)
 

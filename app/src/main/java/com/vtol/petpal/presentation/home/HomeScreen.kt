@@ -70,7 +70,8 @@ fun HomeScreen(
     TODO:
       1- Fix the bottom padding in HomeScreen
       2- Review the required/non-required fields in Add task screen
-      3- Make the check icon smaller in AddTaskScreen
+      3- Make the check icon smaller in AddTaskScreen for the task type card
+      4- Fix Vet Visit Card in Pet Screen
      */
     LaunchedEffect(state.value.error) {
         state.value.error?.let {

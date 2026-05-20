@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.notification.NotificationPermissionManager
@@ -85,6 +86,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideGson(): Gson = Gson()
+
+    @Provides
+    @Singleton
     fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics =
         FirebaseAnalytics.getInstance(context)
 
@@ -99,9 +104,10 @@ object AppModule {
         firestore: FirebaseFirestore,
         tasksDao: TasksDao,
         auth: FirebaseAuth,
-        storage: FirebaseStorage
+        storage: FirebaseStorage,
+        gson: Gson
     ): AppRepository =
-        AppRepositoryImpl(firestore, tasksDao, auth, storage)
+        AppRepositoryImpl(firestore, tasksDao, auth, storage, gson)
 
 
     @Provides

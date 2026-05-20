@@ -3,7 +3,7 @@ package com.vtol.petpal.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
-import com.vtol.petpal.domain.model.tasks.Task
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.usecases.AppUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,13 +85,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun todayTasks(tasks: List<Task>) = tasks.filter {
+    fun todayTasks(tasks: List<TaskUi>) = tasks.filter {
         val taskDate =
             Instant.ofEpochMilli(it.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
         taskDate == LocalDate.now()
     }
 
-    fun upcomingTasks(tasks: List<Task>) = tasks.filter {
+    fun upcomingTasks(tasks: List<TaskUi>) = tasks.filter {
         val taskDate =
             Instant.ofEpochMilli(it.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
         taskDate.isAfter(LocalDate.now())
@@ -99,8 +99,8 @@ class HomeViewModel @Inject constructor(
 }
 
 data class HomeState(
-    val todayTasks: List<Task> = emptyList(),
-    val upcomingTasks: List<Task> = emptyList(),
+    val todayTasks: List<TaskUi> = emptyList(),
+    val upcomingTasks: List<TaskUi> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val petMap: Map<String, String> = emptyMap(),

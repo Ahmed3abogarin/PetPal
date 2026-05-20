@@ -40,8 +40,8 @@ import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
-import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
@@ -56,7 +56,7 @@ fun PetCard(
     pet: Pet,
     onScheduleClick: (String) -> Unit,
     onCardClick: (String) -> Unit,
-    task: Task?,
+    task: TaskUi?,
 ) {
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }

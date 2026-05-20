@@ -37,12 +37,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.gson.Gson
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
-import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.ui.theme.CellsBgPurple
@@ -164,13 +163,9 @@ fun VetsList(
 }
 
 @Composable
-fun VetItem(task: Task, date: String) {
+fun VetItem(task: TaskUi, date: String) {
 
-    val vet = remember(task.details) {
-        task.details?.let {
-            Gson().fromJson(it, VetDetails::class.java)
-        }
-    } ?: return
+    val vet = task.details as VetDetails
 
     Column(
         modifier = Modifier

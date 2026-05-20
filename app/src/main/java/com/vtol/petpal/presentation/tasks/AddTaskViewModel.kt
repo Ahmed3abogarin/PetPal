@@ -65,6 +65,7 @@ data class AddTaskState(
 class AddTaskViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val permissionManager: NotificationPermissionManager,
+    private val gson: Gson
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AddTaskState())
@@ -74,7 +75,6 @@ class AddTaskViewModel @Inject constructor(
     val uiEffect = _uiEffect.receiveAsFlow()
 
     private var pendingTask: Task? = null
-    private val gson = Gson()
 
     init {
         getPets()

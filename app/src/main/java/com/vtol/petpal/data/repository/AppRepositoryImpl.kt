@@ -4,11 +4,14 @@ import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import com.vtol.petpal.data.local.TasksDao
+import com.vtol.petpal.data.mapper.toUiModel
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.util.Constants.PETS_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
@@ -19,6 +22,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 
@@ -26,7 +30,8 @@ class AppRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val tasksDao: TasksDao,
     private val auth: FirebaseAuth,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val gson: Gson
 ) : AppRepository {
 
 
@@ -126,11 +131,15 @@ class AppRepositoryImpl @Inject constructor(
     override suspend fun insertTask(task: Task): Long =
         tasksDao.insertTask(task)
 
-    override fun getAllTasks(): Flow<List<Task>> =
-        tasksDao.getAllTasks()
+    override fun getAllTasks(): Flow<List<TaskUi>> =
+        tasksDao.getAllTasks().map { entities ->
+            entities.map { entity -> entity.toUiModel(gson) }
+        }
 
-    override fun getTask(petId: String): Flow<List<Task>> =
-        tasksDao.getTask(petId)
+    override fun getTask(petId: String): Flow<List<TaskUi>> =
+        tasksDao.getTask(petId).map { entities ->
+            entities.map { entity -> entity.toUiModel(gson) }
+        }
 
     override suspend fun addWeight(petId: String, weightRecord: WeightRecord) {
         val uid = auth.currentUser?.uid

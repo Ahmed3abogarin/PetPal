@@ -27,12 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.util.toTimeString
 
 @Composable
-fun TaskCard(modifier: Modifier = Modifier, task: Task, petName: String? = null, onCheckedChange: (Boolean) -> Unit) {
+fun TaskCard(modifier: Modifier = Modifier, task: TaskUi, petName: String? = null, onCheckedChange: (Boolean) -> Unit) {
 
     val (taskType, taskImg) = when (task.type) {
         TaskType.VET -> "Vet" to R.drawable.ic_vets
