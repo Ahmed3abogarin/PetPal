@@ -66,6 +66,12 @@ fun HomeScreen(
     val scaffoldState = remember { SnackbarHostState() }
 
 
+    /*
+    TODO:
+      1- Fix the bottom padding in HomeScreen
+      2- Review the required/non-required fields in Add task screen
+      3- Make the check icon smaller in AddTaskScreen
+     */
     LaunchedEffect(state.value.error) {
         state.value.error?.let {
             scaffoldState.showSnackbar(it)

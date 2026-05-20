@@ -60,6 +60,7 @@ import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.profile.components.ConfirmationDialog
 import com.vtol.petpal.presentation.profile.components.SettingsButton
 import com.vtol.petpal.presentation.profile.components.ProfileInfoCard
+import com.vtol.petpal.presentation.profile.components.ProfileShimmerEffect
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
@@ -121,7 +122,7 @@ fun ProfileScreen(
     }
 
     if (state.isUserLoading) {
-        LoadingIndicator()
+        ProfileShimmerEffect()
         return
     }
 
@@ -189,6 +190,7 @@ fun ProfileScreen(
 
                 state.user?.let {
                     // User Image + add icon button
+                    val isImgEmpty = it.imgPath.isEmpty()
                     Box(
                         modifier = Modifier
                             .padding(16.dp)
@@ -199,7 +201,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(CircleShape)
-                                .border(width = 1.dp, color= Color.DarkGray, shape = CircleShape)
+                                .border(width = if (isImgEmpty) 0.dp else 1.dp, color= Color.DarkGray, shape = CircleShape)
                                 .background(LightPurple),
                             model = ImageRequest.Builder(context)
                                 .data(it.imgPath)
@@ -229,7 +231,7 @@ fun ProfileScreen(
                         }
 
                         // Add image button
-                        if (it.imgPath.isEmpty() && !state.isImageUploading) {
+                        if (isImgEmpty && !state.isImageUploading) {
                             Image(
                                 modifier = Modifier
                                     .size(30.dp)
