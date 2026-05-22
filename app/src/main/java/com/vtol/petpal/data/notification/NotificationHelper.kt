@@ -23,7 +23,7 @@ object NotificationHelper {
 
     fun showNotification(context: Context, taskId: Long, title: String) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.pet_placeholder)
+            .setSmallIcon(R.drawable.ic_pets_filled)
             .setContentTitle(title)
             .setContentText("Time for your pet task!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)

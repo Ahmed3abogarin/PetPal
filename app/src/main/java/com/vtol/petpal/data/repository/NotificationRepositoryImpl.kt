@@ -11,7 +11,7 @@ import com.vtol.petpal.domain.repository.NotificationRepository
 // data/notification/NotificationRepositoryImpl.kt
 class NotificationRepositoryImpl(
     private val context: Context
-) : NotificationRepository {
+) :NotificationRepository {
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 

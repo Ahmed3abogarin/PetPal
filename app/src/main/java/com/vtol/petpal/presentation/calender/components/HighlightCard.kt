@@ -45,6 +45,7 @@ import com.vtol.petpal.domain.model.tasks.details.MedDetails
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.domain.model.tasks.details.WalkDetails
 import com.vtol.petpal.ui.theme.CellsBgPurple
+import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightOrange
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
@@ -81,7 +82,7 @@ fun HighlightCard(
                 Icon(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(CellsBgPurple)
+                        .background(ExtraLightPurple)
                         .padding(10.dp)
                         .size(18.dp),
                     painter = painterResource(R.drawable.ic_calendar_outlined),
@@ -93,7 +94,7 @@ fun HighlightCard(
                     modifier = Modifier
                         .padding(start = 10.dp),
                     text = date.convertDate(),
-                    color= TextPurple,
+                    color = TextPurple,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
                 )
             }
@@ -126,7 +127,9 @@ fun HighlightCard(
         when {
             tasks.isNullOrEmpty() -> {
                 Box(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = "No tasks for this day")
@@ -134,9 +137,9 @@ fun HighlightCard(
             }
 
             else -> {
-                Column (
+                Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
-                ){
+                ) {
                     // Day's tasks list
                     tasks.take(3).forEach { task ->
 
@@ -146,7 +149,6 @@ fun HighlightCard(
                             TaskType.WALK -> Pair(MainPurple, CellsBgPurple)
                             TaskType.VET -> Pair(Pink100, Pink50)
                         }
-
 
 
                         val petName = petMap[task.petId] ?: "Unknown"
@@ -159,14 +161,18 @@ fun HighlightCard(
 
                             TaskType.MEDICATION -> {
                                 val d = task.details as? MedDetails
-                                "$petName's Medication" to (d?.let { "${it.medicineName} • ${it.dosage}" }
-                                    ?: "")
+                                "$petName's Medication" to (d?.let {
+                                    if (it.medicineName.isBlank()) return@let ""
+                                    "${it.medicineName} • ${it.dosage}"
+                                } ?: "")
                             }
 
                             TaskType.WALK -> {
                                 val d = task.details as? WalkDetails
-                                "Walk with $petName" to (d?.let { "${it.durationMinutes} min • ${it.location}" }
-                                    ?: "")
+                                "Walk with $petName" to (d?.let {
+                                    "${it.durationMinutes} min • ${it.location}"
+                                } ?: ""
+                                        )
                             }
 
                             TaskType.VET -> {

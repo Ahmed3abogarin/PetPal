@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +61,11 @@ fun CalenderScreen(
     )
 
     val scope = rememberCoroutineScope()
+
+
+    LaunchedEffect(Unit) {
+        calendarState.scrollToMonth(YearMonth.now())
+    }
     Column(
         modifier = modifier
             .background(BackgroundColor),
