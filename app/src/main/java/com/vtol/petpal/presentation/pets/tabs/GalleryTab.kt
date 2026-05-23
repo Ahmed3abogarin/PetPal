@@ -44,7 +44,7 @@ fun GalleryTab(isPremium: Boolean, onUpgradeClicked: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Box(
-                modifier = Modifier.blur(4.dp)
+                modifier = Modifier.blur(7.dp)
             ){
                 Image(
                     modifier = Modifier.fillMaxSize(),
