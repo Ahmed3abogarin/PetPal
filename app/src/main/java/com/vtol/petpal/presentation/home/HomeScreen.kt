@@ -131,7 +131,7 @@ fun HomeScreen(
                     pets = petsList,
                     onPetClicked = { onPetClicked(it) },
                     onAddPetClicked = {
-                        if (petsList.size < 4) {
+                        if (petsList.size < 2) {
                             onAddPetClicked()
                         } else {
                             Toast.makeText(context, "Upgrade to premium", Toast.LENGTH_SHORT).show()

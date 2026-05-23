@@ -1,6 +1,5 @@
 package com.vtol.petpal.data.repository
 
-import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -37,7 +36,7 @@ class AppRepositoryImpl @Inject constructor(
 
     override suspend fun addPet(
         pet: Pet,
-        imageUri: Uri?,
+        image: ByteArray?,
         weight: WeightRecord
     ): Resource<Unit> {
 
@@ -54,12 +53,12 @@ class AppRepositoryImpl @Inject constructor(
             var imageUrl: String? = null
 
             // Upload image ONLY if exists
-            if (imageUri != null) {
+            if (image != null) {
                 val storageRef = storage.reference.child(
                     petProfileStoragePath(uid, petRef.id)
                 )
 
-                storageRef.putFile(imageUri).await()
+                storageRef.putBytes(image).await()
                 imageUrl = storageRef.downloadUrl.await().toString()
             }
 

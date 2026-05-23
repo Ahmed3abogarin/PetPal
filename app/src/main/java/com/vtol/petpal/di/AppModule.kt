@@ -179,10 +179,11 @@ object AppModule {
         userRepository: UserRepository,
         updateRepository: UpdateRepository,
         preferencesRepository: UserPreferencesRepository,
-        notificationRepository: NotificationRepository
+        notificationRepository: NotificationRepository,
+        imageCompressor: ImageCompressor
     ) =
         AppUseCases(
-            addPet = AddPet(appRepository),
+            addPet = AddPet(appRepository,imageCompressor),
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository),
             insertTask = InsertTask(appRepository, preferencesRepository, notificationRepository),
