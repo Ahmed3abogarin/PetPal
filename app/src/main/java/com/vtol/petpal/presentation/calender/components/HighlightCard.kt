@@ -15,13 +15,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,6 +50,7 @@ import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.presentation.components.PetTaskCard
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
@@ -52,13 +60,16 @@ import com.vtol.petpal.util.convertDate
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HighlightCard(
     tasks: List<TaskUi>?,
     date: LocalDate,
     petMap: Map<String, String>,
-    navigateToDayTasks: (LocalDate) -> Unit
+    showToast: () -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Column {
         Row(
             modifier = Modifier
@@ -95,13 +106,19 @@ fun HighlightCard(
                 modifier = Modifier
                     .clip(CircleShape)
                     .border(width = 1.dp, color = LightPurple, shape = CircleShape)
-                    .clickable { navigateToDayTasks(date) }
+                    .clickable {
+                        if (tasks.isNullOrEmpty()) {
+                            showToast()
+                            return@clickable
+                        }
+                        showDialog = true
+                    }
                     .padding(horizontal = 10.dp, vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "Say day",
+                    text = "See day",
                     fontSize = 10.sp,
                     color = TextPurple
                 )
@@ -131,7 +148,7 @@ fun HighlightCard(
             else -> {
                 var isVisible by remember { mutableStateOf(false) }
                 LaunchedEffect(Unit) {
-                    delay(100)
+                    delay(50)
                     isVisible = true
                 }
                 AnimatedVisibility(
@@ -147,9 +164,54 @@ fun HighlightCard(
                             val petName = petMap[task.petId] ?: "Unknown"
                             PetTaskCard(
                                 modifier = Modifier.padding(horizontal = 16.dp),
-                                task = task, petName = petName)
+                                task = task, petName = petName
+                            )
                         }
                         Spacer(modifier = Modifier.width(6.dp))
+                    }
+                }
+            }
+        }
+    }
+
+    if (showDialog && !tasks.isNullOrEmpty()) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+        ModalBottomSheet(
+            containerColor = BackgroundColor,
+            onDismissRequest = {
+                showDialog = false
+            },
+            sheetState = sheetState
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            ) {
+                Box(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
+                        text = date.convertDate(),
+                        color = TextPurple
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .clickable { showDialog = false },
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(tasks) { task ->
+                        val petName = petMap[task.petId] ?: "Unknown"
+                        PetTaskCard(
+                            task = task,
+                            petName = petName
+                        )
                     }
                 }
             }
@@ -178,7 +240,7 @@ fun HighlighPrevew() {
             ),
             date = LocalDate.now(),
             petMap = mapOf(),
-            navigateToDayTasks = {}
+            showToast = {}
         )
     }
 }

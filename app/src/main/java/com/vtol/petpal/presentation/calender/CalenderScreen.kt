@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +40,7 @@ import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.AppColors.petPalGradient
+import com.vtol.petpal.util.showToast
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -53,19 +54,17 @@ fun CalenderScreen(
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
+    val context = LocalContext.current
 
     val calendarState = rememberCalendarState(
         firstDayOfWeek = DayOfWeek.SUNDAY,
         startMonth = YearMonth.now().minusMonths(6),
+        firstVisibleMonth = YearMonth.now(),
         endMonth = YearMonth.now().plusMonths(12)
     )
 
     val scope = rememberCoroutineScope()
 
-
-    LaunchedEffect(Unit) {
-        calendarState.scrollToMonth(YearMonth.now())
-    }
     Column(
         modifier = modifier
             .background(BackgroundColor),
@@ -119,7 +118,6 @@ fun CalenderScreen(
                         }
                     }
                 }
-
             }
         }
 
@@ -188,11 +186,9 @@ fun CalenderScreen(
                 tasks = state.tasks[selectedDate],
                 date = selectedDate,
                 petMap = state.petMap,
-                navigateToDayTasks = {}
+                showToast = {context.showToast("No tasks")}
             )
         }
-
-
     }
 }
 
