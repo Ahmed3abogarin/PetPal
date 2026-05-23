@@ -150,7 +150,7 @@ fun filterWeights(
 data class DetailsState(
     val tasks: List<TaskUi> = emptyList(),
     val lastTask: TaskUi? = null,
-    val pet: Pet? = null,
+    val pet: Pet? = Pet(),
     // This will work in both OverView and Health tabs, since it in overview will just take the last sorted one, which the last weight the user updated so it represent the current pet's weight :)
     val lastWeight: List<WeightRecord> = emptyList(),
     val isLoading: Boolean = false,

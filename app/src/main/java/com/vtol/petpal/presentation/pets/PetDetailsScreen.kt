@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -46,6 +45,7 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.presentation.components.AppIconButton
+import com.vtol.petpal.presentation.pets.components.PetShimmerEffect
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
 import com.vtol.petpal.presentation.pets.tabs.OverviewTab
@@ -182,7 +182,6 @@ fun PetDetailsScreen(
                             fontSize = 12.sp
                         )
                     }
-
                 }
             }
 
@@ -255,7 +254,7 @@ fun PetDetailsScreen(
 
     if (state.isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+            PetShimmerEffect()
         }
     }
 }
