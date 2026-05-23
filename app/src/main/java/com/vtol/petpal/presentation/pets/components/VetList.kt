@@ -144,14 +144,14 @@ fun VetsList(
                         Timber.e(weightList.size.toString())
 
                         if (vetTasks.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(18.dp))
                             Text(
                                 text = "Vet visits",
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = TextPurple
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
 
                         }
 
