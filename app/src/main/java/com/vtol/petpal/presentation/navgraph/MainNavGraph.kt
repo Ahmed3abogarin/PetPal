@@ -155,9 +155,6 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             PetDetailsScreen(
                 state = state,
                 navigateUp = { navController.navigateUp() },
-                onCheckedChanged = { id, isCompleted ->
-                    petDetailsVM.toggleCompletion(id, isCompleted)
-                },
                 onAddWeightClicked = {
                     petDetailsVM.addWeight(state.pet?.id, it)
                 },

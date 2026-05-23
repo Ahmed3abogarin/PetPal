@@ -61,8 +61,8 @@ class CalenderViewModel @Inject constructor(
     fun getCalendarTasks(){
         viewModelScope.launch {
             appUseCases.getTasks().collect { tasks ->
-                val start = YearMonth.now().minusMonths(3).atDay(1)
-                val end = YearMonth.now().plusMonths(3).atEndOfMonth()
+                val start = YearMonth.now().minusMonths(6).atDay(1)
+                val end = YearMonth.now().plusMonths(12).atEndOfMonth()
                 _state.update {
                     it.copy(tasks = generateCalendarTasks(tasks, start, end))
                 }

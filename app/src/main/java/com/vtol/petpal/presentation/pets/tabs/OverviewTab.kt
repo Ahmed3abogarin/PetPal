@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.common.components.ChipButton
 import com.vtol.petpal.presentation.common.components.SecondaryButton
-import com.vtol.petpal.presentation.components.TaskCard
+import com.vtol.petpal.presentation.components.PetTaskCard
 import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.presentation.pets.components.PetInfoItem
 import com.vtol.petpal.ui.theme.CellsBgPurple
@@ -50,7 +50,6 @@ import com.vtol.petpal.util.formatDate
 fun OverviewTab(
     modifier: Modifier = Modifier,
     state: DetailsState,
-    onCheckedChanged: (Int, Boolean) -> Unit,
     onAddTaskClick: () -> Unit
 ) {
     Column(
@@ -99,13 +98,15 @@ fun OverviewTab(
 
 
             if (state.lastTask != null) {
-                TaskCard(
+                PetTaskCard(
+                    modifier = Modifier.fillMaxWidth(),
                     task = state.lastTask,
-                    onCheckedChange = {
-                        onCheckedChanged(state.lastTask.id.toInt(), it)
-
-                    }
+                    petName = pet.petName,
+                    showDate = true,
+                    showMore = false
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+
             } else {
                 // empty state
 
@@ -200,7 +201,6 @@ fun OverPreview() {
         Box(modifier = Modifier.background(Color.White)) {
             OverviewTab(
                 state = DetailsState(),
-                onCheckedChanged = { _, _ -> },
                 onAddTaskClick = {}
             )
         }

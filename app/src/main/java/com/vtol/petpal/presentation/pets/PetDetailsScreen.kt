@@ -65,7 +65,6 @@ fun PetDetailsScreen(
     state: DetailsState,
     navigateUp: () -> Unit,
     onRangeChanged: (WeightRange) -> Unit,
-    onCheckedChanged: (id: Int, isCompleted: Boolean) -> Unit,
     onAddWeightClicked: (WeightRecord) -> Unit,
     onAddTaskClick: () -> Unit
 ) {
@@ -237,12 +236,6 @@ fun PetDetailsScreen(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         state = state,
                         onAddTaskClick = onAddTaskClick,
-                        onCheckedChanged = { id, isCompleted ->
-                            onCheckedChanged(
-                                id,
-                                isCompleted
-                            )
-                        }
                     )
 
                     1 -> HealthTab(
@@ -276,7 +269,6 @@ fun PetScreenPreview() {
         PetDetailsScreen(
             state = DetailsState(),
             onAddWeightClicked = {},
-            onCheckedChanged = { _, _ -> },
             navigateUp = {},
             onAddTaskClick = {},
             onRangeChanged = {}
