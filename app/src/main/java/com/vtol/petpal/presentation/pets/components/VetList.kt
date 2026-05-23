@@ -55,7 +55,8 @@ import timber.log.Timber
 
 @Composable
 fun VetsList(
-    state: DetailsState, weightList: List<WeightRecord>,
+    state: DetailsState,
+    weightList: List<WeightRecord>,
     onAddWeightClicked: () -> Unit,
     onRangeChanged: (WeightRange) -> Unit
 ) {
@@ -145,8 +146,10 @@ fun VetsList(
                         if (vetTasks.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Vet Visits",
-                                style = MaterialTheme.typography.headlineMedium
+                                text = "Vet visits",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = TextPurple
                             )
                             Spacer(modifier = Modifier.height(8.dp))
 
