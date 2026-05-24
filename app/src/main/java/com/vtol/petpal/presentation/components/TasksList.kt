@@ -36,7 +36,7 @@ fun TaskCard(modifier: Modifier = Modifier, task: TaskUi, petName: String? = nul
 
     val (taskType, taskImg) = when (task.type) {
         TaskType.VET -> "Vet" to R.drawable.ic_vets
-        TaskType.FEED -> "Feed" to R.drawable.ic_fed
+        TaskType.FEED -> "Feed" to R.drawable.ic_feed
         TaskType.MEDICATION -> "Medicine" to R.drawable.ic_pharmacy
         TaskType.WALK -> "Walk" to R.drawable.ic_parks
     }

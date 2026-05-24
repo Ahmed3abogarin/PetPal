@@ -59,7 +59,22 @@ data class AddTaskState(
     val errorMessage: String? = null,
     val showNotificationDialog: Boolean = false,
     val showExactAlarmDialog: Boolean = false
-)
+) {
+    val isFormValid: Boolean
+        get() {
+            if (selectedPet == null) return false
+            if (selectedType == null) return false
+            if (dueDate == null) return false
+            if (dueTime == null) return false
+
+            return when (selectedType) {
+                TaskType.FEED -> food.isNotBlank() && amount.isNotBlank()
+                TaskType.VET -> clinic.isNotBlank()          // reason is optional
+                TaskType.MEDICATION -> medicineName.isNotBlank() && dosage.isNotBlank()
+                TaskType.WALK -> location.isNotBlank() && duration.isNotBlank()
+            }
+        }
+}
 
 @HiltViewModel
 class AddTaskViewModel @Inject constructor(
@@ -84,7 +99,19 @@ class AddTaskViewModel @Inject constructor(
     fun onIntent(intent: AddTaskUserIntent) {
         when (intent) {
             is AddTaskUserIntent.PetSelected -> _state.update { it.copy(selectedPet = intent.pet) }
-            is AddTaskUserIntent.TypeSelected -> _state.update { it.copy(selectedType = intent.type) }
+            is AddTaskUserIntent.TypeSelected -> _state.update {
+                it.copy(
+                    selectedType = intent.type,
+                    food         = "",
+                    amount       = "",
+                    clinic       = "",
+                    reason       = "",
+                    medicineName = "",
+                    dosage       = "",
+                    location     = "",
+                    duration     = "",
+                )
+            }
             is AddTaskUserIntent.FoodChanged -> _state.update { it.copy(food = intent.text) }
             is AddTaskUserIntent.AmountChanged -> _state.update { it.copy(amount = intent.text) }
             is AddTaskUserIntent.ClinicChanged -> _state.update { it.copy(clinic = intent.text) }
@@ -93,11 +120,7 @@ class AddTaskViewModel @Inject constructor(
             is AddTaskUserIntent.DosageChanged -> _state.update { it.copy(dosage = intent.text) }
             is AddTaskUserIntent.LocationChanged -> _state.update { it.copy(location = intent.text) }
             is AddTaskUserIntent.NoteChanged -> _state.update { it.copy(note = intent.text) }
-            is AddTaskUserIntent.DurationChanged -> {
-                if (intent.text.all { it.isDigit() }) {
-                    _state.update { it.copy(duration = intent.text) }
-                }
-            }
+            is AddTaskUserIntent.DurationChanged -> _state.update { it.copy(duration = intent.text) }
             is AddTaskUserIntent.RecurrenceChanged -> _state.update { it.copy(recurrence = intent.repeat) }
             is AddTaskUserIntent.DateChanged -> _state.update { it.copy(dueDate = intent.date) }
             is AddTaskUserIntent.TimeChanged -> _state.update { it.copy(dueTime = intent.time) }
@@ -135,7 +158,13 @@ class AddTaskViewModel @Inject constructor(
     private fun submitTask() {
         val s = _state.value
         Timber.tag("AddTaskVM").e("${s.selectedType}, ${s.selectedPet?.petName}")
-        if (s.selectedType == null || s.selectedPet == null) return
+        if (!s.isFormValid) return
+
+        val pet = s.selectedPet ?: return
+        val type = s.selectedType ?: return
+        val date = s.dueDate ?: return
+        val time = s.dueTime ?: return
+
         _state.update { it.copy(isLoading = true) }
 
         Timber.tag("AddTaskVM").e("WE ARE SAFE!!!!!!")
@@ -148,12 +177,12 @@ class AddTaskViewModel @Inject constructor(
             TaskType.WALK -> gson.toJson(WalkDetails(s.duration.toIntOrNull() ?: 0, s.location))
         }
 
-        val combinedDateTime = LocalDateTime.of(s.dueDate, s.dueTime)
+        val combinedDateTime = LocalDateTime.of(date, time)
             .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
         pendingTask = Task(
-            petId = s.selectedPet.id,
-            title = s.selectedType.name,
+            petId = pet.id,
+            title = type.name,
             type = s.selectedType,
             dateTime = combinedDateTime,
             details = jsonDetails,
@@ -176,11 +205,13 @@ class AddTaskViewModel @Inject constructor(
                     _state.update { it.copy(showNotificationDialog = true) }
 
                 }
+
                 !permissionManager.hasExactAlarmPermission() -> {
                     Timber.tag("AddTaskVM").e("!hasExactAlarmPermission")
 
                     _state.update { it.copy(showExactAlarmDialog = true) }
                 }
+
                 else -> pendingTask?.let { saveTask(it) }
             }
         }

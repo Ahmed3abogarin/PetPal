@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.navgraph
 import android.widget.Toast
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -166,7 +167,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 }
             )
         }
-        composable(Routes.AddTaskScreen.route) {
+        composable(
+            route = Routes.AddTaskScreen.route,
+            exitTransition = { slideOutVertically(targetOffsetY = { it }) },
+            enterTransition = { slideInVertically(initialOffsetY = { it }) }
+        ) {
             val viewModel: AddTaskViewModel = hiltViewModel()
             val state by viewModel.state.collectAsState()
 

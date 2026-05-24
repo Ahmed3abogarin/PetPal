@@ -6,8 +6,11 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -155,7 +158,7 @@ fun AddTaskScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    modifier = Modifier.padding(bottom = 8.dp), text = "When? *",
+                    modifier = Modifier.padding(bottom = 8.dp), text = "WHEN? *",
                     fontSize = 14.sp,
                     color = LightPurple,
                     fontWeight = FontWeight.Medium
@@ -175,7 +178,7 @@ fun AddTaskScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    modifier = Modifier.padding(bottom = 8.dp), text = "REPEAT",
+                    modifier = Modifier.padding(bottom = 8.dp), text = "REPEAT *",
                     fontSize = 14.sp,
                     color = LightPurple,
                     fontWeight = FontWeight.Medium
@@ -197,200 +200,143 @@ fun AddTaskScreen(
 
 
                 // Dynamic fields
-                state.selectedType?.let { type ->
-                    Spacer(modifier = Modifier.height(16.dp))
+                state.selectedType?.let {
+                    Spacer(Modifier.height(16.dp))
 
-                    AnimatedVisibility(visible = type == TaskType.FEED) {
-                        Column {
+                    AnimatedContent(
+                        targetState = state.selectedType,
+                        transitionSpec = { fadeIn() togetherWith fadeOut() },
+                        label = "task_form"
+                    ) { type ->
+                        when (type) {
+                            TaskType.FEED -> Column {
+                                SectionLabel("FOOD *")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_feed,
+                                    iconSize = 22.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. Dry kibble, wet food, raw diet…",
+                                    value = state.food,
+                                    onValueChanged = { event(AddTaskUserIntent.FoodChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("AMOUNT *")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_edit,
+                                    iconSize = 22.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. 1 cup, half a can, 200g…",
+                                    value = state.amount,
+                                    onValueChanged = { event(AddTaskUserIntent.AmountChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("NOTE (OPTIONAL)")
+                                PetTextField(
+                                    iconSize = 20.dp,
+                                    fontSize = 14.sp,
+                                    minLines = 2,
+                                    placeHolder = "e.g. Mix with warm water…",
+                                    value = state.note,
+                                    onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
+                                )
+                            }
 
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp), text = "FOOD",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_location,
-                                placeHolder = "e.g. Dry kibble, wet food, raw diet…",
-                                value = state.clinic,
-                                onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            TaskType.VET -> Column {
+                                SectionLabel("CLINIC NAME *")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_vets,
+                                    iconSize = 22.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. Sunrise Animal Clinic…",
+                                    value = state.clinic,
+                                    onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("REASON FOR VISIT (OPTIONAL)")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_edit,
+                                    iconSize = 22.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. Annual checkup, limping, vaccination…",
+                                    value = state.reason,
+                                    onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("NOTE (OPTIONAL)")
+                                PetTextField(
+                                    iconSize = 20.dp,
+                                    fontSize = 14.sp,
+                                    minLines = 2,
+                                    placeHolder = "e.g. Bring past records…",
+                                    value = state.note,
+                                    onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
+                                )
+                            }
 
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "Amount",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                placeHolder = "e.g. 1 cup, half a can, 200g…",
-                                value = state.reason,
-                                minLines = 2,
-                                onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
-                            )
+                            TaskType.MEDICATION -> Column {
+                                SectionLabel("MEDICINE NAME *")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_pharmacy,
+                                    iconSize = 22.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. Heartgard, Apoquel, Metacam…",
+                                    value = state.medicineName,
+                                    onValueChanged = { event(AddTaskUserIntent.MedNameChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("DOSAGE *")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_edit,
+                                    iconSize = 20.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. 1 tablet, 0.5 ml, 25 mg…",
+                                    value = state.dosage,
+                                    onValueChanged = { event(AddTaskUserIntent.DosageChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("NOTE (OPTIONAL)")
+                                PetTextField(
+                                    iconSize = 20.dp,
+                                    fontSize = 14.sp,
+                                    minLines = 2,
+                                    placeHolder = "e.g. Give after meals, avoid sunlight…",
+                                    value = state.note,
+                                    onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
+                                )
+                            }
 
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "NOTE (OPTIONAL)",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "e.g. Mix with warm water…",
-                                value = state.note,
-                                onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
-                            )
-                        }
-                    }
-
-                    AnimatedVisibility(visible = type == TaskType.VET) {
-                        Column {
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp), text = "CLINIC NAME",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_location,
-                                placeHolder = "e.g. Sunrise Animal Clinic…",
-                                value = state.clinic,
-                                onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "REASON FOR VISIT (OPTIONAL)",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                placeHolder = "e.g. Annual checkup, limping, vaccination…",
-                                value = state.reason,
-                                minLines = 2,
-                                onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "NOTE (OPTIONAL)",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "e.g. Bring past records…",
-                                value = state.note,
-                                onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
-                            )
-                        }
-                    }
-
-                    AnimatedVisibility(visible = type == TaskType.MEDICATION) {
-
-                        Column {
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp), text = "MEDICINE NAME",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_location,
-                                placeHolder = "e.g. Heartgard, Apoquel, Metacam…",
-                                value = state.clinic,
-                                onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "DOSAGE",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                placeHolder = "e.g. 1 tablet, 0.5 ml, 25 mg…",
-                                value = state.reason,
-                                minLines = 2,
-                                onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "NOTE (OPTIONAL)",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "e.g. Give after meals, avoid sunlight…",
-                                value = state.note,
-                                onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
-                            )
-                        }
-                    }
-
-                    AnimatedVisibility(visible = type == TaskType.WALK) {
-                        Column {
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp), text = "ROUTE / LOCATION",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_location,
-                                placeHolder = "e.g. Heartgard",
-                                value = state.clinic,
-                                onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "DURATION",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                placeHolder = "e.g. 20 min, 1 hour…",
-                                value = state.reason,
-                                minLines = 2,
-                                onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                text = "NOTE (OPTIONAL)",
-                                fontSize = 14.sp,
-                                color = LightPurple,
-                                fontWeight = FontWeight.Medium
-                            )
-                            PetTextField(
-                                leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "e.g. Avoid the road by the school…",
-                                value = state.note,
-                                onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
-                            )
+                            TaskType.WALK -> Column {
+                                SectionLabel("ROUTE / LOCATION *")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_parks,
+                                    iconSize = 22.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. Park loop, neighbourhood block…",
+                                    value = state.location,
+                                    minLines = 1,
+                                    onValueChanged = { event(AddTaskUserIntent.LocationChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("DURATION *")
+                                PetTextField(
+                                    leadingIcon = R.drawable.ic_edit,
+                                    iconSize = 20.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. 20 min, 1 hour…",
+                                    value = state.duration,
+                                    onValueChanged = { event(AddTaskUserIntent.DurationChanged(it)) }
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                SectionLabel("NOTE (OPTIONAL)")
+                                PetTextField(
+                                    iconSize = 22.dp,
+                                    fontSize = 14.sp,
+                                    placeHolder = "e.g. Avoid the road by the school…",
+                                    value = state.note,
+                                    minLines = 2,
+                                    onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
+                                )
+                            }
                         }
                     }
                 }
@@ -400,7 +346,7 @@ fun AddTaskScreen(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 icon = Icons.Default.Save,
                 text = "Save task",
-                enabled = state.selectedType != null,
+                enabled = state.isFormValid,
                 color = MainPurple
             ) {
                 event(AddTaskUserIntent.SaveClicked)
@@ -428,13 +374,18 @@ fun AddTaskScreen(
             }
 
             if (state.showNotificationDialog) {
-                val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-                    event(AddTaskUserIntent.NotificationPermissionResult(granted))
-                }
+                val launcher =
+                    rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                        event(AddTaskUserIntent.NotificationPermissionResult(granted))
+                    }
                 PermissionRationaleDialog(
                     title = "Enable Notifications",
                     message = "Allow reminders so you don't miss pet tasks.",
-                    onConfirm = { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) launcher.launch(Manifest.permission.POST_NOTIFICATIONS) },
+                    onConfirm = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) launcher.launch(
+                            Manifest.permission.POST_NOTIFICATIONS
+                        )
+                    },
                     onDismiss = { event(AddTaskUserIntent.DismissNotificationDialog) }
                 )
             }
@@ -442,6 +393,15 @@ fun AddTaskScreen(
     }
 }
 
+@Composable
+fun SectionLabel(txt: String) {
+    Text(
+        modifier = Modifier.padding(bottom = 8.dp), text = txt,
+        fontSize = 14.sp,
+        color = LightPurple,
+        fontWeight = FontWeight.Medium
+    )
+}
 
 @Preview
 @Composable

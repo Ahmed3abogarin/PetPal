@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -17,7 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.domain.model.WeightUnit
@@ -35,6 +39,8 @@ fun PetTextField(
     value: String,
     error: String? = null,
     minLines: Int = 1,
+    iconSize: Dp = 32.dp,
+    fontSize: TextUnit = 16.sp,
     selectedUnit: WeightUnit? = null,
     trailingIcon: ImageVector? = null,
     @DrawableRes leadingIcon: Int? = null,
@@ -65,12 +71,14 @@ fun PetTextField(
             ),
             isError = error != null,
             minLines = minLines,
+            maxLines = if (minLines == 1) 1 else Int.MAX_VALUE,
             onValueChange = { onValueChanged(it) },
-            placeholder = { Text(text = placeHolder, color = LightPurple) },
+            placeholder = { Text(text = placeHolder, fontSize = fontSize ,color = LightPurple, overflow = TextOverflow.Ellipsis) },
             shape = RoundedCornerShape(10.dp),
             leadingIcon = if (leadingIcon != null) {
                 {
                     Icon(
+                        modifier = Modifier.size(iconSize),
                         painter = painterResource(leadingIcon),
                         tint = LightPurple,
                         contentDescription = null

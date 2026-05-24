@@ -75,7 +75,7 @@ fun TaskTypeCard(
             Icon(
                 modifier = Modifier
                     .padding(2.dp)
-                    .size(20.dp)
+                    .size(18.dp)
                     .align(Alignment.TopEnd),
                 tint = Color.White,
                 painter = painterResource(R.drawable.ic_check),
