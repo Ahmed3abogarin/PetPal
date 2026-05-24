@@ -6,15 +6,9 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,26 +20,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +50,8 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.presentation.tasks.components.DateTimeButtons
-import com.vtol.petpal.ui.theme.ExtraLightPurple
+import com.vtol.petpal.presentation.tasks.components.RepeatCard
+import com.vtol.petpal.presentation.tasks.components.TaskTypeCard
 
 @Composable
 fun AddTaskScreen(
@@ -72,7 +59,6 @@ fun AddTaskScreen(
     event: (AddTaskUserIntent) -> Unit,
     navigateUp: () -> Unit
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -156,7 +142,7 @@ fun AddTaskScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TaskType.entries.forEach { task ->
-                        TaskCell(
+                        TaskTypeCard(
                             isSelected = state.selectedType == task,
                             task = task.txt,
                             icon = task.icon
@@ -203,7 +189,7 @@ fun AddTaskScreen(
 
                     RepeatInterval.entries.forEach { repeat ->
 
-                        RepeatItem(txt = repeat.name, isSelected = state.recurrence == repeat) {
+                        RepeatCard(txt = repeat.name, isSelected = state.recurrence == repeat) {
                             event(AddTaskUserIntent.RecurrenceChanged(repeat))
                         }
                     }
@@ -225,7 +211,7 @@ fun AddTaskScreen(
                             )
                             PetTextField(
                                 leadingIcon = R.drawable.ic_location,
-                                placeHolder = "Dry food eg..",
+                                placeHolder = "e.g. Dry kibble, wet food, raw diet…",
                                 value = state.clinic,
                                 onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
                             )
@@ -239,7 +225,7 @@ fun AddTaskScreen(
                                 fontWeight = FontWeight.Medium
                             )
                             PetTextField(
-                                placeHolder = "One bowel...",
+                                placeHolder = "e.g. 1 cup, half a can, 200g…",
                                 value = state.reason,
                                 minLines = 2,
                                 onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
@@ -256,7 +242,7 @@ fun AddTaskScreen(
                             )
                             PetTextField(
                                 leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "Add a note...",
+                                placeHolder = "e.g. Mix with warm water…",
                                 value = state.note,
                                 onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
                             )
@@ -264,10 +250,7 @@ fun AddTaskScreen(
                     }
 
                     AnimatedVisibility(visible = type == TaskType.VET) {
-
                         Column {
-
-
                             Text(
                                 modifier = Modifier.padding(bottom = 8.dp), text = "CLINIC NAME",
                                 fontSize = 14.sp,
@@ -276,7 +259,7 @@ fun AddTaskScreen(
                             )
                             PetTextField(
                                 leadingIcon = R.drawable.ic_location,
-                                placeHolder = "Enter clinic name",
+                                placeHolder = "e.g. Sunrise Animal Clinic…",
                                 value = state.clinic,
                                 onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
                             )
@@ -290,7 +273,7 @@ fun AddTaskScreen(
                                 fontWeight = FontWeight.Medium
                             )
                             PetTextField(
-                                placeHolder = "Why are you visiting the vet?",
+                                placeHolder = "e.g. Annual checkup, limping, vaccination…",
                                 value = state.reason,
                                 minLines = 2,
                                 onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
@@ -307,7 +290,7 @@ fun AddTaskScreen(
                             )
                             PetTextField(
                                 leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "Add a note...",
+                                placeHolder = "e.g. Bring past records…",
                                 value = state.note,
                                 onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
                             )
@@ -318,14 +301,14 @@ fun AddTaskScreen(
 
                         Column {
                             Text(
-                                modifier = Modifier.padding(bottom = 8.dp), text = "Medicine Name",
+                                modifier = Modifier.padding(bottom = 8.dp), text = "MEDICINE NAME",
                                 fontSize = 14.sp,
                                 color = LightPurple,
                                 fontWeight = FontWeight.Medium
                             )
                             PetTextField(
                                 leadingIcon = R.drawable.ic_location,
-                                placeHolder = "e.g. Heartgard",
+                                placeHolder = "e.g. Heartgard, Apoquel, Metacam…",
                                 value = state.clinic,
                                 onValueChanged = { event(AddTaskUserIntent.ClinicChanged(it)) }
                             )
@@ -333,13 +316,13 @@ fun AddTaskScreen(
 
                             Text(
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                text = "Dosage",
+                                text = "DOSAGE",
                                 fontSize = 14.sp,
                                 color = LightPurple,
                                 fontWeight = FontWeight.Medium
                             )
                             PetTextField(
-                                placeHolder = "e.g. 1 pill",
+                                placeHolder = "e.g. 1 tablet, 0.5 ml, 25 mg…",
                                 value = state.reason,
                                 minLines = 2,
                                 onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
@@ -356,7 +339,7 @@ fun AddTaskScreen(
                             )
                             PetTextField(
                                 leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "Add a note...",
+                                placeHolder = "e.g. Give after meals, avoid sunlight…",
                                 value = state.note,
                                 onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
                             )
@@ -366,7 +349,7 @@ fun AddTaskScreen(
                     AnimatedVisibility(visible = type == TaskType.WALK) {
                         Column {
                             Text(
-                                modifier = Modifier.padding(bottom = 8.dp), text = "Medicine Name",
+                                modifier = Modifier.padding(bottom = 8.dp), text = "ROUTE / LOCATION",
                                 fontSize = 14.sp,
                                 color = LightPurple,
                                 fontWeight = FontWeight.Medium
@@ -381,13 +364,13 @@ fun AddTaskScreen(
 
                             Text(
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                text = "Dosage",
+                                text = "DURATION",
                                 fontSize = 14.sp,
                                 color = LightPurple,
                                 fontWeight = FontWeight.Medium
                             )
                             PetTextField(
-                                placeHolder = "e.g. 1 pill",
+                                placeHolder = "e.g. 20 min, 1 hour…",
                                 value = state.reason,
                                 minLines = 2,
                                 onValueChanged = { event(AddTaskUserIntent.ReasonChanged(it)) }
@@ -404,7 +387,7 @@ fun AddTaskScreen(
                             )
                             PetTextField(
                                 leadingIcon = R.drawable.ic_edit,
-                                placeHolder = "Add a note...",
+                                placeHolder = "e.g. Avoid the road by the school…",
                                 value = state.note,
                                 onValueChanged = { event(AddTaskUserIntent.NoteChanged(it)) }
                             )
@@ -459,87 +442,6 @@ fun AddTaskScreen(
     }
 }
 
-@Composable
-fun RepeatItem(
-    txt: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .border(1.dp, color = if (isSelected) MainPurple else LightPurple, shape = CircleShape)
-            .clip(CircleShape)
-            .background(if (isSelected) MainPurple else Color.White)
-            .clickable { onClick() }
-            .padding(horizontal = 18.dp, vertical = 10.dp)
-
-    ) {
-        Text(
-            text = txt,
-            color = if (isSelected) Color.White else MainPurple,
-            fontWeight = FontWeight.Medium,
-            fontSize = 13.sp
-        )
-    }
-}
-
-@Composable
-fun TaskCell(
-    task: String,
-    @DrawableRes icon: Int,
-    isSelected: Boolean,
-    onSelected: () -> Unit
-) {
-    val borderColor by animateColorAsState(
-        targetValue = if (isSelected) MainPurple else ExtraLightPurple
-    )
-
-    val cellColor by animateColorAsState(
-        targetValue = if (isSelected) MainPurple else Color.White
-    )
-
-    val txtColor by animateColorAsState(
-        targetValue = if (isSelected) Color.White else MainPurple
-    )
-
-    Card(
-        onClick = onSelected,
-        border = BorderStroke(width = 1.dp, color = borderColor),
-        colors = CardDefaults.cardColors(containerColor = cellColor)
-    ) {
-        Box {
-            Column(
-                modifier = Modifier
-                    .width(72.dp)
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Image(
-                    modifier = Modifier.size(28.dp),
-                    painter = painterResource(icon),
-                    contentDescription = ""
-                )
-                Text(
-                    text = task,
-                    color = txtColor,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-
-            Icon(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .size(20.dp)
-                    .align(Alignment.TopEnd),
-                tint = Color.White,
-                painter = painterResource(R.drawable.ic_check),
-                contentDescription = null
-            )
-        }
-    }
-}
 
 @Preview
 @Composable
