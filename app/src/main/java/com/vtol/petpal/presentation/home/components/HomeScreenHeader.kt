@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -38,14 +37,15 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
-import com.vtol.petpal.util.Resource
 import com.vtol.petpal.util.showToast
 
 @Composable
-fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
+fun HomeScreenHeader(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    userName: String?
+) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.greeting_anim),
     )
@@ -105,8 +105,6 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                     )
 
                 }
-
-
             }
 
             Row(
@@ -117,8 +115,8 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                 Column {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(text = "Hello,", fontSize = 28.sp, color = Color.White)
-                    when (state) {
-                        is Resource.Loading -> {
+                    when  {
+                        isLoading -> {
                             Text(
                                 text = "Loading...",
                                 fontSize = 28.sp,
@@ -126,11 +124,11 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                             )
                         }
 
-                        is Resource.Success -> {
+                        userName != null -> {
                             Row(verticalAlignment = Alignment.Bottom) {
                                 Text(
                                     modifier = Modifier.padding(start = 3.dp),
-                                    text = state.data.name,
+                                    text = userName,
                                     fontSize = 28.sp,
                                     color = Color.White,
                                     fontWeight = FontWeight.SemiBold
@@ -143,7 +141,7 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                             }
                         }
 
-                        is Resource.Error -> {
+                        else -> {
                             Text(
                                 modifier = Modifier.padding(start = 3.dp),
                                 text = "Error",
@@ -157,13 +155,5 @@ fun HomeScreenHeader(modifier: Modifier = Modifier, state: Resource<User>) {
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun Preview() {
-    PetPalTheme {
-        HomeScreenHeader(state = Resource.Success(User("Ahmed", "Ahmed", "Ahmed", "Ahmed")))
     }
 }

@@ -25,8 +25,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
-import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.components.TaskCard
 import com.vtol.petpal.presentation.home.components.HomePetsList
 import com.vtol.petpal.presentation.home.components.HomeScreenHeader
@@ -55,13 +52,11 @@ fun HomeScreen(
     onAddTaskClicked: () -> Unit,
     onAddPetClicked: () -> Unit,
     onPetClicked: (String) -> Unit,
-    viewModel: HomeViewModel,
-    userViewModel: UserViewModel
+    onToggleClicked: (Int, Boolean) -> Unit,
+    state: HomeState
 ) {
-    val state = viewModel.state.collectAsState()
     val context = LocalContext.current
 
-    val userState by userViewModel.state.collectAsState()
 
     val scaffoldState = remember { SnackbarHostState() }
 
@@ -69,12 +64,10 @@ fun HomeScreen(
     /*
     TODO:
       1- Fix the bottom padding in HomeScreen
-      2- Review the required/non-required fields in Add task screen
-      3- Make the check icon smaller in AddTaskScreen for the task type card
-      4- Fix Vet Visit Card in Pet Screen
+      2- Fix Vet Visit Card in Pet Screen
      */
-    LaunchedEffect(state.value.error) {
-        state.value.error?.let {
+    LaunchedEffect(state.error) {
+        state.error?.let {
             scaffoldState.showSnackbar(it)
         }
     }
@@ -91,7 +84,7 @@ fun HomeScreen(
                     .clip(CircleShape)
                     .background(MainPurple)
                     .clickable {
-                        if (state.value.petsList.isEmpty()){
+                        if (state.petsList.isEmpty()){
                             Toast.makeText(context,"Add a pet first",Toast.LENGTH_SHORT).show()
                             return@clickable
                         }
@@ -117,7 +110,7 @@ fun HomeScreen(
 
             // The header
             item {
-                HomeScreenHeader(modifier = Modifier.statusBarsPadding().padding(top = 16.dp), state = userState)
+                HomeScreenHeader(modifier = Modifier.statusBarsPadding().padding(top = 16.dp), isLoading = state.isLoading, userName = state.user?.name)
             }
 
 
@@ -125,7 +118,7 @@ fun HomeScreen(
                 // Pets list
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val petsList = state.value.petsList
+                val petsList = state.petsList
 
                 HomePetsList(
                     pets = petsList,
@@ -144,17 +137,17 @@ fun HomeScreen(
 
             item {
                 ProgressCard(
-                    progress = state.value.progress,
-                    total = state.value.total,
-                    completed = state.value.completedCount,
-                    percentage = state.value.percentage
+                    progress = state.progress,
+                    total = state.total,
+                    completed = state.completedCount,
+                    percentage = state.percentage
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
 
             // check if both lists are empty
-            if (state.value.todayTasks.isEmpty() && state.value.upcomingTasks.isEmpty()) {
+            if (state.todayTasks.isEmpty() && state.upcomingTasks.isEmpty()) {
                 item {
                     Column(
                         modifier = Modifier
@@ -177,7 +170,7 @@ fun HomeScreen(
                 }
 
             } else {
-                if (state.value.todayTasks.isNotEmpty()) {
+                if (state.todayTasks.isNotEmpty()) {
 
                     // Today's tasks
                     // the header
@@ -190,20 +183,20 @@ fun HomeScreen(
                     }
 
                     // The tasks list (today)
-                    items(state.value.todayTasks) { task ->
+                    items(state.todayTasks) { task ->
                         TaskCard(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             task = task,
-                            petName = state.value.petMap[task.petId] ?: "Unknown",
+                            petName = state.petMap[task.petId] ?: "Unknown",
                             onCheckedChange = {
-                                viewModel.toggleCompletion(task.id.toInt(), it)
+                                onToggleClicked(task.id.toInt(), it)
                             }
                         )
                     }
                 }
 
                 // Upcoming tasks
-                if (state.value.upcomingTasks.isNotEmpty()) {
+                if (state.upcomingTasks.isNotEmpty()) {
                     // The header
                     item {
                         Spacer(modifier = Modifier.height(18.dp))
@@ -217,14 +210,14 @@ fun HomeScreen(
 
 
                 // the list of tasks
-                val tasks = state.value.upcomingTasks
+                val tasks = state.upcomingTasks
                 items(tasks) { task ->
                     TaskCard(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         task = task,
-                        petName = state.value.petMap[task.petId] ?: "Unknown",
+                        petName = state.petMap[task.petId] ?: "Unknown",
                         onCheckedChange = {
-                            viewModel.toggleCompletion(task.id.toInt(), it)
+                            onToggleClicked(task.id.toInt(), it)
                         }
                     )
                     if (tasks.last() == task){
@@ -234,7 +227,7 @@ fun HomeScreen(
             }
         }
 
-        if (state.value.isLoading) {
+        if (state.isLoading) {
             HomeShimmer()
         }
     }

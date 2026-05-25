@@ -18,7 +18,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.vtol.petpal.presentation.calender.CalenderScreen
 import com.vtol.petpal.presentation.calender.CalenderViewModel
-import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.explore.ExploreScreen
 import com.vtol.petpal.presentation.tasks.AddTaskScreen
 import com.vtol.petpal.presentation.home.HomeScreen
@@ -44,22 +43,24 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     ) {
         composable(Routes.HomeScreen.route) {
             val homeViewModel: HomeViewModel = hiltViewModel()
-            val userViewModel: UserViewModel = hiltViewModel()
+            val state by homeViewModel.state.collectAsState()
 
             HomeScreen(
+                state = state,
                 onAddTaskClicked = {
                     navController.navigate(Routes.AddTaskScreen.route)
                 },
                 onAddPetClicked = {
                     navController.navigate(Routes.AddPetScreen.route)
                 },
-                viewModel = homeViewModel,
                 onPetClicked = {
                     navController.navigate(Routes.PetDetailsScreen.createRoute(it)) {
                         launchSingleTop = false
                     }
                 },
-                userViewModel = userViewModel
+                onToggleClicked = { taskId, isCompleted ->
+                    homeViewModel.toggleCompletion(taskId, isCompleted)
+                }
             )
         }
         composable(Routes.PetsScreen.route) {
@@ -203,6 +204,10 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 onSubmitClick = { viewModel.submitFeedback(it) },
                 navigateUp = { navController.navigateUp() }
             )
+        }
+
+        composable(Routes.EditUserScreen.route){
+
         }
     }
 }

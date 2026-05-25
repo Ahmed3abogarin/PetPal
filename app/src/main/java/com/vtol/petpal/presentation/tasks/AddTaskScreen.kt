@@ -67,9 +67,7 @@ fun AddTaskScreen(
             .fillMaxSize()
             .background(BackgroundColor)
             .verticalScroll(rememberScrollState())
-
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()

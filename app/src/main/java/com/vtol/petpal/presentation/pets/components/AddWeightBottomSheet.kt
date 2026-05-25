@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -21,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.components.SaveButton
@@ -52,9 +51,9 @@ fun AddWeightBottomSheet(
             PetTextField(
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 placeHolder = "Weight",
-                trailingIcon = Icons.Default.Face,
                 value = weight,
-                selectedUnit = selectWUnit,
+                trailingIcon = R.drawable.ic_edit,
+                text = selectWUnit.displayName,
                 error = error,
                 onTrailingClicked = {
                     val nextIndex =

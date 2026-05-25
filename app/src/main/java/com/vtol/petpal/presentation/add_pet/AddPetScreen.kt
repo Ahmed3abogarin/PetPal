@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -273,11 +272,11 @@ fun AddPetScreen(
                 PetTextField(
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    trailingIcon = Icons.Default.Face,
                     placeHolder = "0.0",
                     label = "Weight",
                     value = state.petWeight,
-                    selectedUnit = state.petWeightUnit,
+                    trailingIcon = R.drawable.ic_edit,
+                    text = state.petWeightUnit.displayName,
                     error = state.petWeightError,
                     onTrailingClicked = {
                         val nextIndex =
