@@ -9,20 +9,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.ValidationUtils
 
 @Composable
-fun ChangeNameDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (name: String) -> Unit
-) {
-    var name by remember { mutableStateOf("") }
-    var nameError by remember { mutableStateOf<String?>(null) }
+fun ChangePhoneDialog(onDismiss: () -> Unit, onConfirm: (name: String) -> Unit) {
+
+    var phone by remember { mutableStateOf("") }
+    var phoneError by remember { mutableStateOf<String?>(null) }
 
 
     AlertDialog(
@@ -31,36 +27,23 @@ fun ChangeNameDialog(
         title = { Text("Change Name") },
         text = {
             PetTextField(
-                value = name,
+                value = phone,
                 onValueChanged = {
-                    name = it
-                    nameError = ValidationUtils.validateName(name)
+                    phone = it
+                    phoneError = ValidationUtils.validatePhone(phone)
                 },
-                placeHolder = "Enter your name",
-                error = nameError
+                placeHolder = "+1 234 567 8900",
+                error = phoneError
             )
         },
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(name) },
-                enabled = nameError == null
+                onClick = { onConfirm(phone) },
+                enabled = phoneError == null
             ) { Text(text = "Update", color = MainPurple) }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(text = "Cancel", color = Color.Black) }
         }
     )
-}
-
-
-@Preview
-@Composable
-fun NameEditDialog() {
-    PetPalTheme {
-        ChangeNameDialog(
-            onConfirm = {},
-            onDismiss = {}
-        )
-
-    }
 }

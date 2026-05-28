@@ -5,7 +5,7 @@ import android.util.Patterns
 object ValidationUtils {
 
     fun validateEmail(email: String): String? {
-       return when {
+        return when {
             email.isEmpty() -> "Email can't be empty"
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email format"
             else -> null
@@ -26,6 +26,14 @@ object ValidationUtils {
             name.isEmpty() -> "Name can't be empty"
             name.length < 2 -> "Name must be at least 2 characters"
             else -> null
+        }
+    }
+
+    fun validatePhone(phone: String): String? {
+        return when {
+            phone.length !in 7..15 -> "Invalid phone number"
+            !Patterns.PHONE.matcher(phone).matches() -> "Wrong format"
+            else -> null // valid
         }
     }
 }
