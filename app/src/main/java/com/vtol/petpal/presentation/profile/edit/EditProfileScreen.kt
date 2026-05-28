@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.profile
+package com.vtol.petpal.presentation.profile.edit
 
 import android.app.Activity
 import android.net.Uri
@@ -71,13 +71,10 @@ import java.io.File
 @Composable
 fun EditProfileScreen(
     state: UserUiState,
-    changeUsernameClicked: () -> Unit,
-    changeEmailClicked: () -> Unit,
-    changePhoneClicked: () -> Unit,
-    changePasswordClicked: () -> Unit,
-    onDeleteClicked: () -> Unit
 ) {
     val context = LocalContext.current
+
+    var dialog by remember { mutableStateOf<EditProfileDialog>(EditProfileDialog.None) }
 
     // TODO: Check the color of the texts could be used as place holder to match the color and to simplify the complexity
 
@@ -85,8 +82,6 @@ fun EditProfileScreen(
         LoadingIndicator()
         return
     }
-
-    var showDialog by remember { mutableStateOf(false) }
 
     // Crop launcher — receives the cropped URI result
     val cropLauncher = rememberLauncherForActivityResult(
@@ -131,7 +126,6 @@ fun EditProfileScreen(
 
     state.user?.let {
         val isImgEmpty = it.imgPath.isEmpty()
-
         Column(
             modifier = Modifier
                 .background(BackgroundColor)
@@ -269,6 +263,7 @@ fun EditProfileScreen(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 SectionLabel("Username")
+                //TODO: Change the value (text) color in this specific screen or in general.
                 PetTextField(
                     leadingIcon = R.drawable.ic_person,
                     iconSize = 22.dp,
@@ -278,7 +273,7 @@ fun EditProfileScreen(
                     placeHolder = "John Doe",
                     value = it.name,
                     onValueChanged = {},
-                    onTrailingClicked = changeUsernameClicked
+                    onTrailingClicked = { dialog = EditProfileDialog.Username }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -288,11 +283,9 @@ fun EditProfileScreen(
                     iconSize = 22.dp,
                     readOnly = true,
                     fontSize = 14.sp,
-                    trailingIcon = R.drawable.ic_edit,
-                    placeHolder = "example@gmail.com",
-                    value = it.email,
+                    placeHolder = it.email,
+                    value = "",
                     onValueChanged = {},
-                    onTrailingClicked = changeEmailClicked
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -305,10 +298,9 @@ fun EditProfileScreen(
                     readOnly = true,
                     trailingIcon = R.drawable.ic_edit,
                     placeHolder = "+1 234 567 8900",
-                    // TODO: add phone number to user
-                    value = "",
+                    value = it.phoneNumber,
                     onValueChanged = {},
-                    onTrailingClicked = changePhoneClicked
+                    onTrailingClicked = { dialog = EditProfileDialog.Phone }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -320,17 +312,17 @@ fun EditProfileScreen(
                     fontSize = 14.sp,
                     readOnly = true,
                     trailingIcon = R.drawable.ic_edit,
-                    placeHolder = "••••••••", // TODO: Should match the others
-                    value = "",
+                    placeHolder = "", // TODO: Should match the others
+                    value = "Password",  // ••••••••
                     onValueChanged = { },
-                    onTrailingClicked = changePasswordClicked
+                    onTrailingClicked = { dialog = EditProfileDialog.Password }
                 )
             }
 
 
             // TODO: Show the deletion warning dialog before proceeding with the deletion request
             Card(
-                onClick = { showDialog = true },
+                onClick = { dialog = EditProfileDialog.Delete },
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 border = BorderStroke(0.3.dp, Color.Red.copy(alpha = 0.4f))
@@ -385,6 +377,29 @@ fun EditProfileScreen(
             Spacer(modifier = Modifier.height(18.dp))
         }
     }
+
+
+    when (dialog) {
+        EditProfileDialog.Username -> {
+
+        }
+
+        EditProfileDialog.Password -> {
+
+        }
+
+        EditProfileDialog.Phone -> {
+
+        }
+
+        EditProfileDialog.Delete -> {
+
+        }
+
+        EditProfileDialog.None -> Unit
+    }
+
+
 }
 
 @Preview
@@ -393,13 +408,12 @@ fun EditPreview() {
     PetPalTheme {
         EditProfileScreen(
             UserUiState(
-                user = User()
+                user = User(
+                    name = "Ahmed Adil",
+                    email = "ahmedadilabogarin@gmail.com",
+                    phoneNumber = "0560634785"
+                )
             ),
-            changeUsernameClicked = {},
-            changeEmailClicked = {},
-            changePhoneClicked = {},
-            changePasswordClicked = {},
-            onDeleteClicked = {}
         )
     }
 }
