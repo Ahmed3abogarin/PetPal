@@ -23,7 +23,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.ValidationUtils
 
 @Composable
-fun EditPasswordDialog(
+fun ChangePasswordDialog(
     onDismiss: () -> Unit,
     onConfirm: (current: String, new: String) -> Unit
 ) {
@@ -31,19 +31,16 @@ fun EditPasswordDialog(
     var currentError by remember { mutableStateOf<String?>(null) }
     var currentVisible by remember { mutableStateOf(false) }
 
-
     var newPw by remember { mutableStateOf("") }
     var newError by remember { mutableStateOf<String?>(null) }
     var newVisible by remember { mutableStateOf(false) }
-
 
     var confirm by remember { mutableStateOf("") }
     var confirmError by remember { mutableStateOf<String?>(null) }
     var confirmVisible by remember { mutableStateOf(false) }
 
-    val passwordsMatch = newPw == confirm
-    val isValid =
-        current.isNotBlank() && ValidationUtils.validatePassword(newPw) == null && passwordsMatch
+    val isValid = currentError == null && newError == null && confirmError == null
+            && current.isNotBlank() && newPw.isNotBlank() && confirm.isNotBlank()
 
     AlertDialog(
         containerColor = BackgroundColor,
@@ -58,7 +55,7 @@ fun EditPasswordDialog(
                     trailingIcon = if (currentVisible) R.drawable.ic_eye else R.drawable.ic_eye_off,
                     onValueChanged = {
                         current = it
-                        ValidationUtils.validatePassword(current)
+                        currentError = ValidationUtils.validatePassword(it)
                     },
                     iconSize = 18.dp,
                     onTrailingClicked = { currentVisible = !currentVisible },
@@ -70,7 +67,14 @@ fun EditPasswordDialog(
                     value = newPw,
                     visualTransformation = if (newVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = if (newVisible) R.drawable.ic_eye else R.drawable.ic_eye_off,
-                    onValueChanged = {},
+                    onValueChanged = {
+                        newPw = it
+                        newError = when {
+                            ValidationUtils.validatePassword(it) != null -> ValidationUtils.validatePassword(it)
+                            it == current -> "New password can't be the same as current"
+                            else -> null
+                        }
+                    },
                     iconSize = 18.dp,
                     onTrailingClicked = { newVisible = !newVisible },
                     error = newError
@@ -81,12 +85,14 @@ fun EditPasswordDialog(
                     value = confirm,
                     visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = if (confirmVisible) R.drawable.ic_eye else R.drawable.ic_eye_off,
-                    onValueChanged = {},
+                    onValueChanged = {
+                        confirm = it
+                        confirmError = if (it != newPw) "Passwords don't match" else null
+                    },
                     iconSize = 18.dp,
                     onTrailingClicked = { confirmVisible = !confirmVisible },
-                    error = confirmError ?: if (!passwordsMatch) "Passwords don't match" else null
+                    error = confirmError
                 )
-
             }
         },
         confirmButton = {
@@ -106,7 +112,7 @@ fun EditPasswordDialog(
 @Composable
 fun MyPreview() {
     PetPalTheme {
-        EditPasswordDialog(
+        ChangePasswordDialog(
             onDismiss = {},
             onConfirm = { _, _ -> }
         )
