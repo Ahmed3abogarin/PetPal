@@ -60,6 +60,7 @@ import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.presentation.profile.edit.components.ChangeNameDialog
 import com.vtol.petpal.presentation.profile.edit.components.ChangePasswordDialog
 import com.vtol.petpal.presentation.profile.edit.components.ChangePhoneDialog
+import com.vtol.petpal.presentation.profile.edit.components.DeletionDialog
 import com.vtol.petpal.presentation.tasks.SectionLabel
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.LightPurple
@@ -407,6 +408,7 @@ fun EditProfileScreen(
 
         EditProfileDialog.Delete -> {
             // TODO
+            DeletionDialog(onConfirm = {}, onDismiss = {})
 
         }
 

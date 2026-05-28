@@ -47,7 +47,6 @@ fun ConfirmationDialog(
     onDismiss: () -> Unit = {},
     onSignOutClicked: () -> Unit = {}
 ) {
-
     if (visible) {
         Dialog(
             onDismissRequest = onDismiss,
@@ -174,10 +173,7 @@ fun ConfirmationDialog(
                         )
                     }
                 }
-
-
             }
-
         }
     }
 }
