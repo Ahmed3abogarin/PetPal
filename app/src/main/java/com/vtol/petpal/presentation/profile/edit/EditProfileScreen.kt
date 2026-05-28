@@ -57,6 +57,7 @@ import com.vtol.petpal.presentation.common.UserUiState
 import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.pets.components.PetTextField
+import com.vtol.petpal.presentation.profile.edit.components.EditPasswordDialog
 import com.vtol.petpal.presentation.tasks.SectionLabel
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.LightPurple
@@ -385,6 +386,14 @@ fun EditProfileScreen(
         }
 
         EditProfileDialog.Password -> {
+            EditPasswordDialog(
+                onDismiss = {},
+                onConfirm = { _, _  ->
+                    // TODO
+
+                    dialog = EditProfileDialog.None
+                }
+            )
 
         }
 
