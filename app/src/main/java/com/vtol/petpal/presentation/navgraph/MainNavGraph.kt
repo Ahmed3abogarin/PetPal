@@ -214,13 +214,17 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         }
 
         composable(
-            enterTransition = { slideInHorizontally(animationSpec = tween(400), initialOffsetX = { it }) },
+            enterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { it })
+            },
             exitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
             route = Routes.EditUserScreen.route
-        ){
+        ) {
             val vm: UserViewModel = hiltViewModel()
             val state by vm.state.collectAsStateWithLifecycle()
-            EditProfileScreen(state)
+            EditProfileScreen(state) { navController.navigateUp() }
 
         }
     }

@@ -75,6 +75,7 @@ import java.io.File
 @Composable
 fun EditProfileScreen(
     state: UserUiState,
+    navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -152,7 +153,7 @@ fun EditProfileScreen(
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    AppIconButton { }
+                    AppIconButton { navigateUp() }
                     Text(
                         text = "My Profile",
                         fontSize = 28.sp,
@@ -160,9 +161,7 @@ fun EditProfileScreen(
                         color = Color.White
                     )
 
-                    // TODO: Could be removed
-
-                    AppIconButton(icon = R.drawable.ic_done) { }
+                    AppIconButton(icon = R.drawable.ic_done) {navigateUp() }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -443,6 +442,6 @@ fun EditPreview() {
                     phoneNumber = "0560634785"
                 )
             ),
-        )
+        ){}
     }
 }
