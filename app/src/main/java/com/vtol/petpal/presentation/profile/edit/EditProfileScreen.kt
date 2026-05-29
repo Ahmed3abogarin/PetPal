@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -161,7 +162,7 @@ fun EditProfileScreen(
                         color = Color.White
                     )
 
-                    AppIconButton(icon = R.drawable.ic_done) {navigateUp() }
+                    AppIconButton(icon = R.drawable.ic_done) { navigateUp() }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -209,7 +210,7 @@ fun EditProfileScreen(
                     }
 
                     // Add image button
-                    if (isImgEmpty && !state.isImageUploading) {
+                    if (!state.isImageUploading) {
                         Card(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
@@ -230,21 +231,28 @@ fun EditProfileScreen(
                             )
                         }
                     }
+
+                    if (!isImgEmpty) {
+                        Card(
+                            modifier = Modifier
+                                .align(Alignment.TopStart),
+                            colors = CardDefaults.cardColors(containerColor = Color.DarkGray),
+                            shape = CircleShape,
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .clickable { /* TODO */}
+                                    .padding(6.dp)
+                                    .size(14.dp),
+                                imageVector = Icons.Default.Close,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                        }
+                    }
                 }
 
-
-                Card(
-                    onClick = {},
-                    border = BorderStroke(width = 0.3.dp, color = Color.Red.copy(alpha = 0.4f)),
-                    colors = CardDefaults.cardColors(containerColor = Color.Red.copy(alpha = 0.1f))
-                ) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
-                        text = "Remove",
-                        fontSize = 12.sp,
-                        color = Red.copy(alpha = 0.7f),
-                    )
-                }
+                Spacer(modifier= Modifier.height(16.dp))
             }
 
             // Main layout
@@ -442,6 +450,6 @@ fun EditPreview() {
                     phoneNumber = "0560634785"
                 )
             ),
-        ){}
+        ) {}
     }
 }

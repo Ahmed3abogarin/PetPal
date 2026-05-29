@@ -142,7 +142,6 @@ fun ProfileScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
-
         Column {
             // Top content
             Column(
@@ -153,7 +152,6 @@ fun ProfileScreen(
                     .padding(bottom = 32.dp, top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Box(modifier = Modifier.fillMaxWidth()) {
 
                     Text(
@@ -213,7 +211,6 @@ fun ProfileScreen(
 
                         // Upload overlay
                         if (state.isImageUploading) {
-
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -223,7 +220,6 @@ fun ProfileScreen(
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
-
                                 LoadingIndicator()
                             }
                         }
