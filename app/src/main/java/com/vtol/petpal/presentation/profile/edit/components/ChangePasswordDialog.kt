@@ -79,11 +79,11 @@ fun ChangePasswordDialog(
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(text = "Change password", lineHeight = 16.sp, fontSize = 16.sp)
+                    Text(text = "Change password", lineHeight = 16.sp, fontSize = 20.sp)
                     Text(
                         text = "Choose a strong password to keep your account secure",
                         lineHeight = 16.sp,
-                        fontSize = 11.sp,
+                        fontSize = 14.sp,
                         color = Color.Gray
                     )
                 }

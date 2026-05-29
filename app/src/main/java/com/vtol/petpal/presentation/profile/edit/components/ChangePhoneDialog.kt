@@ -64,11 +64,11 @@ fun ChangePhoneDialog(onDismiss: () -> Unit, onConfirm: (name: String) -> Unit) 
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(text = "Change phone number", lineHeight = 16.sp, fontSize = 16.sp)
+                    Text(text = "Change phone number", fontSize = 20.sp)
                     Text(
                         text = "Update the number associated with your account",
                         lineHeight = 16.sp,
-                        fontSize = 11.sp,
+                        fontSize = 14.sp,
                         color = Color.Gray
                     )
                 }

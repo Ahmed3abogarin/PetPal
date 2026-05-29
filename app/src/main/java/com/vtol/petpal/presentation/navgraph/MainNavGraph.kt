@@ -1,6 +1,8 @@
 package com.vtol.petpal.presentation.navgraph
 
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
@@ -211,7 +213,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             )
         }
 
-        composable(Routes.EditUserScreen.route){
+        composable(
+            enterTransition = { slideInHorizontally(animationSpec = tween(400), initialOffsetX = { it }) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
+            route = Routes.EditUserScreen.route
+        ){
             val vm: UserViewModel = hiltViewModel()
             val state by vm.state.collectAsStateWithLifecycle()
             EditProfileScreen(state)

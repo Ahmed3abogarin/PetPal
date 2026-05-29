@@ -66,11 +66,11 @@ fun ChangeNameDialog(
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(text = "Change name", lineHeight = 16.sp, fontSize = 16.sp)
+                    Text(text = "Change name", lineHeight = 16.sp, fontSize = 20.sp)
                     Text(
                         text = "Your name will appear on your profile",
                         lineHeight = 16.sp,
-                        fontSize = 11.sp,
+                        fontSize = 14.sp,
                         color = Color.Gray
                     )
                 }
