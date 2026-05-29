@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -112,7 +113,9 @@ fun DeletionDialog(
                     color = Color.Black
                 )
 
-                Spacer(modifier = Modifier.height(42.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+                HorizontalDivider(thickness = 1.dp, color = Color.Black.copy(alpha = 0.2f))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 list.forEach { text ->
                     Row(
@@ -129,7 +132,7 @@ fun DeletionDialog(
                                     .padding(4.dp)
                                     .size(12.dp),
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "",
+                                contentDescription = null,
                                 tint = Color.Red
                             )
                         }
@@ -141,7 +144,6 @@ fun DeletionDialog(
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
-
 
                 Spacer(modifier = Modifier.height(32.dp))
 

@@ -16,7 +16,6 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(UserUiState())
     val state = _state.asStateFlow()
 

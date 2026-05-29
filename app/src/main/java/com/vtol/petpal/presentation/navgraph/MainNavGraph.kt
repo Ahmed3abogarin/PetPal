@@ -25,6 +25,7 @@ import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.presentation.add_pet.AddPetScreen
 import com.vtol.petpal.presentation.add_pet.AddPetViewModel
 import com.vtol.petpal.presentation.add_pet.UiEffects
+import com.vtol.petpal.presentation.common.UserViewModel
 import com.vtol.petpal.presentation.explore.ExploreViewModel
 import com.vtol.petpal.presentation.pets.PetDetailsScreen
 import com.vtol.petpal.presentation.pets.PetDetailsViewModel
@@ -33,6 +34,7 @@ import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.presentation.profile.ProfileViewModel
+import com.vtol.petpal.presentation.profile.edit.EditProfileScreen
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
 
@@ -114,6 +116,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 doneTasks = hiltViewModel<HomeViewModel>().state.collectAsState().value.completedCount,
                 navigateToFeedBack = {
                     navController.navigate(Routes.FeedbackScreen.route)
+                },
+                navigateToEdit = {
+                    navController.navigate(Routes.EditUserScreen.route)
                 }
             )
         }
@@ -207,6 +212,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         }
 
         composable(Routes.EditUserScreen.route){
+            val vm: UserViewModel = hiltViewModel()
+            val state by vm.state.collectAsStateWithLifecycle()
+            EditProfileScreen(state)
 
         }
     }

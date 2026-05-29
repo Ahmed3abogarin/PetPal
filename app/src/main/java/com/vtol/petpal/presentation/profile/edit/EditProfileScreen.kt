@@ -386,13 +386,17 @@ fun EditProfileScreen(
     when (dialog) {
         EditProfileDialog.Username -> {
             // TODO
-            ChangeNameDialog(onDismiss = {}, onConfirm = {})
+            ChangeNameDialog(onDismiss = {
+                dialog = EditProfileDialog.None
+            }, onConfirm = {})
         }
 
         EditProfileDialog.Password -> {
             ChangePasswordDialog(
-                onDismiss = {},
-                onConfirm = { _, _  ->
+                onDismiss = {
+                    dialog = EditProfileDialog.None
+                },
+                onConfirm = { _, _ ->
                     // TODO
 
                     dialog = EditProfileDialog.None
@@ -402,13 +406,22 @@ fun EditProfileScreen(
 
         EditProfileDialog.Phone -> {
             // TODO
-            ChangePhoneDialog(onDismiss = {}, onConfirm = {})
+            ChangePhoneDialog(onDismiss = {
+                dialog = EditProfileDialog.None
+            }, onConfirm = {})
 
         }
 
         EditProfileDialog.Delete -> {
             // TODO
-            DeletionDialog(onConfirm = {}, onDismiss = {})
+            DeletionDialog(
+                onConfirm = {
+                },
+                onDismiss = {
+                    dialog = EditProfileDialog.None
+
+                }
+            )
 
         }
 

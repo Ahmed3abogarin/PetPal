@@ -69,7 +69,6 @@ import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.ShareManager.openWebsite
 import com.vtol.petpal.util.ShareManager.shareApp
 import com.vtol.petpal.util.getVersionName
-import com.vtol.petpal.util.showToast
 import com.yalantis.ucrop.UCrop
 import java.io.File
 
@@ -79,6 +78,7 @@ fun ProfileScreen(
     petsCount: Int = 0,
     doneTasks: Int = 0,
     navigateToFeedBack: () -> Unit,
+    navigateToEdit: () -> Unit,
     event: (ProfileEvents) -> Unit
 ) {
     val context = LocalContext.current
@@ -173,9 +173,7 @@ fun ProfileScreen(
                                 alpha = 0.5f
                             )
                         ),
-                        onClick = {
-                            context.showToast()
-                        }
+                        onClick = navigateToEdit
                     ) {
                         Icon(
                             modifier = Modifier.padding(12.dp),
@@ -446,7 +444,8 @@ fun SettingsButtonPreview() {
                 )
             ),
             event = { },
-            navigateToFeedBack = {}
+            navigateToFeedBack = {},
+            navigateToEdit = {}
         )
     }
 }
