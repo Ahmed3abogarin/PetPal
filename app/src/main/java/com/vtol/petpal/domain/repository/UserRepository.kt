@@ -2,9 +2,10 @@ package com.vtol.petpal.domain.repository
 
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.util.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    suspend fun getUser(): Resource<User>
+    fun getUser(): Flow<User>
 
     suspend fun updateUserProfileImage(bytes: ByteArray): Result<String>
     suspend fun updateUsername(name: String): Result<Unit>

@@ -1,4 +1,4 @@
-package com.vtol.petpal.domain.usecases
+package com.vtol.petpal.domain.usecases.user
 
 import android.net.Uri
 import com.vtol.petpal.domain.repository.UserRepository

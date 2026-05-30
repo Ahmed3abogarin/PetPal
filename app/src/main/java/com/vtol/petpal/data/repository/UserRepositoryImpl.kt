@@ -8,7 +8,9 @@ import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.util.AppStoragePaths
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
-import com.vtol.petpal.util.Resource
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -17,23 +19,24 @@ class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val storage: FirebaseStorage
 ) : UserRepository {
-    override suspend fun getUser(): Resource<User> {
-
-        return try {
-            val currentUid = auth.currentUser?.uid ?: return Resource.Error("User Not found")
-            val snapshot = firestore.collection(USERS_COLLECTION)
-                .document(currentUid)
-                .get()
-                .await()
-
-            val user =
-                snapshot.toObject(User::class.java) ?: return Resource.Error("User not found")
-
-            Resource.Success(user)
-        } catch (e: Exception) {
-            Resource.Error(e.message ?: "Unknown error")
+    override fun getUser(): Flow<User> = callbackFlow {
+        val currentUid = auth.currentUser?.uid
+        if (currentUid == null) {
+            close(IllegalStateException("User not found"))
+            return@callbackFlow
         }
 
+        val listener = firestore.collection(USERS_COLLECTION)
+            .document(currentUid)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                snapshot?.toObject(User::class.java)?.let { trySend(it) }
+            }
+
+        awaitClose { listener.remove() }
     }
 
     override suspend fun updateUserProfileImage(bytes: ByteArray): Result<String> = runCatching {
@@ -72,7 +75,7 @@ class UserRepositoryImpl @Inject constructor(
             .await()
     }
 
-    override suspend fun updatePassword(oldPw: String,newPw: String): Result<Unit> = runCatching {
+    override suspend fun updatePassword(oldPw: String, newPw: String): Result<Unit> = runCatching {
         val user = auth.currentUser ?: throw Exception("User not found")
 
         // Re-authenticate first — Firebase requires this before sensitive changes

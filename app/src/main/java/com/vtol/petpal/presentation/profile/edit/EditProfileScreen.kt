@@ -83,9 +83,21 @@ fun EditProfileScreen(
 
     // TODO: Check the color of the texts could be used as place holder to match the color and to simplify the complexity
 
+    // TODO:
+    // 1- Remove image functionality
+    // 2- Delete account (with its all and whole associated data) functionality
+
+
     if (state.isLoading) {
         LoadingIndicator()
         return
+    }
+
+    LaunchedEffect(state.message) {
+        if (state.message != null) {
+            context.showToast(state.message)
+            event(EditEvents.ErrorShown)
+        }
     }
 
     // Crop launcher — receives the cropped URI result
@@ -123,12 +135,6 @@ fun EditProfileScreen(
         }
     }
 
-    LaunchedEffect(state.error) {
-        if (state.error != null) {
-            context.showToast(state.error)
-        }
-    }
-
     state.user?.let {
         val isImgEmpty = it.imgPath.isEmpty()
         Column(
@@ -146,23 +152,19 @@ fun EditProfileScreen(
                     .padding(bottom = 32.dp, top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    AppIconButton { navigateUp() }
+                Box(modifier = Modifier.fillMaxWidth().padding(start = 16.dp)) {
+                    AppIconButton(
+                        modifier = Modifier.align(Alignment.TopStart)
+                    ) { navigateUp() }
                     Text(
+                        modifier = Modifier.align(Alignment.Center),
                         text = "Edit Profile",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.White
                     )
-
-                    AppIconButton(icon = R.drawable.ic_done) { navigateUp() }
                 }
+
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -276,6 +278,7 @@ fun EditProfileScreen(
                 //TODO: Change the value (text) color in this specific screen or in general.
                 PetTextField(
                     leadingIcon = R.drawable.ic_person,
+                    textColor = MainPurple,
                     iconSize = 22.dp,
                     fontSize = 14.sp,
                     readOnly = true,
@@ -303,6 +306,7 @@ fun EditProfileScreen(
                 SectionLabel("Phone")
                 PetTextField(
                     leadingIcon = R.drawable.ic_phone,
+                    textColor = MainPurple,
                     iconSize = 22.dp,
                     fontSize = 14.sp,
                     readOnly = true,
@@ -318,6 +322,7 @@ fun EditProfileScreen(
                 SectionLabel("Passowrd")
                 PetTextField(
                     leadingIcon = R.drawable.ic_lock,
+                    textColor = MainPurple,
                     iconSize = 22.dp,
                     fontSize = 14.sp,
                     readOnly = true,
@@ -391,10 +396,15 @@ fun EditProfileScreen(
 
     when (dialog) {
         EditProfileDialog.Username -> {
-            // TODO
-            ChangeNameDialog(onDismiss = {
-                dialog = EditProfileDialog.None
-            }, onConfirm = {})
+            ChangeNameDialog(
+                onDismiss = {
+                    dialog = EditProfileDialog.None
+                },
+                onConfirm = {
+                    event(EditEvents.UpdateUsername(it))
+                    dialog = EditProfileDialog.None
+                }
+            )
         }
 
         EditProfileDialog.Password -> {
@@ -402,30 +412,33 @@ fun EditProfileScreen(
                 onDismiss = {
                     dialog = EditProfileDialog.None
                 },
-                onConfirm = { _, _ ->
-                    // TODO
-
+                onConfirm = { old, new ->
+                    event(EditEvents.UpdatePassword(old, new))
                     dialog = EditProfileDialog.None
                 }
             )
         }
 
         EditProfileDialog.Phone -> {
-            // TODO
-            ChangePhoneDialog(onDismiss = {
-                dialog = EditProfileDialog.None
-            }, onConfirm = {})
-
+            ChangePhoneDialog(
+                onDismiss = {
+                    dialog = EditProfileDialog.None
+                },
+                onConfirm = {
+                    event(EditEvents.UpdatePhone(it))
+                    dialog = EditProfileDialog.None
+                }
+            )
         }
 
         EditProfileDialog.Delete -> {
-            // TODO
             DeletionDialog(
-                onConfirm = {
-                },
                 onDismiss = {
                     dialog = EditProfileDialog.None
+                },
+                onConfirm = {
 
+                    dialog = EditProfileDialog.None
                 }
             )
 

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,6 +36,7 @@ fun PetTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     label: String? = null,
     readOnly: Boolean = false,
+    textColor: Color = Color.Black,
     placeHolder: String,
     value: String,
     error: String? = null,
@@ -62,6 +64,9 @@ fun PetTextField(
             modifier = Modifier
                 .fillMaxWidth(),
             value = value,
+            textStyle = TextStyle(
+                color = textColor
+            ),
             readOnly = readOnly,
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = Color.White,

@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
-import com.vtol.petpal.domain.usecases.UpdateUserImageUseCase
+import com.vtol.petpal.domain.usecases.user.UpdateUserImageUseCase
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
-import com.vtol.petpal.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -60,23 +60,9 @@ class ProfileViewModel @Inject constructor(
     private fun getUser() {
         viewModelScope.launch {
             _uiState.update { it.copy(isUserLoading = true) }
-            when (val result = appUseCases.getUser()) {
-                is Resource.Success -> _uiState.update {
-                    it.copy(
-                        user = result.data,
-                        isUserLoading = false
-                    )
-                }
-
-                is Resource.Error -> _uiState.update {
-                    it.copy(
-                        error = result.message,
-                        isUserLoading = false
-                    )
-                }
-
-                else -> _uiState.update { it.copy(isUserLoading = false) }
-            }
+            appUseCases.getUser()
+                .catch { e -> _uiState.update { it.copy(isUserLoading = false, error = e.message) } }
+                .collect { user -> _uiState.update { it.copy(isUserLoading = false, user = user) } }
         }
     }
 
