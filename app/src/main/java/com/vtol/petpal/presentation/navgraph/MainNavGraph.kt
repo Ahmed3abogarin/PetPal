@@ -27,7 +27,7 @@ import com.vtol.petpal.presentation.home.HomeViewModel
 import com.vtol.petpal.presentation.add_pet.AddPetScreen
 import com.vtol.petpal.presentation.add_pet.AddPetViewModel
 import com.vtol.petpal.presentation.add_pet.UiEffects
-import com.vtol.petpal.presentation.common.UserViewModel
+import com.vtol.petpal.presentation.profile.edit.UserViewModel
 import com.vtol.petpal.presentation.explore.ExploreViewModel
 import com.vtol.petpal.presentation.pets.PetDetailsScreen
 import com.vtol.petpal.presentation.pets.PetDetailsViewModel
@@ -224,7 +224,10 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         ) {
             val vm: UserViewModel = hiltViewModel()
             val state by vm.state.collectAsStateWithLifecycle()
-            EditProfileScreen(state) { navController.navigateUp() }
+            EditProfileScreen(
+                state = state,
+                event = vm::onEvent,
+            ) { navController.navigateUp() }
 
         }
     }

@@ -1,5 +1,6 @@
 package com.vtol.petpal.data.repository
 
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -15,7 +16,7 @@ class UserRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
     private val storage: FirebaseStorage
-): UserRepository {
+) : UserRepository {
     override suspend fun getUser(): Resource<User> {
 
         return try {
@@ -25,7 +26,8 @@ class UserRepositoryImpl @Inject constructor(
                 .get()
                 .await()
 
-            val user = snapshot.toObject(User::class.java) ?: return Resource.Error("User not found")
+            val user =
+                snapshot.toObject(User::class.java) ?: return Resource.Error("User not found")
 
             Resource.Success(user)
         } catch (e: Exception) {
@@ -50,5 +52,38 @@ class UserRepositoryImpl @Inject constructor(
             .await()
 
         downloadUrl
+    }
+
+    override suspend fun updateUsername(name: String): Result<Unit> = runCatching {
+        val currentUid = auth.currentUser?.uid
+            ?: throw Exception("User not found")
+        firestore.collection(USERS_COLLECTION)
+            .document(currentUid)
+            .update("name", name)
+            .await()
+    }
+
+    override suspend fun updatePhoneNumber(phone: String): Result<Unit> = runCatching {
+        val currentUid = auth.currentUser?.uid ?: throw Exception("User not found")
+
+        firestore.collection(USERS_COLLECTION)
+            .document(currentUid)
+            .update("phoneNumber", phone)
+            .await()
+    }
+
+    override suspend fun updatePassword(oldPw: String,newPw: String): Result<Unit> = runCatching {
+        val user = auth.currentUser ?: throw Exception("User not found")
+
+        // Re-authenticate first — Firebase requires this before sensitive changes
+        val credential = EmailAuthProvider.getCredential(user.email!!, oldPw)
+        user.reauthenticate(credential).await()
+
+        // Now safe to update
+        user.updatePassword(newPw).await()
+    }
+
+    override suspend fun deleteAccount(): Result<Unit> {
+        TODO("Not yet implemented")
     }
 }

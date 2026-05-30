@@ -28,7 +28,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -54,7 +53,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.user.User
-import com.vtol.petpal.presentation.common.UserUiState
 import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.pets.components.PetTextField
@@ -76,6 +74,7 @@ import java.io.File
 @Composable
 fun EditProfileScreen(
     state: UserUiState,
+    event: (EditEvents) -> Unit,
     navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
@@ -96,7 +95,7 @@ fun EditProfileScreen(
         if (result.resultCode == Activity.RESULT_OK) {
             val croppedUri = UCrop.getOutput(result.data!!)
             croppedUri?.let {
-                // event(ProfileEvents.UpdateImage(it))
+                event(EditEvents.UpdateImage(it))
             }
         }
     }
@@ -156,7 +155,7 @@ fun EditProfileScreen(
                 ) {
                     AppIconButton { navigateUp() }
                     Text(
-                        text = "My Profile",
+                        text = "Edit Profile",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.White
@@ -232,7 +231,7 @@ fun EditProfileScreen(
                         }
                     }
 
-                    if (!isImgEmpty) {
+                    if (!isImgEmpty && !state.isImageUploading) {
                         Card(
                             modifier = Modifier
                                 .align(Alignment.TopStart),
@@ -241,7 +240,7 @@ fun EditProfileScreen(
                         ) {
                             Icon(
                                 modifier = Modifier
-                                    .clickable { /* TODO */}
+                                    .clickable { /* TODO */ }
                                     .padding(6.dp)
                                     .size(14.dp),
                                 imageVector = Icons.Default.Close,
@@ -252,7 +251,7 @@ fun EditProfileScreen(
                     }
                 }
 
-                Spacer(modifier= Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             // Main layout
@@ -357,7 +356,7 @@ fun EditProfileScreen(
                         ) {
                             Icon(
                                 modifier = Modifier.size(32.dp),
-                                imageVector = Icons.Default.RestoreFromTrash,
+                                painter = painterResource(R.drawable.ic_trash),
                                 contentDescription = null,
                                 tint = Red
                             )
@@ -450,6 +449,6 @@ fun EditPreview() {
                     phoneNumber = "0560634785"
                 )
             ),
-        ) {}
+            event = {}) {}
     }
 }
