@@ -1,5 +1,6 @@
 package com.vtol.petpal.domain.repository
 
+import com.vtol.petpal.domain.model.user.ProviderInfo
 import com.vtol.petpal.domain.model.user.User
 import kotlinx.coroutines.flow.Flow
 
@@ -13,4 +14,6 @@ interface UserRepository {
 
     suspend fun deleteUserImage(): Result<Unit>
     suspend fun deleteAccount(): Result<Unit>
+
+    suspend fun getProvider(): ProviderInfo
 }

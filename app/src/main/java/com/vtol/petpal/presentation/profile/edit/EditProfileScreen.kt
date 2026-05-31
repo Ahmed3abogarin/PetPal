@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -153,9 +154,11 @@ fun EditProfileScreen(
                     .padding(bottom = 32.dp, top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp)
+                ) {
                     AppIconButton(
                         modifier = Modifier.align(Alignment.TopStart)
                     ) { navigateUp() }
@@ -329,12 +332,15 @@ fun EditProfileScreen(
                     iconSize = 22.dp,
                     fontSize = 14.sp,
                     readOnly = true,
-                    trailingIcon = R.drawable.ic_edit,
+                    trailingIcon = if (state.isEmailProvider) R.drawable.ic_edit else null,
                     placeHolder = "", // TODO: Should match the others
                     value = "Password",  // ••••••••
                     onValueChanged = { },
                     onTrailingClicked = { dialog = EditProfileDialog.Password }
                 )
+                if (!state.isEmailProvider){
+                    EmailProviderConditionRow(state.providerName)
+                }
             }
 
 
@@ -449,9 +455,28 @@ fun EditProfileScreen(
 
         EditProfileDialog.None -> Unit
     }
-
-
 }
+
+@Composable
+fun EmailProviderConditionRow(provider: String?){
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(14.dp),
+            imageVector = Icons.Default.Info,
+            tint = Color.Gray,
+            contentDescription = null
+        )
+        Text(
+            text = "Manged by $provider",
+            fontSize = 11.sp,
+            color = Color.Gray
+        )
+    }
+}
+
 
 @Preview
 @Composable

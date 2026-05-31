@@ -4,6 +4,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.vtol.petpal.domain.model.user.ProviderInfo
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.util.AppStoragePaths
@@ -100,5 +101,18 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAccount(): Result<Unit> {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun getProvider(): ProviderInfo {
+        val providerId = auth.currentUser
+            ?.providerData
+            ?.firstOrNull { it.providerId != "firebase" }
+            ?.providerId
+
+        return ProviderInfo(
+            isEmailProvider = providerId == EmailAuthProvider.PROVIDER_ID,
+            providerName = if (providerId == EmailAuthProvider.PROVIDER_ID) null
+            else providerId?.replace(".com", "")?.replaceFirstChar { it.uppercase() }
+        )
     }
 }

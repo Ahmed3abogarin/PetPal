@@ -3,8 +3,10 @@ package com.vtol.petpal.presentation.profile.edit
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.domain.model.user.ProviderInfo
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.user.GetProvider
 import com.vtol.petpal.domain.usecases.user.RemoveUserImage
 import com.vtol.petpal.domain.usecases.user.UpdatePassword
 import com.vtol.petpal.domain.usecases.user.UpdatePhoneNumber
@@ -26,13 +28,22 @@ class UserViewModel @Inject constructor(
     private val updatePasswordUseCase: UpdatePassword,
     private val updatePhoneNumberUseCase: UpdatePhoneNumber,
     private val updateUsernameUseCase: UpdateUsername,
-    private val removeUserImage: RemoveUserImage
+    private val removeUserImage: RemoveUserImage,
+    private val getProviderInfo: GetProvider
 ) : ViewModel() {
     private val _state = MutableStateFlow(UserUiState())
     val state = _state.asStateFlow()
 
 
     init {
+        viewModelScope.launch {
+            val providerInfo = getProviderInfo()
+            _state.update { it.copy(
+                isEmailProvider = providerInfo.isEmailProvider,
+                providerName = providerInfo.providerName
+            ) }
+
+        }
         getUser()
     }
 
@@ -136,6 +147,8 @@ class UserViewModel @Inject constructor(
 data class UserUiState(
     val isLoading: Boolean = false,
     val isImageLoading: Boolean = false,
+    val isEmailProvider: Boolean = false,
+    val providerName: String? = null,
     val user: User? = null,
     val message: String? = null,
 )
