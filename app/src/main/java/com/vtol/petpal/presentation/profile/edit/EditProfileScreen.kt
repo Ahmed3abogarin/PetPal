@@ -137,6 +137,7 @@ fun EditProfileScreen(
 
     state.user?.let {
         val isImgEmpty = it.imgPath.isEmpty()
+
         Column(
             modifier = Modifier
                 .background(BackgroundColor)
@@ -152,7 +153,9 @@ fun EditProfileScreen(
                     .padding(bottom = 32.dp, top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(modifier = Modifier.fillMaxWidth().padding(start = 16.dp)) {
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp)) {
                     AppIconButton(
                         modifier = Modifier.align(Alignment.TopStart)
                     ) { navigateUp() }
@@ -195,7 +198,7 @@ fun EditProfileScreen(
                     )
 
                     // Upload overlay
-                    if (state.isImageUploading) {
+                    if (state.isImageLoading) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -205,13 +208,12 @@ fun EditProfileScreen(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-
                             LoadingIndicator()
                         }
                     }
 
-                    // Add image button
-                    if (!state.isImageUploading) {
+                    // edit image button
+                    if (!state.isImageLoading) {
                         Card(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
@@ -233,7 +235,8 @@ fun EditProfileScreen(
                         }
                     }
 
-                    if (!isImgEmpty && !state.isImageUploading) {
+                    // delete icon
+                    if (!isImgEmpty && !state.isImageLoading) {
                         Card(
                             modifier = Modifier
                                 .align(Alignment.TopStart),
@@ -242,7 +245,7 @@ fun EditProfileScreen(
                         ) {
                             Icon(
                                 modifier = Modifier
-                                    .clickable { /* TODO */ }
+                                    .clickable { event(EditEvents.RemoveImage) }
                                     .padding(6.dp)
                                     .size(14.dp),
                                 imageVector = Icons.Default.Close,

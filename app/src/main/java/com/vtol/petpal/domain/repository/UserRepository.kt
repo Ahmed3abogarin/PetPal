@@ -1,7 +1,6 @@
 package com.vtol.petpal.domain.repository
 
 import com.vtol.petpal.domain.model.user.User
-import com.vtol.petpal.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
@@ -12,5 +11,6 @@ interface UserRepository {
     suspend fun updatePhoneNumber(phone: String): Result<Unit>
     suspend fun updatePassword(oldPw: String,newPw: String): Result<Unit>
 
+    suspend fun deleteUserImage(): Result<Unit>
     suspend fun deleteAccount(): Result<Unit>
 }

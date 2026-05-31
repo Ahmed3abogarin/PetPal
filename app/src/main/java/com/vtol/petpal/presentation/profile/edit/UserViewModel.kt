@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.user.RemoveUserImage
 import com.vtol.petpal.domain.usecases.user.UpdatePassword
 import com.vtol.petpal.domain.usecases.user.UpdatePhoneNumber
 import com.vtol.petpal.domain.usecases.user.UpdateUserImageUseCase
@@ -24,7 +25,8 @@ class UserViewModel @Inject constructor(
     private val updateUserImageUseCase: UpdateUserImageUseCase,
     private val updatePasswordUseCase: UpdatePassword,
     private val updatePhoneNumberUseCase: UpdatePhoneNumber,
-    private val updateUsernameUseCase: UpdateUsername
+    private val updateUsernameUseCase: UpdateUsername,
+    private val removeUserImage: RemoveUserImage
 ) : ViewModel() {
     private val _state = MutableStateFlow(UserUiState())
     val state = _state.asStateFlow()
@@ -34,9 +36,8 @@ class UserViewModel @Inject constructor(
         getUser()
     }
 
-
-    fun onEvent(event: EditEvents){
-        when(event){
+    fun onEvent(event: EditEvents) {
+        when (event) {
             is EditEvents.RemoveImage -> removeImage()
             is EditEvents.UpdateImage -> updateUserImage(event.uri)
             is EditEvents.UpdatePassword -> updatePassword(event.old, event.new)
@@ -69,10 +70,19 @@ class UserViewModel @Inject constructor(
     }
 
     private fun removeImage() {
-
+        viewModelScope.launch {
+            _state.update { it.copy(isImageLoading = true) }
+            removeUserImage()
+                .onSuccess {
+                    _state.update { it.copy(isImageLoading = false) }
+                }
+                .onFailure { e ->
+                    _state.update { it.copy(isImageLoading = false, message = e.message) }
+                }
+        }
     }
 
-    private fun updateUsername(name: String){
+    private fun updateUsername(name: String) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             updateUsernameUseCase(name)
@@ -101,7 +111,7 @@ class UserViewModel @Inject constructor(
 
     private fun updateUserImage(uri: Uri) {
         viewModelScope.launch {
-            _state.update { it.copy(isImageUploading = true) }
+            _state.update { it.copy(isImageLoading = true) }
 
             val result = updateUserImageUseCase(uri)
 
@@ -110,14 +120,14 @@ class UserViewModel @Inject constructor(
                     Timber.d(">>> onSuccess called")
                     _state.update {
                         it.copy(
-                            isImageUploading = false,
+                            isImageLoading = false,
                             user = it.user?.copy(imgPath = imagePath)
                         )
                     }
                 }
                 .onFailure { e ->
                     Timber.e(">>> onFailure called: ${e.message}")
-                    _state.update { it.copy(isImageUploading = false, message = e.message) }
+                    _state.update { it.copy(isImageLoading = false, message = e.message) }
                 }
         }
     }
@@ -125,7 +135,7 @@ class UserViewModel @Inject constructor(
 
 data class UserUiState(
     val isLoading: Boolean = false,
-    val isImageUploading: Boolean = false,
+    val isImageLoading: Boolean = false,
     val user: User? = null,
     val message: String? = null,
 )

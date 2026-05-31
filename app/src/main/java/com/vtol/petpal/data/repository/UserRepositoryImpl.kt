@@ -86,6 +86,18 @@ class UserRepositoryImpl @Inject constructor(
         user.updatePassword(newPw).await()
     }
 
+    override suspend fun deleteUserImage(): Result<Unit> = runCatching {
+        val currentUid = auth.currentUser?.uid
+            ?: throw Exception("User not found")
+        storage.reference.child(AppStoragePaths.userProfileStoragePath(currentUid)).delete().await()
+
+        firestore.collection(USERS_COLLECTION)
+            .document(currentUid)
+            .update("imgPath", "")
+            .await()
+
+    }
+
     override suspend fun deleteAccount(): Result<Unit> {
         TODO("Not yet implemented")
     }
