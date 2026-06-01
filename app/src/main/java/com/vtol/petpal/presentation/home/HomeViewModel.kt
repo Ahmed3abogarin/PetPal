@@ -75,7 +75,9 @@ class HomeViewModel @Inject constructor(
                         // Preserve these flags from the current UI state
                         taskSaved = currentState.taskSaved,
                         showNotificationPermissionDialog = currentState.showNotificationPermissionDialog,
-                        showExactAlarmPermissionDialog = currentState.showExactAlarmPermissionDialog
+                        showExactAlarmPermissionDialog = currentState.showExactAlarmPermissionDialog,
+                        isUserLoading = currentState.isUserLoading,
+                        user = currentState.user
                     )
                 }
             }.launchIn(viewModelScope)
@@ -84,10 +86,9 @@ class HomeViewModel @Inject constructor(
 
     private fun getUser() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
             appUseCases.getUser()
-                .catch { e -> _state.update { it.copy(isLoading = false, error = e.message) } }
-                .collect { user -> _state.update { it.copy(isLoading = false, user = user) } }
+                .catch { e -> _state.update { it.copy(isUserLoading = false, error = e.message) } }
+                .collect { user -> _state.update { it.copy(isUserLoading = false, user = user) } }
         }
     }
 
@@ -114,6 +115,7 @@ data class HomeState(
     val todayTasks: List<TaskUi> = emptyList(),
     val upcomingTasks: List<TaskUi> = emptyList(),
     val isLoading: Boolean = false,
+    val isUserLoading: Boolean = true,
     val error: String? = null,
     val petMap: Map<String, String> = emptyMap(),
     val petsList: List<Pet> = emptyList(),

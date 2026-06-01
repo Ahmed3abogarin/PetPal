@@ -21,17 +21,23 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,14 +45,19 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.vtol.petpal.R
+import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.Red
 
 @Composable
 fun DeletionDialog(
+    isEmailProvider: Boolean,
+    providerName: String?,
+    isDeleting: Boolean,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirmEmail: (password: String) -> Unit,
+    onConfirmSocial: () -> Unit,
 ) {
 
     val list = listOf(
@@ -54,6 +65,8 @@ fun DeletionDialog(
         "You'll lose access to all your data.",
         "This cannot be recovered once confirmed."
     )
+
+    var password by remember { mutableStateOf("") }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -145,25 +158,71 @@ fun DeletionDialog(
                     Spacer(modifier = Modifier.height(10.dp))
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+                if (isEmailProvider) {
+                    Text(
+                        text = "Enter your password to confirm",
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    PetTextField(
+                        leadingIcon = R.drawable.ic_lock,
+                        iconSize = 22.dp,
+                        fontSize = 14.sp,
+                        placeHolder = "Password",
+                        value = password,
+                        visualTransformation = PasswordVisualTransformation(),
+                        onValueChanged = { password = it },
+                    )
+                } else {
+                    Text(
+                        text = "You'll be asked to sign in with $providerName to confirm.",
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
+                    enabled = if (isDeleting) {
+                        if (isEmailProvider) password.isNotBlank() else true
+                    } else true,
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = onConfirm,
+                    onClick = {
+                        if (isEmailProvider) onConfirmEmail(password)
+                        else onConfirmSocial()
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Red),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 6.dp),
-                        text = "Yes, delete my account",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = if (isDeleting) "Deleting account..." else "Yes, delete my account",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White
+                        )
+                        if (isDeleting){
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                strokeWidth = 2.dp,
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .align(Alignment.CenterEnd)
+                            )
+                        }
+                    }
+
                 }
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Button(
+                    enabled = !isDeleting,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onDismiss,
                     border = BorderStroke(width = 1.dp, color = MainPurple.copy(alpha = 0.2f)),
@@ -179,6 +238,9 @@ fun DeletionDialog(
                     )
                 }
             }
+            if (isDeleting){
+                Box(modifier = Modifier.fillMaxSize().background(Color.White.copy(alpha = 0.4f)))
+            }
         }
     }
 }
@@ -187,6 +249,12 @@ fun DeletionDialog(
 @Composable
 fun DeletionPreview() {
     PetPalTheme {
-        DeletionDialog(onDismiss = {}, onConfirm = {})
+        DeletionDialog(
+            isDeleting = false,
+            isEmailProvider = true,
+            providerName = "Google",
+            onDismiss = {},
+            onConfirmEmail = {},
+            onConfirmSocial = {})
     }
 }

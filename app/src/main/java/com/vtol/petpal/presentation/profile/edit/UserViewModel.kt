@@ -1,16 +1,20 @@
 package com.vtol.petpal.presentation.profile.edit
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.GoogleAuthProvider
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.user.DeleteAccount
 import com.vtol.petpal.domain.usecases.user.GetProvider
 import com.vtol.petpal.domain.usecases.user.RemoveUserImage
 import com.vtol.petpal.domain.usecases.user.UpdatePassword
 import com.vtol.petpal.domain.usecases.user.UpdatePhoneNumber
 import com.vtol.petpal.domain.usecases.user.UpdateUserImageUseCase
 import com.vtol.petpal.domain.usecases.user.UpdateUsername
+import com.vtol.petpal.presentation.register.GoogleAuthUiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +32,9 @@ class UserViewModel @Inject constructor(
     private val updatePhoneNumberUseCase: UpdatePhoneNumber,
     private val updateUsernameUseCase: UpdateUsername,
     private val removeUserImage: RemoveUserImage,
-    private val getProviderInfo: GetProvider
+    private val getProviderInfo: GetProvider,
+    private val deleteAccountUseCase: DeleteAccount,
+    private val googleAuthUiClient: GoogleAuthUiClient
 ) : ViewModel() {
     private val _state = MutableStateFlow(UserUiState())
     val state = _state.asStateFlow()
@@ -55,6 +61,36 @@ class UserViewModel @Inject constructor(
             is EditEvents.UpdatePhone -> updatePhoneNumber(event.phone)
             is EditEvents.UpdateUsername -> updateUsername(event.name)
             is EditEvents.ErrorShown -> _state.update { it.copy(message = null) }
+            is EditEvents.DeleteAccount -> deleteAccount(event.credential)
+            is EditEvents.ReAuthWithGoogle -> reAuthWithGoogle(event.context)
+        }
+    }
+
+    private fun reAuthWithGoogle(activityContext: Context) {
+        viewModelScope.launch {
+            viewModelScope.launch {
+                val token =
+                    googleAuthUiClient.signIn(activityContext) // inject context via @ApplicationContext
+                if (token == null) {
+                    _state.update { it.copy(message = "Google sign in failed") }
+                    return@launch
+                }
+                val credential = GoogleAuthProvider.getCredential(token, null)
+                deleteAccount(ReAuthCredential.Social(credential))
+            }
+        }
+    }
+
+    private fun deleteAccount(credential: ReAuthCredential) {
+        viewModelScope.launch {
+            _state.update { it.copy(isDeleting = true) }
+            deleteAccountUseCase(credential)
+                .onSuccess {
+                    _state.update { it.copy(isDeleting = false) }
+                }
+                .onFailure { e ->
+                    _state.update { it.copy(isDeleting = false, message = e.message) }
+                }
         }
     }
 
@@ -146,6 +182,7 @@ class UserViewModel @Inject constructor(
 
 data class UserUiState(
     val isLoading: Boolean = false,
+    val isDeleting: Boolean = false,
     val isImageLoading: Boolean = false,
     val isEmailProvider: Boolean = false,
     val providerName: String? = null,

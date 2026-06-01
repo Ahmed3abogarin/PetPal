@@ -2,6 +2,7 @@ package com.vtol.petpal.domain.repository
 
 import com.vtol.petpal.domain.model.user.ProviderInfo
 import com.vtol.petpal.domain.model.user.User
+import com.vtol.petpal.presentation.profile.edit.ReAuthCredential
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
@@ -13,7 +14,7 @@ interface UserRepository {
     suspend fun updatePassword(oldPw: String,newPw: String): Result<Unit>
 
     suspend fun deleteUserImage(): Result<Unit>
-    suspend fun deleteAccount(): Result<Unit>
+    suspend fun deleteAccount(credential: ReAuthCredential): Result<Unit>
 
     suspend fun getProvider(): ProviderInfo
 }

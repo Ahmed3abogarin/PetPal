@@ -4,21 +4,27 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.domain.model.user.ProviderInfo
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.UserRepository
+import com.vtol.petpal.presentation.profile.edit.ReAuthCredential
 import com.vtol.petpal.util.AppStoragePaths
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val db: TasksDB
 ) : UserRepository {
     override fun getUser(): Flow<User> = callbackFlow {
         val currentUid = auth.currentUser?.uid
@@ -99,8 +105,57 @@ class UserRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun deleteAccount(): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun deleteAccount(credential: ReAuthCredential): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            val user = auth.currentUser ?: throw Exception("User not found")
+            val currentUid = user.uid
+
+            // Re-authenticate based on credential type
+            when (credential) {
+                is ReAuthCredential.Email -> {
+                    val authCredential = EmailAuthProvider.getCredential(user.email!!, credential.password)
+                    user.reauthenticate(authCredential).await()
+                }
+                is ReAuthCredential.Social -> {
+                    user.reauthenticate(credential.credential).await()
+                }
+            }
+
+            // 1- Storage: User profile image
+            runCatching {
+                storage.reference.child(AppStoragePaths.userProfileStoragePath(currentUid)).delete().await()
+            }
+
+            // 2- Storage: Pet Profile images - the whole node which will include the user pet images if he is premium
+            runCatching {
+                deleteFolder(storage.reference.child("pets/$currentUid"))
+            }
+
+            // 3- Local: Tasks
+            db.clearAllTables()
+
+            // 4- Firestore: Pets subcollection first, then the user document
+            val petsCollection = firestore.collection(USERS_COLLECTION)
+                .document(currentUid)
+                .collection("pets")
+
+            val pets = petsCollection.get().await()
+            pets.documents.forEach { it.reference.delete().await() }
+
+            firestore.collection(USERS_COLLECTION)
+                .document(currentUid)
+                .delete()
+                .await()
+
+            // 5- Lastly: Auth: User
+            auth.currentUser?.delete()?.await()
+            Unit
+        }
+    }
+    private suspend fun deleteFolder(ref: StorageReference) {
+        val result = ref.listAll().await()
+        result.items.forEach { it.delete().await() }
+        result.prefixes.forEach { deleteFolder(it) } // recurse into subfolders
     }
 
     override suspend fun getProvider(): ProviderInfo {

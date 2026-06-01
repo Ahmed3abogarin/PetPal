@@ -43,7 +43,7 @@ import com.vtol.petpal.util.showToast
 @Composable
 fun HomeScreenHeader(
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
+    isLoading: Boolean,
     userName: String?
 ) {
     val composition by rememberLottieComposition(
@@ -141,15 +141,7 @@ fun HomeScreenHeader(
                             }
                         }
 
-                        else -> {
-                            Text(
-                                modifier = Modifier.padding(start = 3.dp),
-                                text = "Error",
-                                fontSize = 28.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
+                        else -> Unit
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                 }

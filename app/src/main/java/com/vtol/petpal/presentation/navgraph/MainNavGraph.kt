@@ -224,6 +224,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         ) {
             val vm: UserViewModel = hiltViewModel()
             val state by vm.state.collectAsStateWithLifecycle()
+
             EditProfileScreen(
                 state = state,
                 event = vm::onEvent,

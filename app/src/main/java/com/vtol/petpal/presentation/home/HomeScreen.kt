@@ -84,8 +84,8 @@ fun HomeScreen(
                     .clip(CircleShape)
                     .background(MainPurple)
                     .clickable {
-                        if (state.petsList.isEmpty()){
-                            Toast.makeText(context,"Add a pet first",Toast.LENGTH_SHORT).show()
+                        if (state.petsList.isEmpty()) {
+                            Toast.makeText(context, "Add a pet first", Toast.LENGTH_SHORT).show()
                             return@clickable
                         }
                         onAddTaskClicked()
@@ -110,7 +110,13 @@ fun HomeScreen(
 
             // The header
             item {
-                HomeScreenHeader(modifier = Modifier.statusBarsPadding().padding(top = 16.dp), isLoading = state.isLoading, userName = state.user?.name)
+                HomeScreenHeader(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .padding(top = 16.dp),
+                    isLoading = state.isUserLoading,
+                    userName = state.user?.name
+                )
             }
 
 
@@ -220,7 +226,7 @@ fun HomeScreen(
                             onToggleClicked(task.id.toInt(), it)
                         }
                     )
-                    if (tasks.last() == task){
+                    if (tasks.last() == task) {
                         Spacer(modifier = Modifier.height(72.dp))
                     }
                 }

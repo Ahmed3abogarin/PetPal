@@ -52,9 +52,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.firebase.auth.FacebookAuthProvider
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.presentation.common.components.LoadingIndicator
+import com.vtol.petpal.presentation.common.components.rememberFacebookAuthLauncher
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.pets.components.PetTextField
 import com.vtol.petpal.presentation.profile.edit.components.ChangeNameDialog
@@ -81,12 +83,6 @@ fun EditProfileScreen(
     val context = LocalContext.current
 
     var dialog by remember { mutableStateOf<EditProfileDialog>(EditProfileDialog.None) }
-
-    // TODO: Check the color of the texts could be used as place holder to match the color and to simplify the complexity
-
-    // TODO:
-    // 1- Remove image functionality
-    // 2- Delete account (with its all and whole associated data) functionality
 
 
     if (state.isLoading) {
@@ -325,7 +321,7 @@ fun EditProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                SectionLabel("Passowrd")
+                SectionLabel("Password")
                 PetTextField(
                     leadingIcon = R.drawable.ic_lock,
                     textColor = MainPurple,
@@ -441,14 +437,29 @@ fun EditProfileScreen(
         }
 
         EditProfileDialog.Delete -> {
+
+            val launchFacebook = rememberFacebookAuthLauncher(
+                onSuccess = { token ->
+                    val credential = FacebookAuthProvider.getCredential(token)
+                    event(EditEvents.DeleteAccount(ReAuthCredential.Social(credential)))
+                }
+            )
             DeletionDialog(
-                onDismiss = {
+                isDeleting = state.isDeleting,
+                isEmailProvider = state.isEmailProvider,
+                providerName = state.providerName,
+                onConfirmEmail = { password ->
+                    event(EditEvents.DeleteAccount(ReAuthCredential.Email(password)))
                     dialog = EditProfileDialog.None
                 },
-                onConfirm = {
-
+                onConfirmSocial = {
+                    when (state.providerName) {
+                        "Google" -> event(EditEvents.ReAuthWithGoogle(context))
+                        "Facebook" -> launchFacebook()
+                    }
                     dialog = EditProfileDialog.None
-                }
+                },
+                onDismiss = { dialog = EditProfileDialog.None }
             )
 
         }

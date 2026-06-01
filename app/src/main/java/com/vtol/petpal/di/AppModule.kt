@@ -161,9 +161,10 @@ object AppModule {
     fun provideUserRepository(
         firestore: FirebaseFirestore,
         auth: FirebaseAuth,
-        storage: FirebaseStorage
+        storage: FirebaseStorage,
+        db: TasksDB
     ): UserRepository =
-        UserRepositoryImpl(firestore, auth, storage)
+        UserRepositoryImpl(firestore, auth, storage,db)
 
 
     @Provides
