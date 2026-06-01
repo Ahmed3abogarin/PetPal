@@ -3,7 +3,6 @@ package com.vtol.petpal.presentation.profile.edit
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vtol.petpal.domain.model.user.ProviderInfo
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.user.GetProvider
@@ -38,11 +37,12 @@ class UserViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val providerInfo = getProviderInfo()
-            _state.update { it.copy(
-                isEmailProvider = providerInfo.isEmailProvider,
-                providerName = providerInfo.providerName
-            ) }
-
+            _state.update {
+                it.copy(
+                    isEmailProvider = providerInfo.isEmailProvider,
+                    providerName = providerInfo.providerName
+                )
+            }
         }
         getUser()
     }
