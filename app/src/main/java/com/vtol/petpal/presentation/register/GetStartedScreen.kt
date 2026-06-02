@@ -287,7 +287,7 @@ fun GetStartedScreen(
                         Row(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Image(
                                 modifier = Modifier.size(14.dp),
