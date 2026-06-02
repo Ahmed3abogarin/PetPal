@@ -14,9 +14,14 @@ import com.vtol.petpal.presentation.register.signup.SignUpViewModel
 
 fun NavGraphBuilder.authNavGraph(navController: NavController) {
     navigation(
-        startDestination = Routes.LoginScreen.route,
+        startDestination = Routes.GetStartedScreen.route,
         route = Routes.AuthGraph.route
     ) {
+        composable(Routes.GetStartedScreen.route){
+
+        }
+
+
         composable(Routes.LoginScreen.route) {
             val loginVm: LoginViewModel = hiltViewModel()
             val state by loginVm.uiState.collectAsState()

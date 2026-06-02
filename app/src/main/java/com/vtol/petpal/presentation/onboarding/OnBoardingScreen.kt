@@ -189,7 +189,7 @@ fun HeroSection(modifier: Modifier, showHearts: Boolean, img: Int) {
                             Color.White.copy(alpha = 0.6f),
                             Color.White.copy(alpha = 0.98f),
                             Color.White
-                        ),
+                        )
                     )
                 )
         )
@@ -221,7 +221,7 @@ fun PetPalTopBar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun FloatingHeart(modifier: Modifier = Modifier) {
+fun FloatingHeart(modifier: Modifier = Modifier) {
     Icon(
         imageVector = Icons.Default.Favorite,
         contentDescription = null,

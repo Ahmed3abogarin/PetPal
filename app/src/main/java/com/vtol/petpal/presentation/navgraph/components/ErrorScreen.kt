@@ -13,7 +13,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
 fun ErrorScreen(message: String) {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Red), contentAlignment = Alignment.Center){
+    Box(modifier = Modifier.fillMaxSize().background(Color.Gray), contentAlignment = Alignment.Center){
         Text(text = message)
     }
 

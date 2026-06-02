@@ -12,6 +12,7 @@ sealed class Routes(val route: String) {
 
     // app main screens
 
+    data object GetStartedScreen: Routes("getStartedScreen")
     data object LoginScreen: Routes("loginScreen")
     data object SignUpScreen: Routes("signUpScreen")
     data object HomeScreen: Routes("homeScreen")
