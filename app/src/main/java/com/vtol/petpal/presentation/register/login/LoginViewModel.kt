@@ -66,8 +66,8 @@ class LoginViewModel @Inject constructor(
             if (emailError != null) {
                 _uiState.update {
                     it.copy(emailError = emailError)
-                    return@launch
                 }
+                return@launch
             }
             _uiState.update { it.copy(isLoading = true, error = null) }
 
@@ -100,7 +100,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun signInWithGoogle(context: Context) {
+    private fun signInWithGoogle(context: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 

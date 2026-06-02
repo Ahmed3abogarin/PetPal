@@ -99,6 +99,7 @@ fun LoginScreen(
         }
     }
 
+    // TODO: Replace with the reusable function
     val callbackManager = remember { CallbackManager.Factory.create() }
     val loginLauncher = rememberLauncherForActivityResult(
         contract = LoginManager.getInstance().createLogInActivityResultContract(callbackManager)
