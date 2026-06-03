@@ -186,9 +186,9 @@ fun DeletionDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    enabled = if (isDeleting) {
-                        if (isEmailProvider) password.isNotBlank() else true
-                    } else true,
+                    enabled = !isDeleting && (
+                            !isEmailProvider || password.length >= 8
+                            ),
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         if (isEmailProvider) onConfirmEmail(password)

@@ -32,7 +32,7 @@ fun PetDateTextField(date: Long?, onClick: (Long?) -> Unit) {
 
     Column {
         Text(
-            text = "Gender",
+            text = "Birthdate",
             fontSize = 14.sp,
             color = LightPurple,
             fontWeight = FontWeight.Medium
