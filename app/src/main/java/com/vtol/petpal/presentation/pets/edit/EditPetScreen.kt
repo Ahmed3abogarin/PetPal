@@ -1,10 +1,10 @@
-package com.vtol.petpal.presentation.add_pet
+package com.vtol.petpal.presentation.pets.edit
 
 import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,15 +26,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -62,22 +65,19 @@ import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.AppColors.petPalGradient
-import com.vtol.petpal.util.Constants.genders
+import com.vtol.petpal.util.Constants
 import com.vtol.petpal.util.Constants.species
 import com.yalantis.ucrop.UCrop
 import java.io.File
 
 @Composable
-fun AddPetScreen(
-    state: AddPetState,
-    event: (AddPetEvent) -> Unit,
+fun EditPetScreen(
+    state: EditPetUiState,
+    event: (EditPetEvent) -> Unit,
     navigateUp: () -> Unit
 ) {
-
     val context = LocalContext.current
-
-    val gradient = listOf(LightPurple, ExtraLightPurple)
-
+    val focusManager = LocalFocusManager.current
 
 
     // Crop launcher — receives the cropped URI result
@@ -86,7 +86,7 @@ fun AddPetScreen(
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val croppedUri = UCrop.getOutput(result.data!!)
-            event(AddPetEvent.OnImageChanged(croppedUri))
+            event(EditPetEvent.OnImageChanged(croppedUri))
         }
     }
 
@@ -113,11 +113,6 @@ fun AddPetScreen(
         }
     }
 
-    val pickImage = { imagePickerLauncher.launch("image/*") }
-
-
-    // to loss the focus
-    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -137,85 +132,120 @@ fun AddPetScreen(
                     .padding(bottom = 72.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AppIconButton(modifier = Modifier.padding(start = 16.dp)) { navigateUp() }
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = "Add Pet",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                }
-            }
-
-            if (state.petImage == null) {
-
-                Box(
+                Row(
                     modifier = Modifier
-                        .offset(y = (-62).dp)
-                        .size(124.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(Brush.radialGradient(gradient))
-                            .fillMaxSize()
-                            .border(width = 3.dp, color = Color.White, shape = CircleShape)
-                            .clickable { pickImage() }
+                    AppIconButton { navigateUp() }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .align(Alignment.Center),
-                            painter = painterResource(R.drawable.ic_camera),
-                            contentDescription = null,
-                            tint = MainPurple
+                        Text(
+                            text = "Edit Pet",
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "Bella",
+                            fontSize = 20.sp,
+                            color = ExtraLightPurple
                         )
 
                     }
-                    Image(
+
+                    TextButton(
+                        onClick = {
+                            event(EditPetEvent.OnSaveClicked)
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = Color.White.copy(
+                                alpha = 0.2f
+                            ), contentColor = Color.White
+                        )
+                    ) {
+                        Text("Save")
+                    }
+                }
+            }
+
+
+            Box(
+                modifier = Modifier
+                    .offset(y = (-62).dp)
+                    .padding(top = 16.dp, bottom = 4.dp)
+                    .size(110.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .border(
+                            width = if (state.imagePath.isEmpty()) 0.dp else 2.dp,
+                            color = LightPurple,
+                            shape = CircleShape
+                        )
+                        .background(LightPurple),
+                    model = ImageRequest.Builder(context)
+                        .data(state.imagePath)
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(R.drawable.pet_placeholder),
+                    error = painterResource(R.drawable.pet_placeholder),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Profile image"
+                )
+
+                // edit image button
+                Card(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(4.dp),
+                    colors = CardDefaults.cardColors(containerColor = MainPurple),
+                    shape = CircleShape,
+                    border = BorderStroke(0.3.dp, Color.White)
+
+                ) {
+                    Icon(
                         modifier = Modifier
-                            .padding(6.dp)
-                            .size(30.dp)
-                            .align(Alignment.BottomEnd)
-                            .clip(CircleShape),
-                        painter = painterResource(R.drawable.ic_profile_add),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "profile image"
+                            .clickable { imagePickerLauncher.launch("image/*") }
+                            .padding(8.dp)
+                            .size(12.dp),
+                        painter = painterResource(R.drawable.ic_edit_v2),
+                        contentDescription = null,
+                        tint = Color.White
                     )
                 }
 
-
-            } else {
-                AsyncImage(
-                    modifier = Modifier
-                        .offset(y = (-62).dp)
-                        .clip(CircleShape)
-                        .size(124.dp)
-                        .background(LightPurple)
-                        .clickable { pickImage() },
-                    model = ImageRequest.Builder(context).data(state.petImage).build(),
-                    error = painterResource(R.drawable.ic_camera),
-                    placeholder = painterResource(R.drawable.ic_camera),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = "Pet image"
-                )
+                // delete icon
+                if (state.imagePath.isNotBlank()) {
+                    Card(
+                        modifier = Modifier
+                            .align(Alignment.TopStart),
+                        colors = CardDefaults.cardColors(containerColor = Color.DarkGray),
+                        shape = CircleShape,
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .clickable { event(EditPetEvent.OnRemoveClicked) }
+                                .padding(6.dp)
+                                .size(14.dp),
+                            imageVector = Icons.Default.Close,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                }
             }
         }
 
-        Text(
-            modifier = Modifier.offset(y = (-48).dp),
-            text = "Tap to add a photo",
-            fontSize = 14.sp,
-            color = LightPurple
-        )
-
         Column(
             modifier = Modifier
-                .offset(y = (-24).dp)
+                .offset(y = (-32).dp)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
@@ -229,18 +259,18 @@ fun AddPetScreen(
                         PetChipButton(
                             modifier = Modifier.weight(1f),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (state.petSpecie == specie) MainPurple else Color.White,
+                                containerColor = if (state.specie == specie) MainPurple else Color.White,
                             ),
                             icon = icon,
                             txt = specie,
-                            tint = if (state.petSpecie == specie) Color.White else LightPurple
+                            tint = if (state.specie == specie) Color.White else LightPurple
                         ) {
-                            event(AddPetEvent.OnSpecieChanged(specie))
+                            event(EditPetEvent.OnSpecieChanged(specie))
                         }
                     }
                 }
 
-                state.petSpecieError?.let {
+                state.error?.let {
                     Text(text = it, fontSize = 13.sp, color = Color.Red)
                 }
             }
@@ -252,14 +282,13 @@ fun AddPetScreen(
                 placeHolder = "e.g. Buddy, Luna...",
                 value = state.petName,
                 error = state.petNameError
-            ) { event(AddPetEvent.OnNameChanged(it)) }
+            ) { event(EditPetEvent.OnNameChanged(it)) }
 
             PetTextField(
                 placeHolder = "Breed (optional)",
-                leadingIcon = R.drawable.ic_mark ,
-                value = state.petBreed,
-            ) { event(AddPetEvent.OnBreedChanged(it)) }
-
+                leadingIcon = R.drawable.ic_mark,
+                value = state.breed,
+            ) { event(EditPetEvent.OnBreedChanged(it)) }
 
             Row(
                 modifier = Modifier.wrapContentHeight(),
@@ -278,9 +307,9 @@ fun AddPetScreen(
                     onTrailingClicked = {
                         val nextIndex =
                             (WeightUnit.entries.indexOf(state.petWeightUnit) + 1) % WeightUnit.entries.size
-                        event(AddPetEvent.OnWeightUnitChanged(WeightUnit.entries[nextIndex]))
+                        event(EditPetEvent.OnWeightUnitChanged(WeightUnit.entries[nextIndex]))
                     }
-                ) { event(AddPetEvent.OnWeightChanged(it)) }
+                ) { event(EditPetEvent.OnWeightChanged(it)) }
 
                 Column(
                     modifier = Modifier
@@ -301,8 +330,8 @@ fun AddPetScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        genders.forEach { (icon, gender) ->
-                            val isSelected = state.petGender == gender
+                        Constants.genders.forEach { (icon, gender) ->
+                            val isSelected = state.gender == gender
                             PetChipButton(
                                 modifier = Modifier.weight(1f),
                                 padding = 12.dp,
@@ -314,10 +343,10 @@ fun AddPetScreen(
                                 tint = if (isSelected) Color.White else LightPurple
                             ) {
                                 if (isSelected) {
-                                    event(AddPetEvent.OnGenderChanged(PetGender.Unknown))
+                                    event(EditPetEvent.OnGenderChanged(PetGender.Unknown))
 
                                 } else {
-                                    event(AddPetEvent.OnGenderChanged(gender))
+                                    event(EditPetEvent.OnGenderChanged(gender))
 
                                 }
                             }
@@ -328,10 +357,10 @@ fun AddPetScreen(
 
 
             PetDateTextField(
-                date = state.petBirthDate
+                date = state.birthDate
             ) {
                 focusManager.clearFocus()
-                event(AddPetEvent.OnBirthDateChanged(it))
+                event(EditPetEvent.OnBirthDateChanged(it))
             }
 
             Column {
@@ -354,14 +383,14 @@ fun AddPetScreen(
                 ) {
 
                     tags.forEach { tag ->
-                        val isSelected = tag in state.petPersonalities
+                        val isSelected = tag in state.personality
                         ChipButton(
                             text = tag,
                             bgColor = Color.White,
                             textColor = if (isSelected) MainPurple else ExtraLightPurple,
                             borderColor = if (isSelected) MainPurple else ExtraLightPurple
                         ) {
-                            event(AddPetEvent.OnPersonalityChanged(tag))
+                            event(EditPetEvent.OnPersonalityChanged(tag))
                         }
                     }
                 }
@@ -378,29 +407,22 @@ fun AddPetScreen(
                 color = LightPurple
             ) {
                 focusManager.clearFocus()
-                event(AddPetEvent.OnSaveClicked)
+                event(EditPetEvent.OnSaveClicked)
             }
         }
-    }
-
-    if (state.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(enabled = false) {} // Consume clicks so they don't hit fields below
-                .background(Color.Black.copy(alpha = 0.1f)), // Subtle dimming
-        )
     }
 }
 
 
 @Preview
 @Composable
-fun AddPreview() {
+fun EditPetPreview() {
     PetPalTheme {
-        AddPetScreen(
-            state = AddPetState(),
-            event = {}
-        ) { }
+        EditPetScreen(
+            state = EditPetUiState(),
+            event = {},
+            navigateUp = {}
+        )
+
     }
 }

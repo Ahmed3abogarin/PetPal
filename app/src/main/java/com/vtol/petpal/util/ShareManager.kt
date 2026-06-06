@@ -3,6 +3,7 @@ package com.vtol.petpal.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.net.toUri
 
 object ShareManager {
     fun shareApp(context: Context) {
@@ -36,7 +37,7 @@ object ShareManager {
 
     fun openDialer(context: Context, phoneNumber: String) {
         val intent = Intent(Intent.ACTION_DIAL).apply {
-            data = Uri.parse("tel:$phoneNumber")
+            data = "tel:$phoneNumber".toUri()
         }
         context.startActivity(intent)
     }

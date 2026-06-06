@@ -68,7 +68,7 @@ fun OverviewTab(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 val weight =
-                    if (state.lastWeight.isNotEmpty()) state.lastWeight.last().weight.toString() else "Unknown"
+                    if (state.lastWeight.isNotEmpty()) state.lastWeight.first().weight.toString() else "Unknown"
                 PetInfoItem(modifier = Modifier.weight(1f), title = "Weight", subTitle = weight)
             }
             Spacer(modifier = modifier.height(16.dp))

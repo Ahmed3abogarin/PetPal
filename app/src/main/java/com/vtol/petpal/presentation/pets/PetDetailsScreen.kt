@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -49,7 +48,6 @@ import com.vtol.petpal.presentation.pets.components.PetShimmerEffect
 import com.vtol.petpal.presentation.pets.tabs.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
 import com.vtol.petpal.presentation.pets.tabs.OverviewTab
-import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.CellsBgPurple
 import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightPurple
@@ -87,14 +85,13 @@ fun PetDetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)
+                .background(petPalGradient)
         ) {
             Column(
                 modifier = modifier
-                    .background(petPalGradient)
                     .statusBarsPadding()
                     .padding(16.dp)
-                    .padding(bottom = 28.dp),
+                    .padding(bottom = 8.dp),
 
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -194,9 +191,8 @@ fun PetDetailsScreen(
 
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .offset(y = (-22).dp)
-                    .clip(RoundedCornerShape(14.dp))
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp))
                     .background(Color.White)
             ) {
 
