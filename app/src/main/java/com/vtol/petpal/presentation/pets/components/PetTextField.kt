@@ -41,7 +41,7 @@ fun PetTextField(
     value: String,
     error: String? = null,
     minLines: Int = 1,
-    iconSize: Dp = 32.dp,
+    iconSize: Dp = 26.dp,
     fontSize: TextUnit = 16.sp,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     text: String? = null,

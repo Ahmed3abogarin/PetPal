@@ -375,7 +375,7 @@ fun AddPetScreen(
                 text = "Save Pet",
                 icon = Icons.Default.Favorite,
                 isLoading = state.isLoading,
-                color = LightPurple
+                color = MainPurple
             ) {
                 focusManager.clearFocus()
                 event(AddPetEvent.OnSaveClicked)

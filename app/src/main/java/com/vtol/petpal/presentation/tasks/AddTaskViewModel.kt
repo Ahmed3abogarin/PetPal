@@ -222,7 +222,7 @@ class AddTaskViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                appUseCases.insertTask(task)
+                appUseCases.insertTask(task, state.value.selectedPet?.petName ?: "your pet")
                 pendingTask = null
                 _state.update { it.copy(isLoading = false) }
                 _uiEffect.send(AddTaskUiEffect.NavigateUp)

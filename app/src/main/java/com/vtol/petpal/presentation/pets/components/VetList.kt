@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -40,14 +39,16 @@ import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
+import com.vtol.petpal.domain.model.tasks.RepeatInterval
+import com.vtol.petpal.domain.model.tasks.SyncStatus
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.presentation.pets.DetailsState
 import com.vtol.petpal.ui.theme.CellsBgPurple
-import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.ui.theme.Pink50
 import com.vtol.petpal.ui.theme.TextPurple
 import com.vtol.petpal.util.toDateTimeString
 import com.vtol.petpal.util.toRelativeTime
@@ -119,7 +120,8 @@ fun VetsList(
                         val lastUpdated = remember(weightList) {
                             weightList.maxByOrNull { it.timestamp }?.timestamp
                         }
-                        val txt = if(lastUpdated == null) "Keep track of your pet's weight" else  "Last updated: " + lastUpdated.toRelativeTime()
+                        val txt =
+                            if (lastUpdated == null) "Keep track of your pet's weight" else "Last updated: " + lastUpdated.toRelativeTime()
                         Text(
                             text = txt,
                             color = Color.LightGray,
@@ -159,6 +161,9 @@ fun VetsList(
                     items(vetTasks) { task ->
                         VetItem(task, task.dateTime.toDateTimeString())
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
         }
@@ -170,11 +175,12 @@ fun VetItem(task: TaskUi, date: String) {
 
     val vet = task.details as VetDetails
 
+//    Color(0xFFF6F6F6)
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
-            .background(Color(0XFFF6F6F6))
+            .background(CellsBgPurple)
             .padding(12.dp)
     ) {
         Row(
@@ -183,7 +189,7 @@ fun VetItem(task: TaskUi, date: String) {
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(LightPurple)
+                    .background(Color(0x8BDCC5FF))
                     .padding(12.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -207,29 +213,61 @@ fun VetItem(task: TaskUi, date: String) {
             Box(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(LightPurple)
-                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                    .background(Pink50)
+                    .padding(horizontal = 8.dp, vertical = 3.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "visit", fontSize = 12.sp)
+                Text(text = "visit", fontSize = 12.sp, color = TextPurple)
             }
         }
 
         Spacer(modifier = Modifier.height(14.dp))
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(start = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
-            Spacer(modifier = Modifier.width(3.dp))
-            Text(text = "visit date: $date", fontSize = 12.sp)
+            Icon(
+                modifier = Modifier.size(18.dp),
+                painter = painterResource(R.drawable.ic_calendar_outlined),
+                contentDescription = null,
+                tint = MainPurple
+            )
+            Text(text = "Visit date: $date", fontSize = 13.sp)
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PrelistRange() {
     PetPalTheme {
-        VetsList(state = DetailsState(), weightList = listOf(), onAddWeightClicked = {}, onRangeChanged = {})
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+        ) {
+
+            VetItem(
+                task = TaskUi(
+                    id = 102L,
+                    petId = "pet_xyz789",
+                    title = "Annual Rabies Vaccine",
+                    note = "Bring the medical history folder.",
+                    type = TaskType.VET,
+                    dateTime = System.currentTimeMillis() + 172800000, // In 2 days
+                    isCompleted = false,
+                    repeatInterval = RepeatInterval.Monthly,
+                    details = VetDetails(
+                        clinicName = "Dr.Phill",
+                        reason = "Just checking"
+                    ),
+                    syncStatus = SyncStatus.PENDING
+                ),
+                date = "08 June 2026, 1:10 PM"
+            )
+
+
+        }
+
     }
 }

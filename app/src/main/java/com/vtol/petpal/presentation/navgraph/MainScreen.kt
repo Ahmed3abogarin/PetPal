@@ -19,7 +19,6 @@ import androidx.navigation.compose.rememberNavController
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.navgraph.components.AppBottomNavComponent
 import com.vtol.petpal.presentation.navgraph.components.BottomNavItem
-import com.vtol.petpal.ui.theme.BackgroundColor
 
 
 @Composable
@@ -82,7 +81,6 @@ fun MainScreen() {
     }
 
     Scaffold(
-        containerColor = BackgroundColor,
         bottomBar = {
             AnimatedVisibility(
                 visible = isBottomNavVisible,

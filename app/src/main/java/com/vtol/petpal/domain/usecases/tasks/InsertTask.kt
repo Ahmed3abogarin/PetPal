@@ -11,7 +11,7 @@ class InsertTask(
     private val preferencesRepository: UserPreferencesRepository,
     private val notificationRepository: NotificationRepository
 ) {
-    suspend operator fun invoke(task: Task){
+    suspend operator fun invoke(task: Task, petName: String){
         val insertedId = appRepository.insertTask(task)
 
         val notificationsEnabled = preferencesRepository
@@ -19,7 +19,8 @@ class InsertTask(
 
         if (notificationsEnabled) {
             notificationRepository.scheduleTaskNotification(
-                task.copy(id = insertedId)
+                task.copy(id = insertedId),
+                petName
             )
         }
     }

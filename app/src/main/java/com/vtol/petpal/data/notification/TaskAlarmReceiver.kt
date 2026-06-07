@@ -5,6 +5,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.util.toTimeString
 import java.util.Calendar
 
 class TaskAlarmReceiver : BroadcastReceiver() {
@@ -12,12 +14,22 @@ class TaskAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         val id = intent.getLongExtra("task_id", 0L)
-        val title = intent.getStringExtra("task_title") ?: "Task Reminder"
+        val name = intent.getStringExtra("pet_name") ?: "your pet"
         val repeat = intent.getStringExtra("repeat_interval") ?: "Never"
+        val type = intent.getStringExtra("task_type") ?: "Unknown"
         val oldTime = intent.getLongExtra("trigger_time", 0L)
 
+        val taskType = TaskType.valueOf(type)
+
+        val (title, message) = when(taskType) {
+            TaskType.FEED -> Pair("\uD83C\uDF56 Feeding Reminder","It's time to feed $name. Scheduled for ${oldTime.toTimeString()}.")
+            TaskType.WALK -> Pair("\uD83D\uDC15 Walk Reminder","Walk $name is due now.")
+            TaskType.MEDICATION -> Pair("\uD83D\uDC8A Medication Reminder", "It's time to give $name their medication.")
+            TaskType.VET -> Pair("\uD83E\uDE7A Vet Reminder", "$name has a scheduled vet task.")
+        }
+
         // Show the notification
-        NotificationHelper.showNotification(context, taskId = id, title = title)
+        NotificationHelper.showNotification(context, taskId = id, title = title, message = message)
 
         // Calculate next trigger time
         val nextTime = when (repeat) {
@@ -36,7 +48,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                 putExtra("task_id", id)
                 putExtra("task_title", title)
                 putExtra("repeat_interval", repeat)
-                putExtra("trigger_time", nextTime) // ✅ updated time for next cycle
+                putExtra("trigger_time", nextTime)
             }
 
             val pendingIntent = PendingIntent.getBroadcast(
