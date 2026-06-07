@@ -45,6 +45,7 @@ import com.vtol.petpal.domain.usecases.GetVets
 import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
 import com.vtol.petpal.domain.usecases.ToggleNotification
+import com.vtol.petpal.domain.usecases.UpdatePet
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
 import com.vtol.petpal.domain.usecases.pets.ValidatePetInputUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
@@ -185,6 +186,7 @@ object AppModule {
     ) =
         AppUseCases(
             addPet = AddPet(appRepository,imageCompressor),
+            updatePet = UpdatePet(appRepository,imageCompressor),
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository),
             insertTask = InsertTask(appRepository, preferencesRepository, notificationRepository),

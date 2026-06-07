@@ -7,8 +7,6 @@ import com.vtol.petpal.domain.model.WeightUnit
 sealed class EditPetEvent {
     class OnNameChanged(val name: String): EditPetEvent()
     class OnImageChanged(val uri: Uri?): EditPetEvent()
-    class OnWeightChanged(val weight: String): EditPetEvent()
-    class OnWeightUnitChanged(val weightUnit: WeightUnit): EditPetEvent()
     class OnBreedChanged(val breed: String): EditPetEvent()
     class OnSpecieChanged(val specie: String): EditPetEvent()
     class OnPersonalityChanged(val personality: String): EditPetEvent()
@@ -16,4 +14,5 @@ sealed class EditPetEvent {
     class OnGenderChanged(val gender: PetGender): EditPetEvent()
     object OnRemoveClicked: EditPetEvent()
     object OnSaveClicked: EditPetEvent()
+    object ReloadPet: EditPetEvent()
 }

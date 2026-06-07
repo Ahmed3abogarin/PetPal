@@ -64,7 +64,8 @@ fun PetDetailsScreen(
     navigateUp: () -> Unit,
     onRangeChanged: (WeightRange) -> Unit,
     onAddWeightClicked: (WeightRecord) -> Unit,
-    onAddTaskClick: () -> Unit
+    onAddTaskClick: () -> Unit,
+    navigateToEdit: (String) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -75,7 +76,6 @@ fun PetDetailsScreen(
             navigateUp()
         }
     }
-
 
     if (state.pet != null) {
 
@@ -108,7 +108,7 @@ fun PetDetailsScreen(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         AppIconButton(icon = R.drawable.ic_pet_card) { context.showToast() }
-                        AppIconButton(icon = R.drawable.ic_edit) { context.showToast() }
+                        AppIconButton(icon = R.drawable.ic_edit) { navigateToEdit(pet.id) }
                     }
                 }
 
@@ -266,7 +266,8 @@ fun PetScreenPreview() {
             onAddWeightClicked = {},
             navigateUp = {},
             onAddTaskClick = {},
-            onRangeChanged = {}
+            onRangeChanged = {},
+            navigateToEdit = {}
         )
     }
 }

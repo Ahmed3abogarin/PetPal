@@ -51,44 +51,31 @@ class PetDetailsViewModel @Inject constructor(
 
 
     fun observePetInfo() {
-
         viewModelScope.launch {
-            try {
+            combine(
+                appUseCases.getPet(petId),
+                appUseCases.getTasksById(petId),
+                appUseCases.getWeights(petId),
+                _range
+            ) { pet, tasks, weights, range ->
+                val filtered = filterWeights(weights, range)
 
-                val pet = appUseCases.getPet(petId)
-
-                combine(
-                    appUseCases.getTasksById(petId),
-                    appUseCases.getWeights(petId),
-                    _range
-                ) { tasks, weights, range ->
-                    val filtered = filterWeights(weights, range)
-
-                    DetailsState(
-                        pet = pet,
-                        tasks = tasks.sortedBy { it.dateTime },
-                        lastWeight = filtered,
-                        range = range,
-                        lastTask = tasks.filter { !it.isCompleted }.maxByOrNull { it.dateTime }
-                    )
-                }
-                    .catch { e ->
-                        _state.update {
-                            it.copy(
-                                isLoading = false, error = e.message
-                            )
-                        }
-                    }
-                    .collect { newState -> _state.value = newState }
-
-
-            } catch (e: Exception) {
-                _state.update {
-                    it.copy(
-                        isLoading = false, error = e.message
-                    )
-                }
+                DetailsState(
+                    pet = pet,
+                    tasks = tasks.sortedBy { it.dateTime },
+                    lastWeight = filtered,
+                    range = range,
+                    lastTask = tasks.filter { !it.isCompleted }.maxByOrNull { it.dateTime }
+                )
             }
+                .catch { e ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false, error = e.message
+                        )
+                    }
+                }
+                .collect { newState -> _state.value = newState }
         }
     }
 

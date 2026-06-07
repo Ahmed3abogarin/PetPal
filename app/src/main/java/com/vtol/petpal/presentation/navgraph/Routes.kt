@@ -30,6 +30,10 @@ sealed class Routes(val route: String) {
 
     data object EditUserScreen: Routes("editUserScreen")
 
+    data object EditPetScreen: Routes("editPetScreen/{petId}") {
+        fun createRoute(petId: String) = "editPetScreen/$petId"
+    }
+
     data object FeedbackScreen: Routes("feedbackScreen")
 
 

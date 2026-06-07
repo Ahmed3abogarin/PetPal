@@ -33,12 +33,16 @@ import com.vtol.petpal.presentation.pets.PetDetailsScreen
 import com.vtol.petpal.presentation.pets.PetDetailsViewModel
 import com.vtol.petpal.presentation.pets.PetViewModel
 import com.vtol.petpal.presentation.pets.PetsScreen
+import com.vtol.petpal.presentation.pets.edit.EditPetScreen
+import com.vtol.petpal.presentation.pets.edit.EditPetViewModel
+import com.vtol.petpal.presentation.pets.edit.EditUiEffect
 import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.presentation.profile.ProfileViewModel
 import com.vtol.petpal.presentation.profile.edit.EditProfileScreen
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
+import com.vtol.petpal.util.showToast
 
 fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     navigation(
@@ -172,6 +176,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 },
                 onRangeChanged = {
                     petDetailsVM.updateWeightFilter(it)
+                },
+                navigateToEdit = { id ->
+                    navController.navigate(Routes.EditPetScreen.createRoute(id)) {
+                        launchSingleTop = false
+                    }
                 }
             )
         }
@@ -228,6 +237,41 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             EditProfileScreen(
                 state = state,
                 event = vm::onEvent,
+            ) { navController.navigateUp() }
+
+        }
+
+        composable(
+            enterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { it })
+            },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
+            route = Routes.EditPetScreen.route,
+            arguments = listOf(navArgument("petId") { type = NavType.StringType })
+        ) {
+            val viewModel: EditPetViewModel = hiltViewModel()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+            val context = LocalContext.current
+
+            LaunchedEffect(Unit) {
+
+
+                viewModel.uiEffect.collect {
+                    when(it){
+                        is EditUiEffect.NavigateUp -> navController.navigateUp()
+                        is EditUiEffect.ShowToastMessage -> {
+                            context.showToast(it.error)
+                        }
+                    }
+                }
+            }
+
+            EditPetScreen(
+                state = state,
+                event = viewModel::onEvent,
             ) { navController.navigateUp() }
 
         }

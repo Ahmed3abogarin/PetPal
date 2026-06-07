@@ -8,6 +8,7 @@ import com.vtol.petpal.domain.usecases.tasks.ToggleTask
 
 data class AppUseCases(
     val addPet: AddPet,
+    val updatePet: UpdatePet,
     val getPets: GetPets,
     val getPet: GetPet,
     val insertTask: InsertTask,

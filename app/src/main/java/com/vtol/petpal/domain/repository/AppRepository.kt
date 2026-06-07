@@ -11,9 +11,11 @@ import kotlinx.coroutines.flow.Flow
 interface AppRepository {
     suspend fun addPet(pet: Pet,image: ByteArray?,weight: WeightRecord): Resource<Unit>
 
+    suspend fun updatePet(pet: Pet, image: ByteArray?): Result<Unit>
+
     fun getPets(): Flow<List<Pet>>
 
-    suspend fun getPet(id: String): Pet
+    fun getPet(id: String): Flow<Pet>
 
     suspend fun insertTask(task: Task): Long
 

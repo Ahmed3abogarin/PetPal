@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -35,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +44,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,10 +51,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.PetGender
-import com.vtol.petpal.domain.model.WeightUnit
 import com.vtol.petpal.presentation.add_pet.components.PetChipButton
 import com.vtol.petpal.presentation.add_pet.components.PetDateTextField
 import com.vtol.petpal.presentation.common.components.ChipButton
+import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.components.SaveButton
 import com.vtol.petpal.presentation.pets.components.PetTextField
@@ -78,7 +77,6 @@ fun EditPetScreen(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-
 
     // Crop launcher — receives the cropped URI result
     val cropLauncher = rememberLauncherForActivityResult(
@@ -180,6 +178,7 @@ fun EditPetScreen(
                     .size(110.dp),
                 contentAlignment = Alignment.Center
             ) {
+                val imageModel = state.imageUri ?: state.imagePath
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxSize()
@@ -191,7 +190,7 @@ fun EditPetScreen(
                         )
                         .background(LightPurple),
                     model = ImageRequest.Builder(context)
-                        .data(state.imagePath)
+                        .data(imageModel)
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(R.drawable.pet_placeholder),
@@ -295,22 +294,6 @@ fun EditPetScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                PetTextField(
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    placeHolder = "0.0",
-                    label = "Weight",
-                    value = state.petWeight,
-                    trailingIcon = R.drawable.ic_edit,
-                    text = state.petWeightUnit.displayName,
-                    error = state.petWeightError,
-                    onTrailingClicked = {
-                        val nextIndex =
-                            (WeightUnit.entries.indexOf(state.petWeightUnit) + 1) % WeightUnit.entries.size
-                        event(EditPetEvent.OnWeightUnitChanged(WeightUnit.entries[nextIndex]))
-                    }
-                ) { event(EditPetEvent.OnWeightChanged(it)) }
-
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -411,6 +394,11 @@ fun EditPetScreen(
             }
         }
     }
+
+    if (state.isLoading) {
+        LoadingIndicator()
+    }
+
 }
 
 

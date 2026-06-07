@@ -83,6 +83,39 @@ class AppRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updatePet(
+        pet: Pet,
+        image: ByteArray?
+    ): Result<Unit> = runCatching {
+
+        val currentUid = auth.currentUser?.uid
+            ?: throw Exception("User not found")
+
+        val petRef = firestore
+            .collection(USERS_COLLECTION)
+            .document(currentUid)
+            .collection(PETS_COLLECTION)
+            .document(pet.id)
+
+        var imageUrl = pet.imagePath
+
+        if (image != null) {
+            val storageRef = storage.reference.child(
+                petProfileStoragePath(currentUid, pet.id)
+            )
+
+            storageRef.putBytes(image).await()
+            imageUrl = storageRef.downloadUrl.await().toString()
+        }
+
+        val updatedPet = pet.copy(
+            imagePath = imageUrl,
+            updatedAt = System.currentTimeMillis()
+        )
+
+        petRef.set(updatedPet).await()
+    }
+
     override fun getPets(): Flow<List<Pet>> = callbackFlow {
         val uid = auth.currentUser?.uid
 
@@ -111,20 +144,38 @@ class AppRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPet(id: String): Pet {
+    override fun getPet(id: String): Flow<Pet> = callbackFlow {
+
         val uid = auth.currentUser?.uid
-        uid?.let {
-            val pet = firestore.collection(USERS_COLLECTION)
-                .document(uid)
-                .collection(PETS_COLLECTION)
-                .document(id)
-                .get().await().toObject(Pet::class.java)
 
-
-            return pet ?: throw Exception("Pet not found")
+        if (uid == null) {
+            close(Exception("User not authenticated"))
+            return@callbackFlow
         }
-        return Pet()
 
+        val listener = firestore
+            .collection(USERS_COLLECTION)
+            .document(uid)
+            .collection(PETS_COLLECTION)
+            .document(id)
+            .addSnapshotListener { snapshot, error ->
+
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val pet = snapshot
+                    ?.toObject(Pet::class.java)
+
+                if (pet != null) {
+                    trySend(pet)
+                }
+            }
+
+        awaitClose {
+            listener.remove()
+        }
     }
 
     override suspend fun insertTask(task: Task): Long =
