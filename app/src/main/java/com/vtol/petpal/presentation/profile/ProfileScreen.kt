@@ -58,6 +58,7 @@ import coil.request.ImageRequest
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.profile.components.ConfirmationDialog
+import com.vtol.petpal.presentation.profile.components.PremiumButton
 import com.vtol.petpal.presentation.profile.components.SettingsButton
 import com.vtol.petpal.presentation.profile.components.ProfileInfoCard
 import com.vtol.petpal.presentation.profile.components.ProfileShimmerEffect
@@ -267,6 +268,8 @@ fun ProfileScreen(
                 doneTasks = doneTasks
             )
         }
+        PremiumButton(modifier = Modifier.padding(horizontal = 16.dp)){}
+        Spacer(modifier = Modifier.height(16.dp))
 
 
         Text(
@@ -285,21 +288,21 @@ fun ProfileScreen(
             border = BorderStroke(0.3.dp, MainPurple.copy(alpha = 0.3f))
         ) {
             SettingsButton(buttonTxt = "Settings", icon = R.drawable.ic_settings) {}
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                color = MainPurple.copy(0.3f),
-                thickness = 0.2.dp
-            )
-
-            SettingsButton(buttonTxt = "Notification", icon = R.drawable.ic_notification) {}
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                color = MainPurple.copy(0.3f),
-                thickness = 0.2.dp
-            )
-            SettingsButton(buttonTxt = "Language", icon = R.drawable.ic_language) {}
+//            HorizontalDivider(
+//                modifier = Modifier
+//                    .fillMaxWidth(),
+//                color = MainPurple.copy(0.3f),
+//                thickness = 0.2.dp
+//            )
+//
+//            SettingsButton(buttonTxt = "Notification", icon = R.drawable.ic_notification) {}
+//            HorizontalDivider(
+//                modifier = Modifier
+//                    .fillMaxWidth(),
+//                color = MainPurple.copy(0.3f),
+//                thickness = 0.2.dp
+//            )
+//            SettingsButton(buttonTxt = "Language", icon = R.drawable.ic_language) {}
         }
 
         Spacer(modifier = Modifier.height(18.dp))

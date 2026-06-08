@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 
-// data/notification/NotificationPermissionManager.kt
 class NotificationPermissionManager(
     private val context: Context
 ) {
