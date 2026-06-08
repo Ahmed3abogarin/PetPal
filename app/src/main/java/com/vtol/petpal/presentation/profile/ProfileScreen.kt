@@ -10,10 +10,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,7 +44,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,7 +66,6 @@ import com.vtol.petpal.ui.theme.Red
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.ShareManager.openWebsite
 import com.vtol.petpal.util.ShareManager.shareApp
-import com.vtol.petpal.util.getVersionName
 import com.yalantis.ucrop.UCrop
 import java.io.File
 
@@ -80,6 +76,7 @@ fun ProfileScreen(
     doneTasks: Int = 0,
     navigateToFeedBack: () -> Unit,
     navigateToEdit: () -> Unit,
+    navigateToSettings: () -> Unit,
     event: (ProfileEvents) -> Unit
 ) {
     val context = LocalContext.current
@@ -198,7 +195,11 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(CircleShape)
-                                .border(width = if (isImgEmpty) 0.dp else 1.dp, color= Color.DarkGray, shape = CircleShape)
+                                .border(
+                                    width = if (isImgEmpty) 0.dp else 1.dp,
+                                    color = Color.DarkGray,
+                                    shape = CircleShape
+                                )
                                 .background(LightPurple),
                             model = ImageRequest.Builder(context)
                                 .data(it.imgPath)
@@ -268,7 +269,7 @@ fun ProfileScreen(
                 doneTasks = doneTasks
             )
         }
-        PremiumButton(modifier = Modifier.padding(horizontal = 16.dp)){}
+        PremiumButton(modifier = Modifier.padding(horizontal = 16.dp)) {}
         Spacer(modifier = Modifier.height(16.dp))
 
 
@@ -287,22 +288,10 @@ fun ProfileScreen(
             modifier = Modifier.padding(horizontal = 16.dp),
             border = BorderStroke(0.3.dp, MainPurple.copy(alpha = 0.3f))
         ) {
-            SettingsButton(buttonTxt = "Settings", icon = R.drawable.ic_settings) {}
-//            HorizontalDivider(
-//                modifier = Modifier
-//                    .fillMaxWidth(),
-//                color = MainPurple.copy(0.3f),
-//                thickness = 0.2.dp
-//            )
-//
-//            SettingsButton(buttonTxt = "Notification", icon = R.drawable.ic_notification) {}
-//            HorizontalDivider(
-//                modifier = Modifier
-//                    .fillMaxWidth(),
-//                color = MainPurple.copy(0.3f),
-//                thickness = 0.2.dp
-//            )
-//            SettingsButton(buttonTxt = "Language", icon = R.drawable.ic_language) {}
+            SettingsButton(
+                buttonTxt = "Settings",
+                icon = R.drawable.ic_settings
+            ) { navigateToSettings() }
         }
 
         Spacer(modifier = Modifier.height(18.dp))
@@ -381,43 +370,8 @@ fun ProfileScreen(
                 showDialog = true
             }
         }
-
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // version name
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                color = Color.Gray.copy(0.2f),
-                thickness = 0.5.dp
-            )
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "Version name: ${context.getVersionName()}",
-                fontSize = 11.sp,
-                textAlign = TextAlign.Center,
-                color = Color.Gray
-            )
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                color = Color.Gray.copy(0.2f),
-                thickness = 0.5.dp
-            )
-        }
+        Spacer(modifier = Modifier.height(18.dp))
     }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-
 
     ConfirmationDialog(
         visible = showDialog,
@@ -444,7 +398,8 @@ fun SettingsButtonPreview() {
             ),
             event = { },
             navigateToFeedBack = {},
-            navigateToEdit = {}
+            navigateToEdit = {},
+            navigateToSettings = {}
         )
     }
 }

@@ -40,6 +40,7 @@ import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.presentation.profile.ProfileViewModel
 import com.vtol.petpal.presentation.profile.edit.EditProfileScreen
+import com.vtol.petpal.presentation.profile.settings.SettingsScreen
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
 import com.vtol.petpal.util.showToast
@@ -125,6 +126,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 },
                 navigateToEdit = {
                     navController.navigate(Routes.EditUserScreen.route)
+                },
+                navigateToSettings = {
+                    navController.navigate(Routes.SettingsScreen.route)
                 }
             )
         }
@@ -274,6 +278,10 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 event = viewModel::onEvent,
             ) { navController.navigateUp() }
 
+        }
+
+        composable(Routes.SettingsScreen.route) {
+            SettingsScreen()
         }
     }
 }
