@@ -37,7 +37,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.getVersionName
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
+fun SettingsScreen(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
     val context = LocalContext.current
 
     Column(
@@ -54,7 +54,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
         ) {
             IconButton(
                 colors = IconButtonDefaults.iconButtonColors(containerColor = Color.Transparent),
-                onClick = {}
+                onClick = navigateUp
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
@@ -92,7 +92,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
                 buttonTxt = "Upgrade to Premium",
                 description = "Unlock exclusive features",
                 bgColor = Color(0XFFFFF4DE),
-                icon = R.drawable.ic_premium
+                icon = R.drawable.ic_crown
             ) {}
             HorizontalDivider(
                 modifier = Modifier
@@ -171,7 +171,6 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             ) {}
         }
     }
-
 }
 
 
@@ -179,6 +178,6 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
 @Composable
 fun SettingsPreview() {
     PetPalTheme {
-        SettingsScreen()
+        SettingsScreen {}
     }
 }

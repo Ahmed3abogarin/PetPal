@@ -2,6 +2,8 @@ package com.vtol.petpal.presentation.navgraph
 
 import android.widget.Toast
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -264,7 +266,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
 
                 viewModel.uiEffect.collect {
-                    when(it){
+                    when (it) {
                         is EditUiEffect.NavigateUp -> navController.navigateUp()
                         is EditUiEffect.ShowToastMessage -> {
                             context.showToast(it.error)
@@ -280,8 +282,37 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
         }
 
-        composable(Routes.SettingsScreen.route) {
-            SettingsScreen()
+        composable(
+            enterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { it }
+                ) + fadeIn(animationSpec = tween(400))
+            },
+
+            exitTransition = {
+                slideOutHorizontally(
+                    animationSpec = tween(400),
+                    targetOffsetX = { -it } // Notice the minus sign (-)
+                ) + fadeOut(animationSpec = tween(400))
+            },
+
+            popEnterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { -it } // Comes back from the left
+                ) + fadeIn(animationSpec = tween(400))
+            },
+
+            popExitTransition = {
+                slideOutHorizontally(
+                    animationSpec = tween(400),
+                    targetOffsetX = { it }
+                ) + fadeOut(animationSpec = tween(400))
+            },
+            route = Routes.SettingsScreen.route
+        ) {
+            SettingsScreen(navigateUp = { navController.navigateUp() })
         }
     }
 }
