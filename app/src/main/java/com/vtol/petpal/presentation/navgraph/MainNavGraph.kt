@@ -42,6 +42,8 @@ import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.presentation.profile.ProfileViewModel
 import com.vtol.petpal.presentation.profile.edit.EditProfileScreen
+import com.vtol.petpal.presentation.profile.emergency.EmergencyScreen
+import com.vtol.petpal.presentation.profile.emergency.EmergencyViewModel
 import com.vtol.petpal.presentation.profile.settings.SettingsScreen
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
@@ -131,6 +133,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 },
                 navigateToSettings = {
                     navController.navigate(Routes.SettingsScreen.route)
+                },
+                navigateToEmergency = {
+                    navController.navigate(Routes.EmergencyScreen.route)
                 }
             )
         }
@@ -313,6 +318,45 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             route = Routes.SettingsScreen.route
         ) {
             SettingsScreen(navigateUp = { navController.navigateUp() })
+        }
+
+        composable(
+            enterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { it }
+                ) + fadeIn(animationSpec = tween(400))
+            },
+
+            exitTransition = {
+                slideOutHorizontally(
+                    animationSpec = tween(400),
+                    targetOffsetX = { -it } // Notice the minus sign (-)
+                ) + fadeOut(animationSpec = tween(400))
+            },
+
+            popEnterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { -it } // Comes back from the left
+                ) + fadeIn(animationSpec = tween(400))
+            },
+
+            popExitTransition = {
+                slideOutHorizontally(
+                    animationSpec = tween(400),
+                    targetOffsetX = { it }
+                ) + fadeOut(animationSpec = tween(400))
+            },
+            route = Routes.EmergencyScreen.route
+        ) {
+            val vm: EmergencyViewModel = hiltViewModel()
+            val state by vm.state.collectAsState()
+            EmergencyScreen(
+                state = state,
+                navigateUp = { navController.navigateUp() }
+            )
+
         }
     }
 }

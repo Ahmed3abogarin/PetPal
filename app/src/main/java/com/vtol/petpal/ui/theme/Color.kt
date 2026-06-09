@@ -29,3 +29,9 @@ val ButtonLightGray = Color(0xFFEAEAEA)
 val BackgroundColor = Color(0xFFF8F4FF)
 
 val Red = Color(0xFFFF2B3A)
+
+
+/// TO BE MOVED
+//val DeleteRedBg   = Color(0xFFFFF0F0)
+//val DividerColor  = Color(0xFFEEEEEE)
+val SubtitleGray  = Color(0xFF888888)

@@ -77,6 +77,7 @@ fun ProfileScreen(
     navigateToFeedBack: () -> Unit,
     navigateToEdit: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToEmergency: () -> Unit,
     event: (ProfileEvents) -> Unit
 ) {
     val context = LocalContext.current
@@ -315,7 +316,7 @@ fun ProfileScreen(
                 buttonTxt = "Emergency contacts",
                 bgColor = Color(0XFFFFF4DE),
                 icon = R.drawable.ic_phone
-            ) {}
+            ) { navigateToEmergency() }
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -399,7 +400,8 @@ fun SettingsButtonPreview() {
             event = { },
             navigateToFeedBack = {},
             navigateToEdit = {},
-            navigateToSettings = {}
+            navigateToSettings = {},
+            navigateToEmergency = {}
         )
     }
 }
