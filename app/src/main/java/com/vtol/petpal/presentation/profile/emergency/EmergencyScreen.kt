@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.profile.emergency
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +61,8 @@ import com.vtol.petpal.presentation.profile.emergency.components.DeleteContactBo
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.AppColors.petPalGradient
+import com.vtol.petpal.util.ShareManager.openDialer
+import com.vtol.petpal.util.ShareManager.shareContact
 
 @Composable
 fun EmergencyScreen(
@@ -66,6 +70,7 @@ fun EmergencyScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit
 ) {
+    val context = LocalContext.current
     var currentSheet by remember {
         mutableStateOf<EmergencySheet?>(null)
     }
@@ -114,8 +119,9 @@ fun EmergencyScreen(
             items(state.contacts) {
                 EmergencyContactCard(
                     contact = it,
-                    onCallClick = {},
-                    onMoreClick = { currentSheet = EmergencySheet.More(it) }
+                    onCallClick = { openDialer(context, it.phoneNumber) },
+                    onMoreClick = { currentSheet = EmergencySheet.More(it) },
+                    navigateToDetails = { currentSheet = EmergencySheet.Details(it) }
                 )
             }
         }
@@ -124,42 +130,47 @@ fun EmergencyScreen(
     when (val sheet = currentSheet) {
         is EmergencySheet.Add -> {
             AddContactBottomSheet(
-                onSave    = { newContact -> /* viewModel.add(newContact) */ },
+                onSave = { newContact -> /* viewModel.add(newContact) */ },
                 onDismiss = { currentSheet = null }
             )
         }
+
         is EmergencySheet.Edit -> {
             AddContactBottomSheet(
-                initial   = sheet.contact,          // reuses the same sheet
-                onSave    = { updated -> /* viewModel.update(updated) */ },
+                initial = sheet.contact,          // reuses the same sheet
+                onSave = { updated -> /* viewModel.update(updated) */ },
                 onDismiss = { currentSheet = null }
             )
         }
+
         is EmergencySheet.More -> {
             ContactOptionsBottomSheet(
                 sheet.contact,
                 onDismiss = { currentSheet = null },
-                onView    = { currentSheet = EmergencySheet.Details(sheet.contact) },
-                onEdit    = { currentSheet = EmergencySheet.Edit(sheet.contact) },  // ← wire edit
-                onDelete  = { currentSheet = EmergencySheet.Delete(sheet.contact) },
-                onShare   = {}
+                onView = { currentSheet = EmergencySheet.Details(sheet.contact) },
+                onEdit = { currentSheet = EmergencySheet.Edit(sheet.contact) },  // ← wire edit
+                onDelete = { currentSheet = EmergencySheet.Delete(sheet.contact) },
+                onShare = { shareContact(context, sheet.contact)}
             )
         }
+
         is EmergencySheet.Delete -> {
             DeleteContactBottomSheet(
                 contactName = sheet.contact.name,
-                onDismiss   = { currentSheet = null },
-                onConfirm   = { /* viewModel.delete(sheet.contact) */ }
+                onDismiss = { currentSheet = null },
+                onConfirm = { /* viewModel.delete(sheet.contact) */ }
             )
         }
+
         is EmergencySheet.Details -> {
             ContactDetailsBottomSheet(
-                contact   = sheet.contact,
-                onEdit    = { currentSheet = EmergencySheet.Edit(sheet.contact) },
-                onCall    = { /* dial intent */ },
+                contact = sheet.contact,
+                onEdit = { currentSheet = EmergencySheet.Edit(sheet.contact) },
+                onCall = { openDialer(context, sheet.contact.phoneNumber) },
                 onDismiss = { currentSheet = null }
             )
         }
+
         null -> Unit
     }
 }
@@ -169,8 +180,9 @@ fun EmergencyScreen(
 fun EmergencyContactCard(
     contact: EmergencyContact,
     modifier: Modifier = Modifier,
-    onCallClick: (String) -> Unit,
-    onMoreClick: (EmergencyContact) -> Unit
+    navigateToDetails: () -> Unit,
+    onCallClick: () -> Unit,
+    onMoreClick: () -> Unit
 ) {
     val (icon, color, title) = when (contact.relationship) {
         ContactType.PET_SITTER -> Triple(
@@ -206,6 +218,7 @@ fun EmergencyContactCard(
 
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
+        onClick = { navigateToDetails() },
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 2.dp
@@ -276,7 +289,7 @@ fun EmergencyContactCard(
             FilledIconButton(
                 colors = IconButtonDefaults.iconButtonColors(containerColor = color.copy(alpha = 0.1f)),
                 onClick = {
-                    onCallClick(contact.phoneNumber)
+                    onCallClick()
                 }
             ) {
                 Icon(
@@ -286,7 +299,10 @@ fun EmergencyContactCard(
                 )
             }
             Icon(
-                modifier = Modifier.clickable { onMoreClick(contact) },
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onMoreClick() },
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = null
             )

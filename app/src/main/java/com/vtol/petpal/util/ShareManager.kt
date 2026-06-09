@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.net.toUri
+import com.vtol.petpal.domain.model.EmergencyContact
 
 object ShareManager {
     fun shareApp(context: Context) {
@@ -40,5 +41,28 @@ object ShareManager {
             data = "tel:$phoneNumber".toUri()
         }
         context.startActivity(intent)
+    }
+
+    fun shareContact(
+        context: Context, contact: EmergencyContact
+    ) {
+
+        val shareText = """
+            Emma Johnson
+
+            Phone:
+            tel:${contact.phoneNumber}
+        """.trimIndent()
+
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareText)
+        }
+
+        context.startActivity(
+            Intent.createChooser(
+                intent, "Share Contact"
+            )
+        )
     }
 }
