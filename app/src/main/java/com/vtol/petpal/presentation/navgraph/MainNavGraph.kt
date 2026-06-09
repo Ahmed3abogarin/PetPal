@@ -109,6 +109,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
             val state by viewModel.uiState.collectAsState()
             ExploreScreen(
+                onPermissionGranted = { viewModel.getLocations() },
                 onCategoryClicked = {
                     viewModel.onCategorySelected(it)
                 },

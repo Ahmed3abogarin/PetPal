@@ -240,7 +240,8 @@ fun ExploreScreenContent(
 @Composable
 fun ExploreScreen(
     state: UiState,
-    onCategoryClicked: (PlaceCategory) -> Unit
+    onCategoryClicked: (PlaceCategory) -> Unit,
+    onPermissionGranted: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -268,15 +269,11 @@ fun ExploreScreen(
                 showRationale = false
                 permanentlyDenied = false
             }
-
-            // User denied but can be asked again → show rationale
             ActivityCompat.shouldShowRequestPermissionRationale(
                 activity, Manifest.permission.ACCESS_FINE_LOCATION
             ) -> {
                 showRationale = true
             }
-
-            // User denied with "Don't ask again" → send to settings
             else -> {
                 permanentlyDenied = true
             }
@@ -286,10 +283,14 @@ fun ExploreScreen(
     val settingsLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        // Re-check permission when user returns from Settings
-        hasLocationPermission = ContextCompat.checkSelfPermission(
+        val granted = ContextCompat.checkSelfPermission(
             context, Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+
+        hasLocationPermission = granted
+        if (granted) {
+            permanentlyDenied = false
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -303,6 +304,12 @@ fun ExploreScreen(
         }
     }
 
+    LaunchedEffect(hasLocationPermission) {
+        if (hasLocationPermission) {
+            onPermissionGranted()
+        }
+    }
+
     when {
         hasLocationPermission -> {
             ExploreScreenContent(
@@ -312,7 +319,6 @@ fun ExploreScreen(
         }
 
         showRationale -> {
-            // Explain WHY you need location, then let them retry
             GPSNotGrantedScreen {
                 permissionLauncher.launch(
                     arrayOf(
@@ -324,7 +330,6 @@ fun ExploreScreen(
         }
 
         permanentlyDenied -> {
-            // Can no longer request — must go to Settings
             GPSNotGrantedScreen(
                 buttonTxt = "Open settings",
                 message = "Location permission was permanently denied. Please enable it in Settings."

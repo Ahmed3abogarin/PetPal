@@ -27,11 +27,6 @@ class ExploreViewModel @Inject constructor(
 
     private val cache = mutableMapOf<PlaceCategory, List<PlaceAddress>>()
 
-
-    init {
-        getLocations()
-    }
-
     fun onCategorySelected(category: PlaceCategory) {
         if (category != uiState.value.category) {
             _uiState.update {
