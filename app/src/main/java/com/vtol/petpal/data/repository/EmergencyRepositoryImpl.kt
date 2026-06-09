@@ -3,7 +3,7 @@ package com.vtol.petpal.data.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.vtol.petpal.domain.model.EmergencyContact
-import com.vtol.petpal.domain.repository.EmergencyRepositoryI
+import com.vtol.petpal.domain.repository.EmergencyRepository
 import com.vtol.petpal.util.Constants.EMERGENCY_COLLECTION
 import com.vtol.petpal.util.Constants.USERS_COLLECTION
 import kotlinx.coroutines.channels.awaitClose
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class EmergencyRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth
-): EmergencyRepositoryI {
+): EmergencyRepository {
 
     override fun observeContacts(): Flow<List<EmergencyContact>> =  callbackFlow {
         val uid = auth.currentUser?.uid

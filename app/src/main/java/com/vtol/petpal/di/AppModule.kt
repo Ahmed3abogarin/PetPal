@@ -18,6 +18,7 @@ import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.notification.NotificationPermissionManager
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
+import com.vtol.petpal.data.repository.EmergencyRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.NotificationRepositoryImpl
@@ -28,6 +29,7 @@ import com.vtol.petpal.data.util.ImageCompressorImpl
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
+import com.vtol.petpal.domain.repository.EmergencyRepository
 import com.vtol.petpal.domain.repository.FeedbackRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.repository.NotificationRepository
@@ -46,6 +48,8 @@ import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
 import com.vtol.petpal.domain.usecases.ToggleNotification
 import com.vtol.petpal.domain.usecases.UpdatePet
+import com.vtol.petpal.domain.usecases.emergency.EmergencyUseCases
+import com.vtol.petpal.domain.usecases.emergency.ObserveContacts
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
 import com.vtol.petpal.domain.usecases.pets.ValidatePetInputUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
@@ -165,7 +169,7 @@ object AppModule {
         storage: FirebaseStorage,
         db: TasksDB
     ): UserRepository =
-        UserRepositoryImpl(firestore, auth, storage,db)
+        UserRepositoryImpl(firestore, auth, storage, db)
 
 
     @Provides
@@ -185,8 +189,8 @@ object AppModule {
         imageCompressor: ImageCompressor
     ) =
         AppUseCases(
-            addPet = AddPet(appRepository,imageCompressor),
-            updatePet = UpdatePet(appRepository,imageCompressor),
+            addPet = AddPet(appRepository, imageCompressor),
+            updatePet = UpdatePet(appRepository, imageCompressor),
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository),
             insertTask = InsertTask(appRepository, preferencesRepository, notificationRepository),
@@ -282,4 +286,19 @@ object AppModule {
         @ApplicationContext context: Context
     ): ImageCompressor =
         ImageCompressorImpl(context)
+
+
+    @Provides
+    @Singleton
+    fun provideEmergencyRepository(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+    ): EmergencyRepository =
+        EmergencyRepositoryImpl(firestore, auth)
+
+
+    @Provides
+    @Singleton
+    fun provideEmergencyUseCases(repository: EmergencyRepository) =
+        EmergencyUseCases(observeContacts = ObserveContacts(repository))
 }

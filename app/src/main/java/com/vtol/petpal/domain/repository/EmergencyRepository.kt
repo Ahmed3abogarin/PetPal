@@ -3,7 +3,7 @@ package com.vtol.petpal.domain.repository
 import com.vtol.petpal.domain.model.EmergencyContact
 import kotlinx.coroutines.flow.Flow
 
-interface EmergencyRepositoryI {
+interface EmergencyRepository {
 
     fun observeContacts(): Flow<List<EmergencyContact>>
 
