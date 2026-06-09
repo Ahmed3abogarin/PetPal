@@ -43,11 +43,31 @@ private data class ContactTypeMeta(
 )
 
 private val contactTypes = listOf(
-    ContactTypeMeta(ContactType.PET_SITTER,       "Pet Sitter",       Icons.Outlined.Person,         Color(0xFF8B5CF6)),
-    ContactTypeMeta(ContactType.VETERINARIAN,     "Veterinarian",     Icons.Outlined.LocalHospital,  Color(0xFF22C55E)),
-    ContactTypeMeta(ContactType.EMERGENCY_CLINIC, "Emergency Clinic", Icons.Outlined.MedicalServices,Color(0xFFEF4444)),
-    ContactTypeMeta(ContactType.FAMILY_MEMBER,    "Family Member",    Icons.Outlined.Groups,         Color(0xFFF59E0B)),
-    ContactTypeMeta(ContactType.EMERGENCY_CONTACT,"Emergency",        Icons.Outlined.Emergency,      Color(0xFFEC4899)),
+    ContactTypeMeta(ContactType.PET_SITTER, "Pet Sitter", Icons.Outlined.Person, Color(0xFF8B5CF6)),
+    ContactTypeMeta(
+        ContactType.VETERINARIAN,
+        "Veterinarian",
+        Icons.Outlined.LocalHospital,
+        Color(0xFF22C55E)
+    ),
+    ContactTypeMeta(
+        ContactType.EMERGENCY_CLINIC,
+        "Emergency Clinic",
+        Icons.Outlined.MedicalServices,
+        Color(0xFFEF4444)
+    ),
+    ContactTypeMeta(
+        ContactType.FAMILY_MEMBER,
+        "Family Member",
+        Icons.Outlined.Groups,
+        Color(0xFFF59E0B)
+    ),
+    ContactTypeMeta(
+        ContactType.EMERGENCY_CONTACT,
+        "Emergency",
+        Icons.Outlined.Emergency,
+        Color(0xFFEC4899)
+    ),
 )
 
 // ─── Sheet content (previewable) ──────────────────────────────────────────────
@@ -55,17 +75,17 @@ private val contactTypes = listOf(
 @Composable
 fun AddContactSheetContent(
     initial: EmergencyContact = EmergencyContact(),
+    nameError: String? = null,
+    phoneError: String? = null,
     onSave: (EmergencyContact) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var name        by remember { mutableStateOf(initial.name) }
-    var phone       by remember { mutableStateOf(initial.phoneNumber) }
-    var notes       by remember { mutableStateOf(initial.notes) }
+    var name by remember { mutableStateOf(initial.name) }
+    var phone by remember { mutableStateOf(initial.phoneNumber) }
+    var notes by remember { mutableStateOf(initial.notes) }
     var relationship by remember { mutableStateOf(initial.relationship) }
-    var isPrimary   by remember { mutableStateOf(initial.isPrimary) }
+    var isPrimary by remember { mutableStateOf(initial.isPrimary) }
 
-    var nameError  by remember { mutableStateOf(false) }
-    var phoneError by remember { mutableStateOf(false) }
 
     val isEdit = initial.id.isNotBlank()
 
@@ -125,10 +145,9 @@ fun AddContactSheetContent(
         Spacer(Modifier.height(8.dp))
         PetPalTextField(
             value = name,
-            onValueChange = { name = it; nameError = false },
+            onValueChange = { name = it },
             placeholder = "e.g. Emma Johnson",
-            isError = nameError,
-            errorMessage = "Name is required",
+            errorMessage = nameError,
             leadingIcon = Icons.Outlined.Person,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words)
         )
@@ -140,10 +159,9 @@ fun AddContactSheetContent(
         Spacer(Modifier.height(8.dp))
         PetPalTextField(
             value = phone,
-            onValueChange = { phone = it; phoneError = false },
+            onValueChange = { phone = it },
             placeholder = "+966 55 123 4567",
-            isError = phoneError,
-            errorMessage = "Enter a valid phone number",
+            errorMessage = phoneError,
             leadingIcon = Icons.Outlined.Phone,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
         )
@@ -175,20 +193,15 @@ fun AddContactSheetContent(
         // ── Save button
         Button(
             onClick = {
-                nameError  = name.isBlank()
-                phoneError = phone.isBlank()
-                if (!nameError && !phoneError) {
-                    onSave(
-                        initial.copy(
-                            name         = name.trim(),
-                            phoneNumber  = phone.trim(),
-                            relationship = relationship,
-                            notes        = notes.trim(),
-                            isPrimary    = isPrimary
-                        )
+                onSave(
+                    initial.copy(
+                        name = name.trim(),
+                        phoneNumber = phone.trim(),
+                        relationship = relationship,
+                        notes = notes.trim(),
+                        isPrimary = isPrimary
                     )
-                    onDismiss()
-                }
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -224,6 +237,8 @@ fun AddContactSheetContent(
 @Composable
 fun AddContactBottomSheet(
     initial: EmergencyContact = EmergencyContact(),
+    nameError: String? = null,
+    phoneError: String? = null,
     onSave: (EmergencyContact) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -238,8 +253,10 @@ fun AddContactBottomSheet(
         tonalElevation = 0.dp,
     ) {
         AddContactSheetContent(
-            initial  = initial,
-            onSave   = onSave,
+            initial = initial,
+            nameError = nameError,
+            phoneError = phoneError,
+            onSave = onSave,
             onDismiss = onDismiss
         )
     }
@@ -271,7 +288,7 @@ private fun ContactTypeGrid(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // If last row has fewer items, add weight spacers so chips centre
+                // If last row has fewer items, add weight spacers so chips center
                 if (row.size < 3) Spacer(Modifier.weight(0.5f))
                 row.forEach { meta ->
                     ContactTypeChip(
@@ -349,12 +366,12 @@ private fun PetPalTextField(
     placeholder: String,
     leadingIcon: ImageVector,
     modifier: Modifier = Modifier,
-    isError: Boolean = false,
-    errorMessage: String = "",
+    errorMessage: String? = null,
     singleLine: Boolean = true,
     minLines: Int = 1,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
+    val isError = errorMessage != null
     Column(modifier = modifier) {
         OutlinedTextField(
             value = value,
@@ -377,12 +394,12 @@ private fun PetPalTextField(
             keyboardOptions = keyboardOptions,
             shape = RoundedCornerShape(14.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor   = MainPurple,
+                focusedBorderColor = MainPurple,
                 unfocusedBorderColor = Color(0xFFE5E7EB),
-                errorBorderColor     = MaterialTheme.colorScheme.error,
-                focusedContainerColor   = Color.White,
+                errorBorderColor = MaterialTheme.colorScheme.error,
+                focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color(0xFFFAFAFA),
-                errorContainerColor     = Color(0xFFFFF5F5),
+                errorContainerColor = Color(0xFFFFF5F5),
                 cursorColor = MainPurple,
             ),
             textStyle = LocalTextStyle.current.copy(fontSize = 14.sp, color = Color(0xFF111111))
@@ -405,7 +422,7 @@ private fun PetPalTextField(
 fun AddContactSheetPreview() {
     PetPalTheme {
         AddContactSheetContent(
-            onSave    = {},
+            onSave = {},
             onDismiss = {}
         )
     }
@@ -417,14 +434,14 @@ fun EditContactSheetPreview() {
     PetPalTheme {
         AddContactSheetContent(
             initial = EmergencyContact(
-                id           = "abc123",
-                name         = "Dr. Emma Johnson",
-                phoneNumber  = "+966 55 123 4567",
+                id = "abc123",
+                name = "Dr. Emma Johnson",
+                phoneNumber = "+966 55 123 4567",
                 relationship = ContactType.VETERINARIAN,
-                notes        = "Available Mon–Fri, 9am–6pm",
-                isPrimary    = true
+                notes = "Available Mon–Fri, 9am–6pm",
+                isPrimary = true
             ),
-            onSave    = {},
+            onSave = {},
             onDismiss = {}
         )
     }

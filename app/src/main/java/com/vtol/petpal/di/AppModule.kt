@@ -48,8 +48,11 @@ import com.vtol.petpal.domain.usecases.GetWeights
 import com.vtol.petpal.domain.usecases.MapsUseCases
 import com.vtol.petpal.domain.usecases.ToggleNotification
 import com.vtol.petpal.domain.usecases.UpdatePet
+import com.vtol.petpal.domain.usecases.emergency.AddContact
+import com.vtol.petpal.domain.usecases.emergency.DeleteContact
 import com.vtol.petpal.domain.usecases.emergency.EmergencyUseCases
 import com.vtol.petpal.domain.usecases.emergency.ObserveContacts
+import com.vtol.petpal.domain.usecases.emergency.UpdateContact
 import com.vtol.petpal.domain.usecases.feedback.SubmitFeedBackUseCase
 import com.vtol.petpal.domain.usecases.pets.ValidatePetInputUseCase
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
@@ -300,5 +303,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideEmergencyUseCases(repository: EmergencyRepository) =
-        EmergencyUseCases(observeContacts = ObserveContacts(repository))
+        EmergencyUseCases(
+            observeContacts = ObserveContacts(repository),
+            deleteContact = DeleteContact(repository),
+            addContact = AddContact(repository),
+            updateContact = UpdateContact(repository)
+        )
 }

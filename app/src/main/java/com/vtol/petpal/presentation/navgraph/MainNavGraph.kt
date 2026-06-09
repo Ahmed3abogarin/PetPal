@@ -352,8 +352,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         ) {
             val vm: EmergencyViewModel = hiltViewModel()
             val state by vm.state.collectAsState()
+            val sheet by vm.sheet.collectAsState()
             EmergencyScreen(
                 state = state,
+                currentSheet = sheet,
+                event = vm::onEvent,
                 navigateUp = { navController.navigateUp() }
             )
 
