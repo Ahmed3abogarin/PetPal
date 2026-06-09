@@ -7,13 +7,11 @@ object Constants {
     const val PETS_COLLECTION = "Pets"
     const val USERS_COLLECTION = "Users"
     const val WEIGHT_COLLECTION = "Weight"
-
     const val FEEDBACK_COLLECTION = "Feedback"
 
+    const val EMERGENCY_COLLECTION = "EmergencyContacts"
     const val MIN_REQUIRED_VERSION = "min_required_version"
-
     const val LATEST_VERSION = "latest_version"
-
     val species = listOf(
         Pair(R.drawable.ic_cat, "Cat"),
         Pair(R.drawable.ic_dog, "Dog"),
