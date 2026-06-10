@@ -38,6 +38,7 @@ import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.pets.edit.EditPetScreen
 import com.vtol.petpal.presentation.pets.edit.EditPetViewModel
 import com.vtol.petpal.presentation.pets.edit.EditUiEffect
+import com.vtol.petpal.presentation.premium.RestorePurchasesScreen
 import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
 import com.vtol.petpal.presentation.profile.ProfileViewModel
@@ -270,8 +271,6 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             val context = LocalContext.current
 
             LaunchedEffect(Unit) {
-
-
                 viewModel.uiEffect.collect {
                     when (it) {
                         is EditUiEffect.NavigateUp -> navController.navigateUp()
@@ -324,6 +323,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             SettingsScreen(
                 state = state,
                 onToggleNotification = { viewModel.toggleNotification(it) },
+                navigateToRestorePurchases = { navController.navigate(Routes.RestorePurchasesScreen.route) },
                 navigateUp = { navController.navigateUp() }
             )
         }
@@ -368,6 +368,39 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 navigateUp = { navController.navigateUp() }
             )
 
+        }
+
+        composable(
+            enterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { it }
+                ) + fadeIn(animationSpec = tween(400))
+            },
+
+            exitTransition = {
+                slideOutHorizontally(
+                    animationSpec = tween(400),
+                    targetOffsetX = { -it } // Notice the minus sign (-)
+                ) + fadeOut(animationSpec = tween(400))
+            },
+
+            popEnterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(400),
+                    initialOffsetX = { -it } // Comes back from the left
+                ) + fadeIn(animationSpec = tween(400))
+            },
+
+            popExitTransition = {
+                slideOutHorizontally(
+                    animationSpec = tween(400),
+                    targetOffsetX = { it }
+                ) + fadeOut(animationSpec = tween(400))
+            },
+            route = Routes.RestorePurchasesScreen.route
+        ) {
+            RestorePurchasesScreen { navController.navigateUp() }
         }
     }
 }

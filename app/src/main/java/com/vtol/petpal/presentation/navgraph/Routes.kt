@@ -37,6 +37,7 @@ sealed class Routes(val route: String) {
     data object FeedbackScreen: Routes("feedbackScreen")
     data object SettingsScreen: Routes("settingsScreen")
     data object EmergencyScreen: Routes("emergencyScreen")
+    data object RestorePurchasesScreen: Routes("restorePurchasesScreen")
 
 
     data object MainGraph: Routes("mainGraph")

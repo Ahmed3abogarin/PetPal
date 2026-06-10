@@ -1,4 +1,4 @@
-package com.vtol.petpal
+package com.vtol.petpal.util
 
 import androidx.room.TypeConverter
 import com.vtol.petpal.domain.model.tasks.TaskType

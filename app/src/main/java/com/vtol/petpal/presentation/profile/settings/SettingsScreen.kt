@@ -47,6 +47,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     state: SettingsUiState,
     onToggleNotification: (Boolean) -> Unit,
+    navigateToRestorePurchases: () -> Unit,
     navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
@@ -119,7 +120,7 @@ fun SettingsScreen(
                 buttonTxt = "Restore Purchase",
                 description = "Restore your previous purchase",
                 icon = R.drawable.ic_restore
-            ) { }
+            ) { navigateToRestorePurchases() }
 
         }
 
@@ -204,6 +205,6 @@ fun SettingsScreen(
 @Composable
 fun SettingsPreview() {
     PetPalTheme {
-        SettingsScreen(state = SettingsUiState(), onToggleNotification = {}) {}
+        SettingsScreen(state = SettingsUiState(), onToggleNotification = {}, navigateToRestorePurchases = {}) {}
     }
 }
