@@ -32,12 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.usecases.emergency.EmergencyEvent
+import com.vtol.petpal.presentation.common.components.LoadingIndicator
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.profile.emergency.components.AddContactBottomSheet
 import com.vtol.petpal.presentation.profile.emergency.components.ContactDetailsBottomSheet
 import com.vtol.petpal.presentation.profile.emergency.components.ContactOptionsBottomSheet
 import com.vtol.petpal.presentation.profile.emergency.components.DeleteContactBottomSheet
 import com.vtol.petpal.presentation.profile.emergency.components.EmergencyContactCard
+import com.vtol.petpal.presentation.profile.emergency.components.EmptyContactsScreen
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.Gold
 import com.vtol.petpal.ui.theme.PetPalTheme
@@ -46,7 +48,6 @@ import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.ShareManager.openDialer
 import com.vtol.petpal.util.ShareManager.shareContact
 import com.vtol.petpal.util.showToast
-import timber.log.Timber
 
 @Composable
 fun EmergencyScreen(
@@ -106,9 +107,6 @@ fun EmergencyScreen(
             contentPadding = PaddingValues(vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            state.contacts.forEach {
-                Timber.tag("EmergencyContacts").d("${it.primary}")
-            }
             val primary = state.contacts.filter { it.primary }
             val others = state.contacts.filter { !it.primary }
 
@@ -163,6 +161,13 @@ fun EmergencyScreen(
                 }
             }
         }
+    }
+    if (state.contacts.isEmpty()) {
+        EmptyContactsScreen { event(EmergencyEvent.OpenAdd) }
+    }
+
+    if (state.isLoading) {
+        LoadingIndicator()
     }
 
     when (currentSheet) {
