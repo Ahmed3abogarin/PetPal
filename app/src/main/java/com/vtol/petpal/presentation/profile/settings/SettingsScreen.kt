@@ -21,6 +21,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,14 +35,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.profile.components.SettingsButton
+import com.vtol.petpal.presentation.profile.settings.components.NotificationsBottomSheet
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.getVersionName
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
+fun SettingsScreen(
+    modifier: Modifier = Modifier,
+    state: SettingsUiState,
+    onToggleNotification: (Boolean) -> Unit,
+    navigateUp: () -> Unit
+) {
     val context = LocalContext.current
+
+    var showNotificationSheet by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -130,7 +142,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
                 buttonTxt = "Notification",
                 description = "Manage notification settings",
                 icon = R.drawable.ic_notification
-            ) {}
+            ) { showNotificationSheet = true }
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -171,6 +183,14 @@ fun SettingsScreen(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
             ) {}
         }
     }
+
+    if (showNotificationSheet) {
+        NotificationsBottomSheet(
+            isEnabled = state.isNotificationEnabled,
+            onDismiss = { showNotificationSheet = false },
+            onToggle = { onToggleNotification(it) }
+        )
+    }
 }
 
 
@@ -178,6 +198,6 @@ fun SettingsScreen(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
 @Composable
 fun SettingsPreview() {
     PetPalTheme {
-        SettingsScreen {}
+        SettingsScreen(state = SettingsUiState(), onToggleNotification = {}) {}
     }
 }

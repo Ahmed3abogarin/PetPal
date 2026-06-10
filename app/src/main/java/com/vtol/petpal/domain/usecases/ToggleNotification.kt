@@ -1,11 +1,11 @@
 package com.vtol.petpal.domain.usecases
 
-import com.vtol.petpal.domain.repository.UserPreferencesRepository
+import com.vtol.petpal.domain.repository.NotificationRepository
 
 class ToggleNotification(
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val notificationRepository: NotificationRepository
 ) {
     suspend operator fun invoke(enabled: Boolean) {
-        userPreferencesRepository.setNotificationsEnabled(enabled)
+        notificationRepository.setNotificationsEnabled(enabled)
     }
 }

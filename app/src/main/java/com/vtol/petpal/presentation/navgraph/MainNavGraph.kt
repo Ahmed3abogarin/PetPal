@@ -45,6 +45,7 @@ import com.vtol.petpal.presentation.profile.edit.EditProfileScreen
 import com.vtol.petpal.presentation.profile.emergency.EmergencyScreen
 import com.vtol.petpal.presentation.profile.emergency.EmergencyViewModel
 import com.vtol.petpal.presentation.profile.settings.SettingsScreen
+import com.vtol.petpal.presentation.profile.settings.SettingsViewModel
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
 import com.vtol.petpal.util.showToast
@@ -318,7 +319,13 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             },
             route = Routes.SettingsScreen.route
         ) {
-            SettingsScreen(navigateUp = { navController.navigateUp() })
+            val viewModel: SettingsViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+            SettingsScreen(
+                state = state,
+                onToggleNotification = { viewModel.toggleNotification(it) },
+                navigateUp = { navController.navigateUp() }
+            )
         }
 
         composable(

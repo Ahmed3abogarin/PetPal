@@ -23,7 +23,6 @@ import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.NotificationRepositoryImpl
 import com.vtol.petpal.data.repository.UpdateRepositoryImpl
-import com.vtol.petpal.data.repository.UserPreferencesRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.data.util.ImageCompressorImpl
 import com.vtol.petpal.domain.LocationProvider
@@ -34,11 +33,11 @@ import com.vtol.petpal.domain.repository.FeedbackRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.repository.NotificationRepository
 import com.vtol.petpal.domain.repository.UpdateRepository
-import com.vtol.petpal.domain.repository.UserPreferencesRepository
 import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.domain.usecases.AddPet
 import com.vtol.petpal.domain.usecases.AddWeight
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.GetNotificationStatus
 import com.vtol.petpal.domain.usecases.GetVersion
 import com.vtol.petpal.domain.usecases.GetPet
 import com.vtol.petpal.domain.usecases.GetPets
@@ -187,7 +186,6 @@ object AppModule {
         appRepository: AppRepository,
         userRepository: UserRepository,
         updateRepository: UpdateRepository,
-        preferencesRepository: UserPreferencesRepository,
         notificationRepository: NotificationRepository,
         imageCompressor: ImageCompressor
     ) =
@@ -196,7 +194,7 @@ object AppModule {
             updatePet = UpdatePet(appRepository, imageCompressor),
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository),
-            insertTask = InsertTask(appRepository, preferencesRepository, notificationRepository),
+            insertTask = InsertTask(appRepository,notificationRepository),
             getTasks = GetTasks(appRepository),
             getTasksById = GetTasksById(appRepository),
             addWeight = AddWeight(appRepository),
@@ -204,8 +202,9 @@ object AppModule {
             getUser = GetUser(userRepository),
             getVersion = GetVersion(updateRepository),
             toggleTask = ToggleTask(appRepository),
-            toggleNotification = ToggleNotification(preferencesRepository),
-            getSpecificTasks = GetSpecificTasks(appRepository)
+            toggleNotification = ToggleNotification(notificationRepository),
+            getSpecificTasks = GetSpecificTasks(appRepository),
+            getNotificationStatus = GetNotificationStatus(notificationRepository)
         )
 
     @Provides
@@ -264,18 +263,12 @@ object AppModule {
         return NotificationPermissionManager(context)
     }
 
-
-    @Provides
-    @Singleton
-    fun provideUserPrefsRepository(
-        @ApplicationContext ctx: Context
-    ): UserPreferencesRepository = UserPreferencesRepositoryImpl(ctx)
-
     @Provides
     @Singleton
     fun provideNotificationRepository(
-        @ApplicationContext ctx: Context
-    ): NotificationRepository = NotificationRepositoryImpl(ctx)
+        @ApplicationContext ctx: Context,
+        dataStore: DataStore<Preferences>
+    ): NotificationRepository = NotificationRepositoryImpl(ctx,dataStore)
 
 
     @Provides

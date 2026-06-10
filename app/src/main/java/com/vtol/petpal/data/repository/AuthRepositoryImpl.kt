@@ -138,12 +138,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun isCompleted(): Flow<Boolean> =
         dataStore.data.map {
-            it[OnboardingPrefs.COMPLETED] ?: false
+            it[AppPrefs.COMPLETED] ?: false
         }
 
     override suspend fun setCompleted() {
         dataStore.edit {
-            it[OnboardingPrefs.COMPLETED] = true
+            it[AppPrefs.COMPLETED] = true
         }
     }
 }

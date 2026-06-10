@@ -24,6 +24,7 @@ data class AppUseCases(
     val toggleTask: ToggleTask,
 
     val toggleNotification: ToggleNotification,
+    val getNotificationStatus: GetNotificationStatus,
 
     val getSpecificTasks: GetSpecificTasks
 

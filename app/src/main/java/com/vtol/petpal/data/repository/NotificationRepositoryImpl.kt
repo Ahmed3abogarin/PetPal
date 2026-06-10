@@ -4,13 +4,28 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import com.vtol.petpal.data.notification.TaskAlarmReceiver
+import com.vtol.petpal.data.repository.AppPrefs.NOTIFICATION_ENABLED
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.repository.NotificationRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class NotificationRepositoryImpl(
-    private val context: Context
-) :NotificationRepository {
+    private val context: Context,
+    private val dataStore: DataStore<Preferences>,
+): NotificationRepository {
+
+    override fun isNotificationsEnabled(): Flow<Boolean> {
+        return dataStore.data.map { it[NOTIFICATION_ENABLED] ?: true }
+    }
+
+    override suspend fun setNotificationsEnabled(enabled: Boolean) {
+        dataStore.edit { it[NOTIFICATION_ENABLED] = enabled }
+    }
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
