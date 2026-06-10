@@ -124,16 +124,14 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MainPurple)
-                    .statusBarsPadding()
                     .padding(top = 16.dp, bottom = 62.dp, start = 16.dp)
+                    .statusBarsPadding()
             ) {
 
                 AppIconButton(
                     modifier = Modifier.align(Alignment.TopStart),
                     tint = Color.White
-                ) {
-                    navigateUp()
-                }
+                ) { navigateUp() }
 
                 Column(
                     modifier = Modifier.align(Alignment.BottomCenter)
@@ -148,10 +146,8 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
                         text = "Help us improve your experience",
                         color = ExtraLightPurple
                     )
-
                 }
             }
-
 
             Surface(
                 modifier = Modifier
@@ -166,8 +162,6 @@ fun FeedbackScreenContent(onSubmitClick: (HashMap<String, Any>) -> Unit, navigat
 
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-
                     Text(
                         "How was your experience?",
                         style = MaterialTheme.typography.titleLarge,
