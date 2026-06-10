@@ -120,7 +120,7 @@ fun ContactDetailsSheetContent(
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF111111)
                     )
-                    if (contact.isPrimary) {
+                    if (contact.primary) {
                         Spacer(Modifier.width(8.dp))
                         PrimaryBadge()
                     }
@@ -227,9 +227,9 @@ fun ContactDetailsSheetContent(
             DetailRow(
                 icon = Icons.Outlined.Star,
                 label = "Priority",
-                value = if (contact.isPrimary) "Primary contact" else "Standard contact",
-                accentColor = if (contact.isPrimary) MainPurple else Color(0xFF9CA3AF),
-                valueColor = if (contact.isPrimary) MainPurple else Color(0xFF6B7280)
+                value = if (contact.primary) "Primary contact" else "Standard contact",
+                accentColor = if (contact.primary) MainPurple else Color(0xFF9CA3AF),
+                valueColor = if (contact.primary) MainPurple else Color(0xFF6B7280)
             )
         }
     }
@@ -352,7 +352,7 @@ fun ContactDetailsPreview() {
                 phoneNumber  = "+966 55 123 4567",
                 relationship = ContactType.VETERINARIAN,
                 notes        = "Available Mon–Fri, 9am–6pm. Clinic on King Fahd Road.",
-                isPrimary    = true
+                primary    = true
             ),
             onEdit    = {},
             onCall    = {},
@@ -371,7 +371,7 @@ fun ContactDetailsNoNotesPreview() {
                 phoneNumber  = "+966 50 987 6543",
                 relationship = ContactType.PET_SITTER,
                 notes        = "",
-                isPrimary    = false
+                primary    = false
             ),
             onEdit    = {},
             onCall    = {},

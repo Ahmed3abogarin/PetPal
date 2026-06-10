@@ -29,52 +29,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.domain.model.ContactType
+import com.vtol.petpal.domain.model.ContactTypeMeta
 import com.vtol.petpal.domain.model.EmergencyContact
+import com.vtol.petpal.domain.model.contactTypes
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
-
-// ─── Contact type metadata ────────────────────────────────────────────────────
-
-private data class ContactTypeMeta(
-    val type: ContactType,
-    val label: String,
-    val icon: ImageVector,
-    val color: Color,
-)
-
-private val contactTypes = listOf(
-    ContactTypeMeta(ContactType.PET_SITTER, "Pet Sitter", Icons.Outlined.Person, Color(0xFF8B5CF6)),
-    ContactTypeMeta(
-        ContactType.VETERINARIAN,
-        "Veterinarian",
-        Icons.Outlined.LocalHospital,
-        Color(0xFF22C55E)
-    ),
-    ContactTypeMeta(
-        ContactType.EMERGENCY_CLINIC,
-        "Emergency Clinic",
-        Icons.Outlined.MedicalServices,
-        Color(0xFFEF4444)
-    ),
-    ContactTypeMeta(
-        ContactType.FAMILY_MEMBER,
-        "Family Member",
-        Icons.Outlined.Groups,
-        Color(0xFFF59E0B)
-    ),
-    ContactTypeMeta(
-        ContactType.EMERGENCY_CONTACT,
-        "Emergency",
-        Icons.Outlined.Emergency,
-        Color(0xFFEC4899)
-    ),
-)
-
-// ─── Sheet content (previewable) ──────────────────────────────────────────────
 
 @Composable
 fun AddContactSheetContent(
     initial: EmergencyContact = EmergencyContact(),
+    isLoading: Boolean,
     nameError: String? = null,
     phoneError: String? = null,
     onSave: (EmergencyContact) -> Unit,
@@ -84,7 +48,7 @@ fun AddContactSheetContent(
     var phone by remember { mutableStateOf(initial.phoneNumber) }
     var notes by remember { mutableStateOf(initial.notes) }
     var relationship by remember { mutableStateOf(initial.relationship) }
-    var isPrimary by remember { mutableStateOf(initial.isPrimary) }
+    var isPrimary by remember { mutableStateOf(initial.primary) }
 
 
     val isEdit = initial.id.isNotBlank()
@@ -199,7 +163,7 @@ fun AddContactSheetContent(
                         phoneNumber = phone.trim(),
                         relationship = relationship,
                         notes = notes.trim(),
-                        isPrimary = isPrimary
+                        primary = isPrimary
                     )
                 )
             },
@@ -209,11 +173,15 @@ fun AddContactSheetContent(
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MainPurple)
         ) {
-            Text(
-                text = if (isEdit) "Save changes" else "Add contact",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+            if (isLoading) {
+                CircularProgressIndicator(color = Color.White)
+            } else {
+                Text(
+                    text = if (isEdit) "Save changes" else "Add contact",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
 
         Spacer(Modifier.height(10.dp))
@@ -239,6 +207,7 @@ fun AddContactBottomSheet(
     initial: EmergencyContact = EmergencyContact(),
     nameError: String? = null,
     phoneError: String? = null,
+    isLoading: Boolean,
     onSave: (EmergencyContact) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -256,6 +225,7 @@ fun AddContactBottomSheet(
             initial = initial,
             nameError = nameError,
             phoneError = phoneError,
+            isLoading = isLoading,
             onSave = onSave,
             onDismiss = onDismiss
         )
@@ -423,7 +393,7 @@ fun AddContactSheetPreview() {
     PetPalTheme {
         AddContactSheetContent(
             onSave = {},
-            onDismiss = {}
+            onDismiss = {}, isLoading = false
         )
     }
 }
@@ -439,8 +409,9 @@ fun EditContactSheetPreview() {
                 phoneNumber = "+966 55 123 4567",
                 relationship = ContactType.VETERINARIAN,
                 notes = "Available Mon–Fri, 9am–6pm",
-                isPrimary = true
+                primary = true
             ),
+            isLoading = false,
             onSave = {},
             onDismiss = {}
         )

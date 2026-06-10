@@ -6,7 +6,7 @@ data class EmergencyContact(
     val phoneNumber: String = "",
     val relationship: ContactType = ContactType.EMERGENCY_CONTACT,
     val notes: String = "",
-    val isPrimary: Boolean = false,
+    val primary: Boolean = false,
     val createdAt: Long = System.currentTimeMillis(),
 )
 

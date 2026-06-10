@@ -50,15 +50,30 @@ class EmergencyRepositoryImpl @Inject constructor(
         val currentUid = auth.currentUser?.uid
             ?: throw Exception("User not found")
 
-        val contactDef = firestore
+        val collectionRef = firestore
             .collection(USERS_COLLECTION)
             .document(currentUid)
             .collection(EMERGENCY_COLLECTION)
-            .document()
 
-        val newContact = contact.copy(id = contactDef.id)
+        // Fetch outside transaction
+        if (contact.primary) {
+            val existingPrimaries = collectionRef
+                .whereEqualTo("primary", true)
+                .get()
+                .await()
 
-        contactDef.set(newContact).await()
+            val batch = firestore.batch()
+            existingPrimaries.documents.forEach { doc ->
+                batch.update(doc.reference, "primary", false)
+            }
+
+            val contactDef = collectionRef.document()
+            batch.set(contactDef, contact.copy(id = contactDef.id))
+            batch.commit().await()
+        } else {
+            val contactDef = collectionRef.document()
+            contactDef.set(contact.copy(id = contactDef.id)).await()
+        }
     }
 
     override suspend fun deleteContact(contact: EmergencyContact): Result<Unit> = runCatching {
@@ -78,12 +93,30 @@ class EmergencyRepositoryImpl @Inject constructor(
         val currentUid = auth.currentUser?.uid
             ?: throw Exception("User not found")
 
-        firestore
+        val collectionRef = firestore
             .collection(USERS_COLLECTION)
             .document(currentUid)
             .collection(EMERGENCY_COLLECTION)
-            .document(contact.id)
-            .set(contact)
-            .await()
-    }
-}
+
+        if (contact.primary) {
+            val existingPrimaries = collectionRef
+                .whereEqualTo("primary", true)
+                .get()
+                .await()
+
+            val batch = firestore.batch()
+            existingPrimaries.documents
+                .filter { it.id != contact.id }
+                .forEach { doc ->
+                    batch.update(doc.reference, "primary", false)
+                }
+
+            batch.set(collectionRef.document(contact.id), contact)
+            batch.commit().await()
+        } else {
+            collectionRef
+                .document(contact.id)
+                .set(contact)
+                .await()
+        }
+    }}

@@ -23,7 +23,6 @@ class EmergencyViewModel @Inject constructor(
     private val useCases: EmergencyUseCases
 ) : ViewModel() {
 
-    // TODO: Validate the inputs first before sending them to firestore
     private val _state = MutableStateFlow(EmergencyUiState())
     val state = _state.asStateFlow()
 
@@ -81,14 +80,14 @@ class EmergencyViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isSheetLoading = true) }
             useCases.addContact(contact)
                 .onSuccess {
                     _sheet.value = null
-                    _state.update { it.copy(isLoading = false) }
+                    _state.update { it.copy(isSheetLoading = false) }
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isLoading = false, message = e.message) }
+                    _state.update { it.copy(isSheetLoading = false, message = e.message) }
                 }
         }
 
@@ -96,28 +95,28 @@ class EmergencyViewModel @Inject constructor(
 
     private fun updateContact(contact: EmergencyContact) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isSheetLoading = true) }
             useCases.updateContact(contact)
                 .onSuccess {
                     _sheet.value = null
-                    _state.update { it.copy(isLoading = false, message = "Updated successfully" ) }
+                    _state.update { it.copy(isSheetLoading = false, message = "Updated successfully" ) }
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isLoading = false, message = e.message) }
+                    _state.update { it.copy(isSheetLoading = false, message = e.message) }
                 }
         }
     }
 
     private fun deleteContact(contact: EmergencyContact) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isSheetLoading = true) }
             useCases.deleteContact(contact)
                 .onSuccess {
                     _sheet.value = null
-                    _state.update { it.copy(isLoading = false, message = "${contact.name} removed") }
+                    _state.update { it.copy(isSheetLoading = false, message = "${contact.name} removed") }
                 }
                 .onFailure { e ->
-                    _state.update { it.copy(isLoading = false, message = e.message) }
+                    _state.update { it.copy(isSheetLoading = false, message = e.message) }
                 }
         }
     }
@@ -125,6 +124,8 @@ class EmergencyViewModel @Inject constructor(
 
 data class EmergencyUiState(
     val isLoading: Boolean = false,
+    val isSheetLoading: Boolean = false,
+
     val contacts: List<EmergencyContact> = emptyList(),
     val message: String? = null,
     val nameError: String? = null,
