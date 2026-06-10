@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
 import com.vtol.petpal.presentation.profile.components.SettingsButton
+import com.vtol.petpal.presentation.profile.settings.components.LanguageBottomSheet
 import com.vtol.petpal.presentation.profile.settings.components.NotificationsBottomSheet
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
@@ -51,6 +52,7 @@ fun SettingsScreen(
     val context = LocalContext.current
 
     var showNotificationSheet by remember { mutableStateOf(false) }
+    var showLanguagesSheet by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -154,7 +156,7 @@ fun SettingsScreen(
                 buttonTxt = "Language",
                 description = "Choose your preferred language",
                 icon = R.drawable.ic_language
-            ) {}
+            ) { showLanguagesSheet = true }
 
         }
 
@@ -190,6 +192,10 @@ fun SettingsScreen(
             onDismiss = { showNotificationSheet = false },
             onToggle = { onToggleNotification(it) }
         )
+    }
+
+    if (showLanguagesSheet) {
+        LanguageBottomSheet { showLanguagesSheet = false }
     }
 }
 
