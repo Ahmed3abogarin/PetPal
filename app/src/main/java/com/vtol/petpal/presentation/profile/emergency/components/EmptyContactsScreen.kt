@@ -70,14 +70,14 @@ fun EmptyContactsScreen(onAddClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Update Required",
+                    text = "No Emergency Contacts Yet",
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.SemiBold)
                 )
                 Spacer(modifier = Modifier.height(14.dp))
                 //Please update to the latest version to continue using the app.
                 Text(
                     modifier = Modifier.padding(horizontal = 52.dp),
-                    text = "To continue using this app, please update to the latest version.",
+                    text = "Add trusted contacts who can help during an emergency.",
                     fontSize = 15.sp,
                     color = Color.DarkGray,
                     textAlign = TextAlign.Center
