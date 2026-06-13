@@ -55,6 +55,7 @@ fun PetsScreen(
     navigateToAddPetScreen: () -> Unit,
     onScheduleClick: (String) -> Unit,
     onCardClick: (String) -> Unit,
+    onEditClick: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -162,7 +163,8 @@ fun PetsScreen(
                             pet = pet,
                             onScheduleClick = { onScheduleClick(it) },
                             onCardClick = { onCardClick(pet.id) },
-                            task = state.firstTasks[pet.id]
+                            task = state.firstTasks[pet.id],
+                            onEditClicked = onEditClick
                         )
                     }
                 }
@@ -180,7 +182,8 @@ fun PetsPreview() {
             state = PetsState(),
             onCardClick = {},
             onScheduleClick = {},
-            navigateToAddPetScreen = {}
+            navigateToAddPetScreen = {},
+            onEditClick = {}
         )
     }
 }

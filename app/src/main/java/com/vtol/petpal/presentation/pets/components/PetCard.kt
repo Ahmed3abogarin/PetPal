@@ -48,7 +48,6 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.Pink100
 import com.vtol.petpal.ui.theme.Pink50
 import com.vtol.petpal.ui.theme.TextPurple
-import com.vtol.petpal.util.showToast
 import com.vtol.petpal.util.toAgeString
 
 @Composable
@@ -56,6 +55,7 @@ fun PetCard(
     pet: Pet,
     onScheduleClick: (String) -> Unit,
     onCardClick: (String) -> Unit,
+    onEditClicked: (String) -> Unit,
     task: TaskUi?,
 ) {
     val context = LocalContext.current
@@ -169,7 +169,7 @@ fun PetCard(
                         .clickable(
                             interactionSource = interactionSource,
                             indication = null
-                        ) { context.showToast() },
+                        ) { onEditClicked(pet.id) },
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -240,6 +240,7 @@ fun CardPreview() {
             ),
             onScheduleClick = {},
             onCardClick = {},
+            onEditClicked = {},
             task = null
         )
     }

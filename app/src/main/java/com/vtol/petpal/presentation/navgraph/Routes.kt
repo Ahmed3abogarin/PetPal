@@ -26,7 +26,9 @@ sealed class Routes(val route: String) {
     data object PetDetailsScreen : Routes("petDetailsScreen/{petId}") {
         fun createRoute(petId: String) = "petDetailsScreen/$petId"
     }
-    data object AddTaskScreen: Routes("addTaskScreen")
+    data object AddTaskScreen: Routes("addTaskScreen/{petId}") {
+        fun createRoute(petId: String = "") = "addTaskScreen/$petId"
+    }
 
     data object EditUserScreen: Routes("editUserScreen")
 

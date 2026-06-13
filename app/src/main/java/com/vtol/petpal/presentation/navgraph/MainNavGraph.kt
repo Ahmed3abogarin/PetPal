@@ -63,7 +63,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             HomeScreen(
                 state = state,
                 onAddTaskClicked = {
-                    navController.navigate(Routes.AddTaskScreen.route)
+                    navController.navigate(Routes.AddTaskScreen.createRoute())
                 },
                 onAddPetClicked = {
                     navController.navigate(Routes.AddPetScreen.route)
@@ -88,10 +88,15 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                     navController.navigate(Routes.AddPetScreen.route)
                 },
                 onScheduleClick = {
-                    navController.navigate(Routes.AddTaskScreen.route)
+                    navController.navigate(Routes.AddTaskScreen.createRoute(it))
                 },
                 onCardClick = {
                     navController.navigate(Routes.PetDetailsScreen.createRoute(it)) {
+                        launchSingleTop = false
+                    }
+                },
+                onEditClick = { id ->
+                    navController.navigate(Routes.EditPetScreen.createRoute(id)){
                         launchSingleTop = false
                     }
                 }
@@ -173,7 +178,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
         composable(
             route = Routes.PetDetailsScreen.route,
-            arguments = listOf(navArgument("petId") { type = NavType.StringType })
+            arguments = listOf(navArgument("petId") { type = NavType.StringType }),
         ) {
             val petDetailsVM: PetDetailsViewModel = hiltViewModel()
 
@@ -186,7 +191,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                     petDetailsVM.addWeight(state.pet?.id, it)
                 },
                 onAddTaskClick = {
-                    navController.navigate(Routes.AddTaskScreen.route)
+                    navController.navigate(Routes.AddTaskScreen.createRoute())
                 },
                 onRangeChanged = {
                     petDetailsVM.updateWeightFilter(it)
@@ -200,6 +205,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         }
         composable(
             route = Routes.AddTaskScreen.route,
+            arguments = listOf(navArgument("petId") { type = NavType.StringType }),
             exitTransition = { slideOutVertically(targetOffsetY = { it }) },
             enterTransition = { slideInVertically(initialOffsetY = { it }) }
         ) {

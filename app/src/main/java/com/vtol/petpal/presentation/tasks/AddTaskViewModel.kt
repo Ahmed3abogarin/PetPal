@@ -1,5 +1,6 @@
 package com.vtol.petpal.presentation.tasks
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -80,6 +81,7 @@ data class AddTaskState(
 class AddTaskViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val permissionManager: NotificationPermissionManager,
+    savedStateHandle: SavedStateHandle,
     private val gson: Gson
 ) : ViewModel() {
 
@@ -89,6 +91,7 @@ class AddTaskViewModel @Inject constructor(
     private val _uiEffect = Channel<AddTaskUiEffect>()
     val uiEffect = _uiEffect.receiveAsFlow()
 
+    private val petId: String = checkNotNull(savedStateHandle["petId"])
     private var pendingTask: Task? = null
 
     init {
@@ -146,6 +149,9 @@ class AddTaskViewModel @Inject constructor(
                 )
             }
             .onEach { pets ->
+                if (petId.isNotBlank()){
+                    _state.update { it.copy(selectedPet = pets.first { pet -> pet.id == petId }) }
+                }
                 _state.value = _state.value.copy(
                     pets = pets,
                     isPetsLoading = false,
