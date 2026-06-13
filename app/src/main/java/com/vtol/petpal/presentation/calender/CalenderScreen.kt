@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.kizitonwose.calendar.compose.ContentHeightMode
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
+import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.presentation.calender.components.CalendarDayCell
 import com.vtol.petpal.presentation.calender.components.HighlightCard
 import com.vtol.petpal.presentation.components.AppIconButton
@@ -50,6 +51,8 @@ import java.time.YearMonth
 fun CalenderScreen(
     modifier: Modifier = Modifier,
     state: CalendarState,
+    onDeleteAll: (Long) -> Unit,
+    onDeleteThis: (TaskUi, LocalDate) -> Unit
 ) {
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -96,7 +99,8 @@ fun CalenderScreen(
                 ) {
                     AppIconButton(modifier = Modifier.padding(start = 16.dp)) {
                         scope.launch {
-                            val targetMonth = calendarState.firstVisibleMonth.yearMonth.minusMonths(1)
+                            val targetMonth =
+                                calendarState.firstVisibleMonth.yearMonth.minusMonths(1)
                             calendarState.animateScrollToMonth(targetMonth)
                         }
                     }
@@ -111,9 +115,14 @@ fun CalenderScreen(
                         color = Color.White
                     )
 
-                    AppIconButton(modifier = Modifier.rotate(180f).padding(start = 16.dp)) {
+                    AppIconButton(
+                        modifier = Modifier
+                            .rotate(180f)
+                            .padding(start = 16.dp)
+                    ) {
                         scope.launch {
-                            val targetMonth = calendarState.firstVisibleMonth.yearMonth.plusMonths(1)
+                            val targetMonth =
+                                calendarState.firstVisibleMonth.yearMonth.plusMonths(1)
                             calendarState.animateScrollToMonth(targetMonth)
                         }
                     }
@@ -186,7 +195,9 @@ fun CalenderScreen(
                 tasks = state.tasks[selectedDate],
                 date = selectedDate,
                 petMap = state.petMap,
-                showToast = {context.showToast("No tasks")}
+                showToast = { context.showToast("No tasks") },
+                onDeleteThis = { task -> onDeleteThis(task, selectedDate) },
+                onDeleteAll = onDeleteAll
             )
         }
     }
@@ -196,6 +207,6 @@ fun CalenderScreen(
 @Composable
 fun CalendarPreview() {
     PetPalTheme {
-        CalenderScreen(state = CalendarState())
+        CalenderScreen(state = CalendarState(), onDeleteThis = {_, _ ->}, onDeleteAll = {})
     }
 }

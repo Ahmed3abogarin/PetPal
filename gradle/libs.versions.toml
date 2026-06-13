@@ -21,7 +21,7 @@ navigationCompose = "2.9.5"
 playServicesMaps = "20.0.0"
 playServicesLocation = "21.3.0"
 places = "5.2.0"
-hiltAndroid = "2.55"
+hiltAndroid = "2.57"
 hiltNavigationCompose = "1.2.0"
 googleGmsGoogleServices = "4.4.4"
 firebaseFirestore = "26.0.2"
@@ -93,6 +93,5 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
-dagger-hilt = { id = "com.google.dagger.hilt.android" }
 ksp = {id = "com.google.devtools.ksp" }
 

@@ -7,6 +7,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -64,11 +66,14 @@ import com.vtol.petpal.domain.usecases.register.SaveAppEntry
 import com.vtol.petpal.domain.usecases.register.SignIn
 import com.vtol.petpal.domain.usecases.register.SignInWithFacebook
 import com.vtol.petpal.domain.usecases.register.SignInWithGoogle
+import com.vtol.petpal.domain.usecases.tasks.DeleteTask
 import com.vtol.petpal.domain.usecases.tasks.GetSpecificTasks
-import com.vtol.petpal.domain.usecases.tasks.GetTasksById
+import com.vtol.petpal.domain.usecases.tasks.GetPetTasks
+import com.vtol.petpal.domain.usecases.tasks.GetTaskById
 import com.vtol.petpal.domain.usecases.tasks.GetTasks
 import com.vtol.petpal.domain.usecases.tasks.InsertTask
 import com.vtol.petpal.domain.usecases.tasks.ToggleTask
+import com.vtol.petpal.domain.usecases.tasks.UpdateTask
 import com.vtol.petpal.domain.util.ImageCompressor
 import com.vtol.petpal.presentation.register.GoogleAuthUiClient
 import dagger.Module
@@ -196,7 +201,7 @@ object AppModule {
             getPet = GetPet(appRepository),
             insertTask = InsertTask(appRepository,notificationRepository),
             getTasks = GetTasks(appRepository),
-            getTasksById = GetTasksById(appRepository),
+            getPetTasks = GetPetTasks(appRepository),
             addWeight = AddWeight(appRepository),
             getWeights = GetWeights(appRepository),
             getUser = GetUser(userRepository),
@@ -204,7 +209,10 @@ object AppModule {
             toggleTask = ToggleTask(appRepository),
             toggleNotification = ToggleNotification(notificationRepository),
             getSpecificTasks = GetSpecificTasks(appRepository),
-            getNotificationStatus = GetNotificationStatus(notificationRepository)
+            getNotificationStatus = GetNotificationStatus(notificationRepository),
+            deleteTask = DeleteTask(appRepository, notificationRepository),
+            updateTask = UpdateTask(appRepository),
+            getTaskById = GetTaskById(appRepository)
         )
 
     @Provides
@@ -237,11 +245,19 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTasksDB(application: Application): TasksDB {
+        val migration12 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Room expects a TEXT column because our converter turns the List into a String.
+                // We set a default empty string so existing rows don't break.
+                db.execSQL("ALTER TABLE pet_tasks ADD COLUMN deletedDates TEXT NOT NULL DEFAULT ''")
+            }
+        }
         return Room.databaseBuilder(
             context = application,
             klass = TasksDB::class.java,
             name = "tasks_DB"
         ).fallbackToDestructiveMigration(true)
+            .addMigrations(migration12)
             .build()
     }
 

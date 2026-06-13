@@ -54,7 +54,7 @@ class PetDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 appUseCases.getPet(petId),
-                appUseCases.getTasksById(petId),
+                appUseCases.getPetTasks(petId),
                 appUseCases.getWeights(petId),
                 _range
             ) { pet, tasks, weights, range ->

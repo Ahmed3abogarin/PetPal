@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
-import com.vtol.petpal.domain.model.tasks.SyncStatus
-import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.TaskUi
-import com.vtol.petpal.domain.model.tasks.details.WalkDetails
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CalenderViewModel @Inject constructor(
     private val appUseCases: AppUseCases
-): ViewModel() {
+) : ViewModel() {
     private val _state = MutableStateFlow(CalendarState())
     val state = _state.asStateFlow()
 
@@ -58,7 +55,7 @@ class CalenderViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun getCalendarTasks(){
+    fun getCalendarTasks() {
         viewModelScope.launch {
             appUseCases.getTasks().collect { tasks ->
                 val start = YearMonth.now().minusMonths(6).atDay(1)
@@ -70,7 +67,7 @@ class CalenderViewModel @Inject constructor(
         }
     }
 
-    fun generateCalendarTasks(
+    private fun generateCalendarTasks(
         tasks: List<TaskUi>,
         start: LocalDate,
         end: LocalDate
@@ -84,7 +81,8 @@ class CalenderViewModel @Inject constructor(
             when (task.repeatInterval ?: RepeatInterval.Never) {
 
                 RepeatInterval.Never -> {
-                    if (taskDate in start..end) {
+                    // Check if this single date was marked as deleted
+                    if (taskDate in start..end && !task.deletedDates.contains(taskDate)) {
                         result.getOrPut(taskDate) { mutableListOf() }.add(task)
                     }
                 }
@@ -92,7 +90,10 @@ class CalenderViewModel @Inject constructor(
                 RepeatInterval.Daily -> {
                     var date = maxOf(taskDate, start)
                     while (date <= end) {
-                        result.getOrPut(date) { mutableListOf() }.add(task)
+                        // Skip adding if the date is in the deleted exclusions list
+                        if (!task.deletedDates.contains(date)) {
+                            result.getOrPut(date) { mutableListOf() }.add(task)
+                        }
                         date = date.plusDays(1)
                     }
                 }
@@ -101,7 +102,9 @@ class CalenderViewModel @Inject constructor(
                     var date = taskDate
                     while (date < start) date = date.plusWeeks(1)
                     while (date <= end) {
-                        result.getOrPut(date) { mutableListOf() }.add(task)
+                        if (!task.deletedDates.contains(date)) {
+                            result.getOrPut(date) { mutableListOf() }.add(task)
+                        }
                         date = date.plusWeeks(1)
                     }
                 }
@@ -110,7 +113,9 @@ class CalenderViewModel @Inject constructor(
                     var date = taskDate
                     while (date < start) date = date.plusMonths(1)
                     while (date <= end) {
-                        result.getOrPut(date) { mutableListOf() }.add(task)
+                        if (!task.deletedDates.contains(date)) {
+                            result.getOrPut(date) { mutableListOf() }.add(task)
+                        }
                         date = date.plusMonths(1)
                     }
                 }
@@ -120,75 +125,33 @@ class CalenderViewModel @Inject constructor(
         return result
     }
 
+    // Option 1: User chose "Delete All Occurrences"
+    fun deleteTask(taskId: Long) {
+        viewModelScope.launch {
+            appUseCases.deleteTask(taskId)
+        }
+    }
+
+    // Option 2: User chose "Delete Just This Occurrence"
+    fun deleteSpecificOccurrence(task: TaskUi, dateToDelete: LocalDate) {
+        viewModelScope.launch {
+            if (task.repeatInterval == null || task.repeatInterval == RepeatInterval.Never) {
+                // It's a single event, safe to permanently delete from DB
+                appUseCases.deleteTask(task.id)
+            } else {
+                // It's a repeating event, add this date to the exclusions list
+                val updatedDates = task.deletedDates + dateToDelete
+                val updatedTask = task.copy(deletedDates = updatedDates)
+
+                // Save the updated task to the database
+                appUseCases.updateTask(updatedTask)
+            }
+        }
+    }
 }
 
-val previewTasks = mapOf(
-    LocalDate.of(2026, 5, 20) to listOf(
-        TaskUi(
-            id = 5L,
-            petId = "dog_01",
-            title = "Quick Walk",
-            note = null,
-            type = TaskType.WALK,
-            dateTime = 1779287687000L, // Static timestamp matching date
-            isCompleted = false,
-            repeatInterval = null,
-            details = WalkDetails( 22, "Neighborhood Block"),
-            syncStatus = SyncStatus.SYNCED
-        ),
-        TaskUi(
-            id = 5L,
-            petId = "dog_01",
-            title = "Quick Walk",
-            note = null,
-            type = TaskType.WALK,
-            dateTime = 1779287687000L, // Static timestamp matching date
-            isCompleted = false,
-            repeatInterval = null,
-            details = WalkDetails( 22, "Neighborhood Block"),
-            syncStatus = SyncStatus.SYNCED
-        ),
-        TaskUi(
-            id = 5L,
-            petId = "dog_01",
-            title = "Quick Walk",
-            note = null,
-            type = TaskType.WALK,
-            dateTime = 1779287687000L, // Static timestamp matching date
-            isCompleted = false,
-            repeatInterval = null,
-            details = WalkDetails( 22, "Neighborhood Block"),
-            syncStatus = SyncStatus.SYNCED
-        ),
-        TaskUi(
-            id = 5L,
-            petId = "dog_01",
-            title = "Quick Walk",
-            note = null,
-            type = TaskType.WALK,
-            dateTime = 1779287687000L, // Static timestamp matching date
-            isCompleted = false,
-            repeatInterval = null,
-            details = WalkDetails( 22, "Neighborhood Block"),
-            syncStatus = SyncStatus.SYNCED
-        ),
-        TaskUi(
-            id = 5L,
-            petId = "dog_01",
-            title = "Quick Walk",
-            note = null,
-            type = TaskType.WALK,
-            dateTime = 1779287687000L, // Static timestamp matching date
-            isCompleted = false,
-            repeatInterval = null,
-            details = WalkDetails( 22, "Neighborhood Block"),
-            syncStatus = SyncStatus.SYNCED
-        )
-    ),
-)
-
 data class CalendarState(
-    val tasks: Map<LocalDate, List<TaskUi>> = previewTasks,
+    val tasks: Map<LocalDate, List<TaskUi>> = emptyMap(),
     val pets: List<Pet> = emptyList(),
     val isLoading: Boolean = false,
     val petMap: Map<String, String> = emptyMap(),

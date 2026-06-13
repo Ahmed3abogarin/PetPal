@@ -103,7 +103,9 @@ fun OverviewTab(
                     task = state.lastTask,
                     petName = pet.petName,
                     showDate = true,
-                    showMore = false
+                    showMore = false,
+                    onDeleteThis = {},
+                    onDeleteAll = {}
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 

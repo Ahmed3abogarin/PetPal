@@ -4,11 +4,11 @@ import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.repository.AppRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetTasksById(
+class GetPetTasks(
     private val appRepository: AppRepository
 ) {
     operator fun invoke(petId: String): Flow<List<TaskUi>> {
-        return appRepository.getTask(petId)
+        return appRepository.getPetTasks(petId)
     }
 
 }

@@ -18,10 +18,14 @@ interface AppRepository {
     fun getPet(id: String): Flow<Pet>
 
     suspend fun insertTask(task: Task): Long
+    suspend fun updateTask(task: TaskUi)
+    suspend fun deleteTask(taskId: Long)
 
     fun getAllTasks(): Flow<List<TaskUi>>
 
-    fun getTask(petId: String): Flow<List<TaskUi>>
+    fun getPetTasks(petId: String): Flow<List<TaskUi>>
+
+    suspend fun getTaskById(taskId: Long): Task?
 
     suspend fun addWeight(petId: String,weightRecord: WeightRecord)
 

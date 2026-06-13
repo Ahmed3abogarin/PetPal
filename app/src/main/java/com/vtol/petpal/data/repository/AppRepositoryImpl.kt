@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.vtol.petpal.data.local.TasksDao
+import com.vtol.petpal.data.mapper.toTaskModel
 import com.vtol.petpal.data.mapper.toUiModel
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
@@ -181,15 +182,28 @@ class AppRepositoryImpl @Inject constructor(
     override suspend fun insertTask(task: Task): Long =
         tasksDao.insertTask(task)
 
+    override suspend fun updateTask(task: TaskUi) {
+        val newTask = task.toTaskModel(gson)
+        tasksDao.updateTask(newTask)
+    }
+
+    override suspend fun deleteTask(taskId: Long) {
+        return tasksDao.deleteTask(taskId)
+    }
+
     override fun getAllTasks(): Flow<List<TaskUi>> =
         tasksDao.getAllTasks().map { entities ->
             entities.map { entity -> entity.toUiModel(gson) }
         }
 
-    override fun getTask(petId: String): Flow<List<TaskUi>> =
-        tasksDao.getTask(petId).map { entities ->
+    override fun getPetTasks(petId: String): Flow<List<TaskUi>> =
+        tasksDao.getPetTasks(petId).map { entities ->
             entities.map { entity -> entity.toUiModel(gson) }
         }
+
+    override suspend fun getTaskById(taskId: Long): Task? {
+        return tasksDao.getTaskById(taskId)
+    }
 
     override suspend fun addWeight(petId: String, weightRecord: WeightRecord) {
         val uid = auth.currentUser?.uid

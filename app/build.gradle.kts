@@ -10,7 +10,7 @@ plugins {
 //    id("kotlin-kapt")
 
     // Hilt
-    alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.hilt)
 
     // Firebase
     alias(libs.plugins.google.gms.google.services)

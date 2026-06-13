@@ -66,7 +66,9 @@ fun HighlightCard(
     tasks: List<TaskUi>?,
     date: LocalDate,
     petMap: Map<String, String>,
-    showToast: () -> Unit
+    showToast: () -> Unit,
+    onDeleteAll: (Long) -> Unit,
+    onDeleteThis: (TaskUi) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -164,7 +166,9 @@ fun HighlightCard(
                             val petName = petMap[task.petId] ?: "Unknown"
                             PetTaskCard(
                                 modifier = Modifier.padding(horizontal = 16.dp),
-                                task = task, petName = petName
+                                task = task, petName = petName,
+                                onDeleteThis = { onDeleteThis(task) },
+                                onDeleteAll = { onDeleteAll(task.id) }
                             )
                         }
                         Spacer(modifier = Modifier.width(6.dp))
@@ -185,9 +189,15 @@ fun HighlightCard(
             sheetState = sheetState
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
-                Box(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
@@ -210,7 +220,9 @@ fun HighlightCard(
                         val petName = petMap[task.petId] ?: "Unknown"
                         PetTaskCard(
                             task = task,
-                            petName = petName
+                            petName = petName,
+                            onDeleteThis = {},
+                            onDeleteAll = {}
                         )
                     }
                 }
@@ -240,7 +252,9 @@ fun HighlighPrevew() {
             ),
             date = LocalDate.now(),
             petMap = mapOf(),
-            showToast = {}
+            showToast = {},
+            onDeleteAll = {},
+            onDeleteThis = {}
         )
     }
 }

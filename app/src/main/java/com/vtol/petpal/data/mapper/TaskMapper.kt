@@ -23,9 +23,26 @@ fun Task.toUiModel(gson: Gson): TaskUi {
         note = note,
         type = type,
         dateTime = dateTime,
+        deletedDates = deletedDates,
         isCompleted = isCompleted,
         repeatInterval = repeatInterval,
         details = details,
+        syncStatus = syncStatus
+    )
+}
+
+fun TaskUi.toTaskModel(gson: Gson): Task {
+    return Task(
+        id = id,
+        petId = petId,
+        title = title,
+        note = note,
+        type = type,
+        dateTime = dateTime,
+        deletedDates = deletedDates,
+        isCompleted = isCompleted,
+        repeatInterval = repeatInterval,
+        details = details?.let { gson.toJson(it) },
         syncStatus = syncStatus
     )
 }

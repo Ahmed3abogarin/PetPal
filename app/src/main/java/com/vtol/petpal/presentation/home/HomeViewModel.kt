@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.domain.model.Pet
+import com.vtol.petpal.domain.model.tasks.RepeatInterval // <-- Added Import
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 
@@ -37,16 +39,13 @@ class HomeViewModel @Inject constructor(
 
     private fun observeHomeData() {
         combine(appUseCases.getTasks(), appUseCases.getPets()) { tasks, pets ->
-            // Success logic...
-
             val petMap = pets.associate { pet -> pet.id to pet.petName }
-            val todayTasksList = todayTasks(tasks)  // extract first
+            val todayTasksList = todayTasks(tasks)
 
-            val total = todayTasksList.size                                    // ← was tasks.size
+            val total = todayTasksList.size
             val completed = todayTasksList.count { task -> task.isCompleted }
 
             val progress = if (total > 0) completed.toFloat() / total else 0f
-
 
             HomeState(
                 todayTasks = todayTasksList,
@@ -61,7 +60,6 @@ class HomeViewModel @Inject constructor(
         }
             .onStart { _state.update { it.copy(isLoading = true) } }
             .catch { exception ->
-                // Handle the error here!
                 _state.update {
                     it.copy(
                         isLoading = false,
@@ -72,7 +70,6 @@ class HomeViewModel @Inject constructor(
             .onEach { dataUpdate ->
                 _state.update { currentState ->
                     dataUpdate.copy(
-                        // Preserve these flags from the current UI state
                         taskSaved = currentState.taskSaved,
                         showNotificationPermissionDialog = currentState.showNotificationPermissionDialog,
                         showExactAlarmPermissionDialog = currentState.showExactAlarmPermissionDialog,
@@ -98,16 +95,36 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun todayTasks(tasks: List<TaskUi>) = tasks.filter {
-        val taskDate =
-            Instant.ofEpochMilli(it.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
-        taskDate == LocalDate.now()
+    // --- UPDATED FILTERING LOGIC ---
+
+    fun todayTasks(tasks: List<TaskUi>): List<TaskUi> {
+        val today = LocalDate.now()
+
+        return tasks.filter { task ->
+            val taskDate = Instant.ofEpochMilli(task.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
+
+            // 1. Calculate if this task repeats or falls on today's date
+            val occursToday = when (task.repeatInterval ?: RepeatInterval.Never) {
+                RepeatInterval.Never -> taskDate == today
+                RepeatInterval.Daily -> taskDate <= today
+                RepeatInterval.Weekly -> taskDate <= today && ChronoUnit.DAYS.between(taskDate, today) % 7 == 0L
+                RepeatInterval.Monthly -> taskDate <= today && taskDate.dayOfMonth == today.dayOfMonth
+            }
+
+            // 2. Filter out if today's date exists in the deleted exceptions list
+            occursToday && !task.deletedDates.contains(today)
+        }
     }
 
-    fun upcomingTasks(tasks: List<TaskUi>) = tasks.filter {
-        val taskDate =
-            Instant.ofEpochMilli(it.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
-        taskDate.isAfter(LocalDate.now())
+    fun upcomingTasks(tasks: List<TaskUi>): List<TaskUi> {
+        val today = LocalDate.now()
+
+        return tasks.filter { task ->
+            val taskDate = Instant.ofEpochMilli(task.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
+
+            // Only capture future tasks and ensure their specific target date wasn't deleted
+            taskDate.isAfter(today) && !task.deletedDates.contains(taskDate)
+        }
     }
 }
 

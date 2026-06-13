@@ -75,7 +75,7 @@ class PetViewModel @Inject constructor(
                 }
 
                 val taskFlows = pets.map { pet ->
-                    appUseCases.getTasksById(pet.id)
+                    appUseCases.getPetTasks(pet.id)
                         .map { tasks ->
                             val now = System.currentTimeMillis()
 

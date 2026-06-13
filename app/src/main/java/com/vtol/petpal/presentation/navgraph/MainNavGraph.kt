@@ -96,7 +96,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                     }
                 },
                 onEditClick = { id ->
-                    navController.navigate(Routes.EditPetScreen.createRoute(id)){
+                    navController.navigate(Routes.EditPetScreen.createRoute(id)) {
                         launchSingleTop = false
                     }
                 }
@@ -105,7 +105,13 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         composable(Routes.CalenderScreen.route) {
             val calendarViewModel: CalenderViewModel = hiltViewModel()
             val state = calendarViewModel.state.collectAsState()
-            CalenderScreen(state = state.value)
+            CalenderScreen(
+                state = state.value,
+                onDeleteAll = { id -> calendarViewModel.deleteTask(id) },
+                onDeleteThis = { task, date ->
+                    calendarViewModel.deleteSpecificOccurrence(task, date)
+                }
+            )
         }
         composable(
 //                enterTransition = { slideInHorizontally(animationSpec = tween(400)) },

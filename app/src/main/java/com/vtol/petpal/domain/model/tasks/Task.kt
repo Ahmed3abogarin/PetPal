@@ -2,6 +2,7 @@ package com.vtol.petpal.domain.model.tasks
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 @Entity(tableName = "pet_tasks")
 data class Task(
@@ -11,6 +12,7 @@ data class Task(
     val note: String?,
     val type: TaskType,
     val dateTime: Long,
+    val deletedDates: List<LocalDate> = emptyList(),
     val isCompleted: Boolean = false,
     val repeatInterval: RepeatInterval? = null,
     val details: String? = null,

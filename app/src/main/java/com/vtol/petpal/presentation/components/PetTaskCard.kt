@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,11 +20,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +49,7 @@ import com.vtol.petpal.domain.model.tasks.details.FoodDetails
 import com.vtol.petpal.domain.model.tasks.details.MedDetails
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.domain.model.tasks.details.WalkDetails
+import com.vtol.petpal.presentation.calender.components.DeleteTaskDialog
 import com.vtol.petpal.ui.theme.CellsBgPurple
 import com.vtol.petpal.ui.theme.LightOrange
 import com.vtol.petpal.ui.theme.LightPurple
@@ -60,8 +69,11 @@ fun PetTaskCard(
     petName: String,
     bgColor: Color = Color.White,
     showDate: Boolean = false,
-    showMore: Boolean = true
+    showMore: Boolean = true,
+    onDeleteThis: () -> Unit,
+    onDeleteAll: () -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     val (mainColor, secColor) = when (task.type) {
         TaskType.FEED -> Pair(Orange, LightOrange)
@@ -101,7 +113,7 @@ fun PetTaskCard(
         }
     }
 
-    val icon = when(task.type){
+    val icon = when (task.type) {
         TaskType.FEED -> R.drawable.ic_task_feed
         TaskType.MEDICATION -> R.drawable.ic_task_meds
         TaskType.WALK -> R.drawable.ic_task_walk
@@ -181,14 +193,45 @@ fun PetTaskCard(
                     style = MaterialTheme.typography.labelSmall
                 )
             }
-            if (showMore){
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null
-                )
+            if (showMore) {
+                var expanded by remember { mutableStateOf(false) }
+
+                Box {
+                    Icon(
+                        modifier = Modifier
+                            .clickable { expanded = true }
+                            .size(20.dp),
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = null
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Delete") },
+                            onClick = {
+                                expanded = false
+                                showDeleteDialog = true
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Default.Delete, contentDescription = null)
+                            }
+                        )
+                    }
+                }
+
             }
         }
+    }
+
+    if (showDeleteDialog) {
+        DeleteTaskDialog(
+            isRecurring = true,
+            onDismiss = { showDeleteDialog = false },
+            onDeleteAll = onDeleteAll,
+            onDeleteThis = onDeleteThis
+        )
     }
 }
 
@@ -209,7 +252,9 @@ fun MyPreviewPet() {
                 details = VetDetails("Clinic 1", "Just checking in"),
                 syncStatus = SyncStatus.SYNCED
             ),
-            petName = "gsdg"
+            petName = "gsdg",
+            onDeleteAll = {},
+            onDeleteThis = {}
         )
 
     }
