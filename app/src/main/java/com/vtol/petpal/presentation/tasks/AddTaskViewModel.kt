@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.vtol.petpal.data.notification.NotificationPermissionManager
+import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
 import com.vtol.petpal.domain.model.tasks.Task
@@ -13,12 +14,14 @@ import com.vtol.petpal.domain.model.tasks.details.FoodDetails
 import com.vtol.petpal.domain.model.tasks.details.MedDetails
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.domain.model.tasks.details.WalkDetails
+import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -81,6 +84,8 @@ data class AddTaskState(
 class AddTaskViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val permissionManager: NotificationPermissionManager,
+    private val settingsRepository: SettingsRepository,
+    private val syncScheduler: SyncScheduler,
     savedStateHandle: SavedStateHandle,
     private val gson: Gson
 ) : ViewModel() {
@@ -229,6 +234,9 @@ class AddTaskViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 appUseCases.insertTask(task, state.value.selectedPet?.petName ?: "your pet")
+                if (settingsRepository.isCloudSyncEnabled().first()) {
+                    syncScheduler.scheduleSync() // then trigger background sync
+                }
                 pendingTask = null
                 _state.update { it.copy(isLoading = false) }
                 _uiEffect.send(AddTaskUiEffect.NavigateUp)

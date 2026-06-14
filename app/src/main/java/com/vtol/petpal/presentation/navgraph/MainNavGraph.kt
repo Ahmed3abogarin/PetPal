@@ -334,7 +334,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             val state by viewModel.state.collectAsState()
             SettingsScreen(
                 state = state,
-                onToggleNotification = { viewModel.toggleNotification(it) },
+                event = viewModel::onEvent,
                 navigateToRestorePurchases = { navController.navigate(Routes.RestorePurchasesScreen.route) },
                 navigateUp = { navController.navigateUp() }
             )

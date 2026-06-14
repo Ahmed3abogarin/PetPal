@@ -9,6 +9,7 @@ import com.vtol.petpal.data.mapper.toTaskModel
 import com.vtol.petpal.data.mapper.toUiModel
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
+import com.vtol.petpal.domain.model.tasks.SyncStatus
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.TaskUi
@@ -200,6 +201,12 @@ class AppRepositoryImpl @Inject constructor(
         tasksDao.getPetTasks(petId).map { entities ->
             entities.map { entity -> entity.toUiModel(gson) }
         }
+
+    override suspend fun getPendingSyncTasks(): List<Task> =
+        tasksDao.getPendingSyncTasks() // no mapping needed
+
+    override suspend fun updateSyncStatus(taskId: Long, status: SyncStatus) =
+        tasksDao.updateSyncStatus(taskId, status.name)
 
     override suspend fun getTaskById(taskId: Long): Task? {
         return tasksDao.getTaskById(taskId)

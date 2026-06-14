@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
+import com.vtol.petpal.presentation.profile.components.CloudSyncButton
 import com.vtol.petpal.presentation.profile.components.SettingsButton
 import com.vtol.petpal.presentation.profile.settings.components.LanguageBottomSheet
 import com.vtol.petpal.presentation.profile.settings.components.NotificationsBottomSheet
@@ -47,7 +48,7 @@ import com.vtol.petpal.util.showToast
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     state: SettingsUiState,
-    onToggleNotification: (Boolean) -> Unit,
+    event: (SettingsEvent) -> Unit,
     navigateToRestorePurchases: () -> Unit,
     navigateUp: () -> Unit
 ) {
@@ -123,6 +124,19 @@ fun SettingsScreen(
                 icon = R.drawable.ic_restore
             ) { navigateToRestorePurchases() }
 
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                color = MainPurple.copy(0.3f),
+                thickness = 0.2.dp
+            )
+
+            CloudSyncButton(isEnabled = state.isSyncEnabled) {
+                event(
+                    SettingsEvent.OnToggleSyncUp(it)
+                )
+            }
+
         }
 
         Spacer(modifier = Modifier.height(18.dp))
@@ -192,7 +206,7 @@ fun SettingsScreen(
         NotificationsBottomSheet(
             isEnabled = state.isNotificationEnabled,
             onDismiss = { showNotificationSheet = false },
-            onToggle = { onToggleNotification(it) }
+            onToggle = { event(SettingsEvent.OnToggleNotification(it)) }
         )
     }
 
@@ -206,6 +220,10 @@ fun SettingsScreen(
 @Composable
 fun SettingsPreview() {
     PetPalTheme {
-        SettingsScreen(state = SettingsUiState(), onToggleNotification = {}, navigateToRestorePurchases = {}) {}
+        SettingsScreen(
+            state = SettingsUiState(),
+            event = {},
+            navigateToRestorePurchases = {}
+        ) {}
     }
 }

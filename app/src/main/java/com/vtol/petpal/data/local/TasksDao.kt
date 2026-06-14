@@ -35,5 +35,11 @@ interface TasksDao {
     @Query("SELECT * FROM pet_tasks WHERE type = :type ORDER BY dateTime ASC")
     fun getSpecificTasks(type: TaskType): Flow<List<Task>>
 
+    @Query("SELECT * FROM pet_tasks WHERE syncStatus IN ('PENDING', 'MODIFIED')")
+    suspend fun getPendingSyncTasks(): List<Task>
+
+    @Query("UPDATE pet_tasks SET syncStatus = :status WHERE id = :taskId")
+    suspend fun updateSyncStatus(taskId: Long, status: String)
+
     //  @Query("SELECT * FROM pet_tasks WHERE petId = :petId ORDER BY dateTime ASC")
 }

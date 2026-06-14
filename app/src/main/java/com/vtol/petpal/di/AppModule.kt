@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,9 +25,11 @@ import com.vtol.petpal.data.repository.EmergencyRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.NotificationRepositoryImpl
+import com.vtol.petpal.data.repository.SettingsRepositoryImpl
 import com.vtol.petpal.data.repository.UpdateRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.data.util.ImageCompressorImpl
+import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
@@ -34,6 +37,7 @@ import com.vtol.petpal.domain.repository.EmergencyRepository
 import com.vtol.petpal.domain.repository.FeedbackRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.repository.NotificationRepository
+import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.repository.UpdateRepository
 import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.domain.usecases.AddPet
@@ -318,4 +322,29 @@ object AppModule {
             addContact = AddContact(repository),
             updateContact = UpdateContact(repository)
         )
+
+
+    @Provides
+    @Singleton
+    fun provideCloudRepository(
+        firestore: FirebaseFirestore
+    ): com.vtol.petpal.data.remote.CloudRepository = com.vtol.petpal.data.repository.CloudRepositoryImpl(firestore)
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
+        WorkManager.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun provideSyncScheduler(workManager: WorkManager): SyncScheduler =
+        SyncScheduler(workManager)
+
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(
+        dataStore: DataStore<Preferences>
+    ): SettingsRepository =
+        SettingsRepositoryImpl(dataStore)
 }

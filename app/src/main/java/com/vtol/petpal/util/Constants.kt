@@ -9,6 +9,8 @@ object Constants {
     const val WEIGHT_COLLECTION = "Weight"
     const val FEEDBACK_COLLECTION = "Feedback"
 
+    const val TASKS_COLLECTION = "tasks"
+
     const val EMERGENCY_COLLECTION = "EmergencyContacts"
     const val MIN_REQUIRED_VERSION = "min_required_version"
     const val LATEST_VERSION = "latest_version"

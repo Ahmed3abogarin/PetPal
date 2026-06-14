@@ -2,6 +2,7 @@ package com.vtol.petpal.domain.repository
 
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.WeightRecord
+import com.vtol.petpal.domain.model.tasks.SyncStatus
 import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.TaskUi
@@ -24,6 +25,9 @@ interface AppRepository {
     fun getAllTasks(): Flow<List<TaskUi>>
 
     fun getPetTasks(petId: String): Flow<List<TaskUi>>
+
+    suspend fun getPendingSyncTasks(): List<Task>
+    suspend fun updateSyncStatus(taskId: Long, status: SyncStatus)
 
     suspend fun getTaskById(taskId: Long): Task?
 

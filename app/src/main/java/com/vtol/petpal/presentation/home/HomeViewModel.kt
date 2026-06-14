@@ -2,10 +2,12 @@ package com.vtol.petpal.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval // <-- Added Import
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.model.user.User
+import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -26,6 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
+    private val settingsRepository: SettingsRepository,
+    private val syncScheduler: SyncScheduler
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
@@ -34,6 +39,10 @@ class HomeViewModel @Inject constructor(
     init {
         observeHomeData()
         getUser()
+        viewModelScope.launch {
+            val isEnabled = settingsRepository.isCloudSyncEnabled().first()
+            if (isEnabled) syncScheduler.scheduleSync()
+        }
     }
 
     private fun observeHomeData() {
