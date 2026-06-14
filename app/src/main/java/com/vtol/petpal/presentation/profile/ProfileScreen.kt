@@ -66,6 +66,7 @@ import com.vtol.petpal.ui.theme.Red
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.ShareManager.openWebsite
 import com.vtol.petpal.util.ShareManager.shareApp
+import com.vtol.petpal.util.showToast
 import com.yalantis.ucrop.UCrop
 import java.io.File
 
@@ -270,7 +271,7 @@ fun ProfileScreen(
                 doneTasks = doneTasks
             )
         }
-        PremiumButton(modifier = Modifier.padding(horizontal = 16.dp)) {}
+        PremiumButton(modifier = Modifier.padding(horizontal = 16.dp)) { context.showToast("Will be available soon") }
         Spacer(modifier = Modifier.height(16.dp))
 
 

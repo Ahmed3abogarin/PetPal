@@ -41,6 +41,7 @@ import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.getVersionName
+import com.vtol.petpal.util.showToast
 
 @Composable
 fun SettingsScreen(
@@ -108,7 +109,7 @@ fun SettingsScreen(
                 description = "Unlock exclusive features",
                 bgColor = Color(0XFFFFF4DE),
                 icon = R.drawable.ic_crown
-            ) {}
+            ) { context.showToast() }
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(),
