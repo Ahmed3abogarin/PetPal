@@ -20,16 +20,16 @@ interface AppRepository {
 
     suspend fun insertTask(task: Task): Long
     suspend fun updateTask(task: TaskUi)
-    suspend fun deleteTask(taskId: Long)
+    suspend fun deleteTask(taskId: String)
 
     fun getAllTasks(): Flow<List<TaskUi>>
 
     fun getPetTasks(petId: String): Flow<List<TaskUi>>
 
     suspend fun getPendingSyncTasks(): List<Task>
-    suspend fun updateSyncStatus(taskId: Long, status: SyncStatus)
-
-    suspend fun getTaskById(taskId: Long): Task?
+    suspend fun updateSyncStatus(taskId: String, status: SyncStatus)
+    suspend fun upsertRemoteTasks(tasks: List<Task>)
+    suspend fun getTaskById(taskId: String): Task?
 
     suspend fun addWeight(petId: String,weightRecord: WeightRecord)
 

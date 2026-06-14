@@ -249,7 +249,7 @@ fun PrelistRange() {
 
             VetItem(
                 task = TaskUi(
-                    id = 102L,
+                    id = "",
                     petId = "pet_xyz789",
                     title = "Annual Rabies Vaccine",
                     note = "Bring the medical history folder.",

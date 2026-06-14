@@ -188,7 +188,7 @@ class AppRepositoryImpl @Inject constructor(
         tasksDao.updateTask(newTask)
     }
 
-    override suspend fun deleteTask(taskId: Long) {
+    override suspend fun deleteTask(taskId: String) {
         return tasksDao.deleteTask(taskId)
     }
 
@@ -205,10 +205,14 @@ class AppRepositoryImpl @Inject constructor(
     override suspend fun getPendingSyncTasks(): List<Task> =
         tasksDao.getPendingSyncTasks() // no mapping needed
 
-    override suspend fun updateSyncStatus(taskId: Long, status: SyncStatus) =
+    override suspend fun updateSyncStatus(taskId: String, status: SyncStatus) =
         tasksDao.updateSyncStatus(taskId, status.name)
 
-    override suspend fun getTaskById(taskId: Long): Task? {
+    override suspend fun upsertRemoteTasks(tasks: List<Task>) {
+        tasksDao.upsertRemoteTasks(tasks)
+    }
+
+    override suspend fun getTaskById(taskId: String): Task? {
         return tasksDao.getTaskById(taskId)
     }
 

@@ -16,7 +16,7 @@ class InsertTask(
 
         if (notificationsEnabled) {
             notificationRepository.scheduleTaskNotification(
-                task.copy(id = insertedId),
+                task.copy(id = insertedId.toString()),
                 petName
             )
         }

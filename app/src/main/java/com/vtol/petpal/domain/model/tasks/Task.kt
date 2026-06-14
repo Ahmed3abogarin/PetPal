@@ -3,10 +3,11 @@ package com.vtol.petpal.domain.model.tasks
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
+import java.util.UUID
 
 @Entity(tableName = "pet_tasks")
 data class Task(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val petId: String,
     val title: String,
     val note: String?,

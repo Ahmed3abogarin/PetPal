@@ -7,7 +7,7 @@ class DeleteTask(
     private val appRepository: AppRepository,
     private val notificationRepository: NotificationRepository
 ) {
-    suspend operator fun invoke(taskId: Long) {
+    suspend operator fun invoke(taskId: String) {
         appRepository.deleteTask(taskId)
         notificationRepository.cancelTaskNotification(taskId)
     }

@@ -34,6 +34,8 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 @Composable
 fun CloudSyncButton(
     bgColor: Color = Color(0XFFEFE9FF),
+    textColor: Color,
+    text: String,
     isEnabled: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
@@ -72,9 +74,9 @@ fun CloudSyncButton(
                 )
 
                     Text(
-                        text = "Sync pet tasks across devices",
+                        text = text,
                         fontSize = 12.sp,
-                        color = Color.DarkGray,
+                        color = textColor,
                         fontWeight = FontWeight.Normal
                     )
             }
@@ -103,7 +105,9 @@ fun CloudSyncButton(
 fun CloudSyncButtonPreview() {
     PetPalTheme {
         CloudSyncButton(
-            isEnabled = false
+            isEnabled = false,
+            text = "",
+            textColor = Color.DarkGray
         ) { }
     }
 }

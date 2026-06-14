@@ -6,6 +6,6 @@ import com.vtol.petpal.domain.repository.AppRepository
 class GetTaskById(
     private val repository: AppRepository
 ) {
-    suspend operator fun invoke(taskId: Long): Task? =
+    suspend operator fun invoke(taskId: String): Task? =
         repository.getTaskById(taskId)
 }

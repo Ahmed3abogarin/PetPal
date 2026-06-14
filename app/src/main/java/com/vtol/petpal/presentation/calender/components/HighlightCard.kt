@@ -67,7 +67,7 @@ fun HighlightCard(
     date: LocalDate,
     petMap: Map<String, String>,
     showToast: () -> Unit,
-    onDeleteAll: (Long) -> Unit,
+    onDeleteAll: (String) -> Unit,
     onDeleteThis: (TaskUi) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -246,7 +246,7 @@ fun HighlighPrevew() {
                     isCompleted = false,
                     repeatInterval = null,
                     details = VetDetails("Clinic 1", "Just checking in"),
-                    id = 4,
+                    id = "4",
                     syncStatus = SyncStatus.SYNCED
                 )
             ),

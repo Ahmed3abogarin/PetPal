@@ -19,8 +19,10 @@ import com.google.gson.Gson
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.notification.NotificationPermissionManager
+import com.vtol.petpal.data.remote.CloudRepository
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
+import com.vtol.petpal.data.repository.CloudRepositoryImpl
 import com.vtol.petpal.data.repository.EmergencyRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
@@ -203,7 +205,7 @@ object AppModule {
             updatePet = UpdatePet(appRepository, imageCompressor),
             getPets = GetPets(appRepository),
             getPet = GetPet(appRepository),
-            insertTask = InsertTask(appRepository,notificationRepository),
+            insertTask = InsertTask(appRepository, notificationRepository),
             getTasks = GetTasks(appRepository),
             getPetTasks = GetPetTasks(appRepository),
             addWeight = AddWeight(appRepository),
@@ -251,17 +253,58 @@ object AppModule {
     fun provideTasksDB(application: Application): TasksDB {
         val migration12 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // Room expects a TEXT column because our converter turns the List into a String.
-                // We set a default empty string so existing rows don't break.
                 db.execSQL("ALTER TABLE pet_tasks ADD COLUMN deletedDates TEXT NOT NULL DEFAULT ''")
             }
         }
+
+        // NEW: Migration to handle changing Primary Key from INTEGER to TEXT
+        val migration56 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // 1. Create a temporary table with the exact new schema (id is now TEXT)
+                // Double-check your other columns against your 6.json schema file to match types perfectly!
+                db.execSQL(
+                    """
+                CREATE TABLE IF NOT EXISTS pet_tasks_new (
+                    id TEXT NOT NULL PRIMARY KEY, 
+                    petId TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    note TEXT,
+                    type TEXT NOT NULL,
+                    dateTime INTEGER NOT NULL,
+                    deletedDates TEXT NOT NULL,
+                    isCompleted INTEGER NOT NULL,
+                    repeatInterval TEXT,
+                    details TEXT,
+                    syncStatus TEXT NOT NULL
+                )
+            """.trimIndent()
+                )
+
+                // 2. Copy the data from the old table to the new table.
+                // CAST(id AS TEXT) safely converts old numerical IDs (like 1, 2, 3) into Strings ("1", "2", "3")
+                db.execSQL(
+                    """
+                INSERT INTO pet_tasks_new (id, petId, title, note, type, dateTime, deletedDates, isCompleted, repeatInterval, details, syncStatus)
+                SELECT CAST(id AS TEXT), petId, title, note, type, dateTime, deletedDates, isCompleted, repeatInterval, details, syncStatus 
+                FROM pet_tasks
+            """.trimIndent()
+                )
+
+                // 3. Drop the old table
+                db.execSQL("DROP TABLE pet_tasks")
+
+                // 4. Rename the temporary table to the official production table name
+                db.execSQL("ALTER TABLE pet_tasks_new RENAME TO pet_tasks")
+            }
+        }
+
         return Room.databaseBuilder(
             context = application,
             klass = TasksDB::class.java,
             name = "tasks_DB"
-        ).fallbackToDestructiveMigration(true)
-            .addMigrations(migration12)
+        )
+            .fallbackToDestructiveMigration(true) // Keeps safety net active
+            .addMigrations(migration12, migration56) // <-- Add the new migration step here
             .build()
     }
 
@@ -288,7 +331,7 @@ object AppModule {
     fun provideNotificationRepository(
         @ApplicationContext ctx: Context,
         dataStore: DataStore<Preferences>
-    ): NotificationRepository = NotificationRepositoryImpl(ctx,dataStore)
+    ): NotificationRepository = NotificationRepositoryImpl(ctx, dataStore)
 
 
     @Provides
@@ -327,8 +370,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideCloudRepository(
-        firestore: FirebaseFirestore
-    ): com.vtol.petpal.data.remote.CloudRepository = com.vtol.petpal.data.repository.CloudRepositoryImpl(firestore)
+        firestore: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): CloudRepository =
+        CloudRepositoryImpl(firestore, auth)
 
     @Provides
     @Singleton

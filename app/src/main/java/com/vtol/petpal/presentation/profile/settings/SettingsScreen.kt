@@ -131,10 +131,19 @@ fun SettingsScreen(
                 thickness = 0.2.dp
             )
 
-            CloudSyncButton(isEnabled = state.isSyncEnabled) {
-                event(
-                    SettingsEvent.OnToggleSyncUp(it)
-                )
+            val (txt, txtColor) = when {
+                state.isRestoring -> "Restoring tasks..." to MaterialTheme.colorScheme.onSurfaceVariant
+                state.error != null -> state.error to MaterialTheme.colorScheme.error
+                state.restoredCount != null -> "Restored ${state.restoredCount} tasks" to MaterialTheme.colorScheme.primary
+                else -> "Sync pet tasks across devices" to MaterialTheme.colorScheme.onSurfaceVariant
+            }
+
+            CloudSyncButton(
+                isEnabled = state.isSyncEnabled,
+                text = txt,
+                textColor = txtColor
+            ) {
+                event(SettingsEvent.OnToggleSyncUp(it))
             }
 
         }

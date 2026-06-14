@@ -35,7 +35,7 @@ object NotificationHelper {
             .createNotificationChannel(channel)
     }
 
-    fun showNotification(context: Context, taskId: Long, title: String, message: String) {
+    fun showNotification(context: Context, taskId: String, title: String, message: String) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_pets_filled)
             .setContentTitle(title)

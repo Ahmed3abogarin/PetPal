@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.tasks.RestoreTasksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,8 +20,10 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val useCases: AppUseCases,
     private val repository: SettingsRepository,
-    private val syncScheduler: SyncScheduler
+    private val syncScheduler: SyncScheduler,
+    private val restoreTasksUseCase: RestoreTasksUseCase,
 ) : ViewModel() {
+
     private val _state = MutableStateFlow(SettingsUiState())
     val state = _state.asStateFlow()
 
@@ -40,8 +43,8 @@ class SettingsViewModel @Inject constructor(
         repository.isCloudSyncEnabled()
             .onEach { enabled ->
                 _state.update { it.copy(isSyncEnabled = enabled) }
-
-            }.catch { e ->
+            }
+            .catch { e ->
                 _state.update { it.copy(error = e.message) }
             }
             .launchIn(viewModelScope)
@@ -51,23 +54,39 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             repository.setCloudSyncEnabled(enabled)
 
-            if (enabled) syncScheduler.scheduleSync()
-            else syncScheduler.cancelSync()
+            if (enabled) {
+                restoreTasks()
+                syncScheduler.scheduleSync()
+            } else {
+                syncScheduler.cancelSync()
+            }
         }
     }
 
-    fun isNotificationEnabled() {
+    private suspend fun restoreTasks() {
+        _state.update { it.copy(isRestoring = true, error = null) }
+
+        restoreTasksUseCase()
+            .onSuccess { count ->
+                _state.update { it.copy(isRestoring = false, restoredCount = count) }
+            }
+            .onFailure { e ->
+                _state.update { it.copy(isRestoring = false, error = e.message) }
+            }
+    }
+
+    private fun isNotificationEnabled() {
         useCases.getNotificationStatus()
             .onEach { enabled ->
                 _state.update { it.copy(isNotificationEnabled = enabled) }
-
             }
             .catch { e ->
                 _state.update { it.copy(error = e.message) }
-            }.launchIn(viewModelScope)
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun toggleNotification(enabled: Boolean) {
+    private fun toggleNotification(enabled: Boolean) {
         viewModelScope.launch {
             useCases.toggleNotification(enabled)
         }
@@ -77,5 +96,7 @@ class SettingsViewModel @Inject constructor(
 data class SettingsUiState(
     val isNotificationEnabled: Boolean = true,
     val isSyncEnabled: Boolean = false,
+    val isRestoring: Boolean = false,
+    val restoredCount: Int? = null,
     val error: String? = null
 )

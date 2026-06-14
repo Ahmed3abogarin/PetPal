@@ -38,8 +38,10 @@ class NotificationRepositoryImpl(
             putExtra("pet_name", petName)
         }
 
+        val requestCode = task.id.hashCode()
+
         val pendingIntent = PendingIntent.getBroadcast(
-            context, task.id.toInt(), intent,
+            context, requestCode, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
@@ -50,12 +52,20 @@ class NotificationRepositoryImpl(
         )
     }
 
-    override fun cancelTaskNotification(taskId: Long) {
+    override fun cancelTaskNotification(taskId: String) {
         val intent = Intent(context, TaskAlarmReceiver::class.java)
+
+        // Convert the String UUID into a unique, stable Int request code
+        val requestCode = taskId.hashCode()
+
         val pendingIntent = PendingIntent.getBroadcast(
-            context, taskId.toInt(), intent,
+            context,
+            requestCode, // Fixed: Passing the Int instead of the String
+            intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
         alarmManager.cancel(pendingIntent)
+        pendingIntent.cancel() // Clean up the PendingIntent from the system OS memory too
     }
 }

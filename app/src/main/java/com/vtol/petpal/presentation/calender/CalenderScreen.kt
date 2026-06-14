@@ -51,7 +51,7 @@ import java.time.YearMonth
 fun CalenderScreen(
     modifier: Modifier = Modifier,
     state: CalendarState,
-    onDeleteAll: (Long) -> Unit,
+    onDeleteAll: (String) -> Unit,
     onDeleteThis: (TaskUi, LocalDate) -> Unit
 ) {
 

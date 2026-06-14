@@ -126,7 +126,7 @@ class CalenderViewModel @Inject constructor(
     }
 
     // Option 1: User chose "Delete All Occurrences"
-    fun deleteTask(taskId: Long) {
+    fun deleteTask(taskId: String) {
         viewModelScope.launch {
             appUseCases.deleteTask(taskId)
         }

@@ -248,7 +248,7 @@ fun MyPreviewPet() {
                 dateTime = System.currentTimeMillis(),
                 isCompleted = false,
                 repeatInterval = null,
-                id = 3L,
+                id = "",
                 details = VetDetails("Clinic 1", "Just checking in"),
                 syncStatus = SyncStatus.SYNCED
             ),

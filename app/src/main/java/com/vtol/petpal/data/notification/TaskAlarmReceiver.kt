@@ -27,7 +27,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         // goAsync() keeps the Receiver alive while Coroutines do background database work
         val pendingResult = goAsync()
 
-        val id = intent.getLongExtra("task_id", 0L)
+        val id = intent.getStringExtra("task_id") ?: ""
         val name = intent.getStringExtra("pet_name") ?: "your pet"
         val repeat = intent.getStringExtra("repeat_interval") ?: "Never"
         val type = intent.getStringExtra("task_type") ?: "Unknown"

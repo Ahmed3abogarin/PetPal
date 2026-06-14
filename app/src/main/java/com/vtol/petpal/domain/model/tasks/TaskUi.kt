@@ -4,7 +4,7 @@ import com.vtol.petpal.domain.model.tasks.details.TaskDetails
 import java.time.LocalDate
 
 data class TaskUi(
-    val id: Long,
+    val id: String,
     val petId: String,
     val title: String,
     val note: String?,
