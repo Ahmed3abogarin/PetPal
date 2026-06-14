@@ -196,8 +196,8 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 onAddWeightClicked = {
                     petDetailsVM.addWeight(state.pet?.id, it)
                 },
-                onAddTaskClick = {
-                    navController.navigate(Routes.AddTaskScreen.createRoute())
+                onAddTaskClick = { id ->
+                    navController.navigate(Routes.AddTaskScreen.createRoute(id))
                 },
                 onRangeChanged = {
                     petDetailsVM.updateWeightFilter(it)

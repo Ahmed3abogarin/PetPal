@@ -64,7 +64,7 @@ fun PetDetailsScreen(
     navigateUp: () -> Unit,
     onRangeChanged: (WeightRange) -> Unit,
     onAddWeightClicked: (WeightRecord) -> Unit,
-    onAddTaskClick: () -> Unit,
+    onAddTaskClick: (String) -> Unit,
     navigateToEdit: (String) -> Unit
 ) {
 
@@ -230,7 +230,7 @@ fun PetDetailsScreen(
                     0 -> OverviewTab(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         state = state,
-                        onAddTaskClick = onAddTaskClick,
+                        onAddTaskClick = { onAddTaskClick(pet.id) },
                     )
 
                     1 -> HealthTab(
