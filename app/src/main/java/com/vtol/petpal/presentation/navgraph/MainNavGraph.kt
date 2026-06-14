@@ -38,6 +38,8 @@ import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.pets.edit.EditPetScreen
 import com.vtol.petpal.presentation.pets.edit.EditPetViewModel
 import com.vtol.petpal.presentation.pets.edit.EditUiEffect
+import com.vtol.petpal.presentation.premium.PremiumScreen
+import com.vtol.petpal.presentation.premium.PremiumViewModel
 import com.vtol.petpal.presentation.premium.RestorePurchasesScreen
 import com.vtol.petpal.presentation.profile.FeedbackScreen
 import com.vtol.petpal.presentation.profile.ProfileScreen
@@ -150,6 +152,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 },
                 navigateToEmergency = {
                     navController.navigate(Routes.EmergencyScreen.route)
+                },
+                navigateToPremium = {
+                    navController.navigate(Routes.PremiumScreen.route)
                 }
             )
         }
@@ -413,6 +418,22 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             route = Routes.RestorePurchasesScreen.route
         ) {
             RestorePurchasesScreen { navController.navigateUp() }
+        }
+        composable(
+            route = Routes.PremiumScreen.route,
+            exitTransition = { slideOutVertically(targetOffsetY = { it }) },
+            enterTransition = { slideInVertically(initialOffsetY = { it }) }
+        ){
+            val viewModel: PremiumViewModel = hiltViewModel()
+
+            val state by viewModel.state.collectAsState()
+            PremiumScreen(
+                state = state,
+                onEvent = viewModel::onEvent
+            ) {
+                navController.navigateUp()
+            }
+
         }
     }
 }

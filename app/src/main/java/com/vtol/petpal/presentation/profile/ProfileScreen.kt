@@ -66,7 +66,6 @@ import com.vtol.petpal.ui.theme.Red
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.ShareManager.openWebsite
 import com.vtol.petpal.util.ShareManager.shareApp
-import com.vtol.petpal.util.showToast
 import com.yalantis.ucrop.UCrop
 import java.io.File
 
@@ -79,6 +78,7 @@ fun ProfileScreen(
     navigateToEdit: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateToEmergency: () -> Unit,
+    navigateToPremium: () -> Unit,
     event: (ProfileEvents) -> Unit
 ) {
     val context = LocalContext.current
@@ -271,7 +271,7 @@ fun ProfileScreen(
                 doneTasks = doneTasks
             )
         }
-        PremiumButton(modifier = Modifier.padding(horizontal = 16.dp)) { context.showToast("Will be available soon") }
+        PremiumButton(modifier = Modifier.padding(horizontal = 16.dp)) { navigateToPremium() }
         Spacer(modifier = Modifier.height(16.dp))
 
 
@@ -402,7 +402,8 @@ fun SettingsButtonPreview() {
             navigateToFeedBack = {},
             navigateToEdit = {},
             navigateToSettings = {},
-            navigateToEmergency = {}
+            navigateToEmergency = {},
+            navigateToPremium = {}
         )
     }
 }

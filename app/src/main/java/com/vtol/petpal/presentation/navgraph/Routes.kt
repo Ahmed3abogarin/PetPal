@@ -40,6 +40,7 @@ sealed class Routes(val route: String) {
     data object SettingsScreen: Routes("settingsScreen")
     data object EmergencyScreen: Routes("emergencyScreen")
     data object RestorePurchasesScreen: Routes("restorePurchasesScreen")
+    data object PremiumScreen: Routes("premiumScreen")
 
 
     data object MainGraph: Routes("mainGraph")

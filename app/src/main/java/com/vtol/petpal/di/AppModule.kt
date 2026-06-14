@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
+import com.vtol.petpal.data.billing.BillingManager
 import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.notification.NotificationPermissionManager
@@ -27,6 +28,7 @@ import com.vtol.petpal.data.repository.EmergencyRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.NotificationRepositoryImpl
+import com.vtol.petpal.data.repository.PremiumRepositoryImpl
 import com.vtol.petpal.data.repository.SettingsRepositoryImpl
 import com.vtol.petpal.data.repository.UpdateRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
@@ -39,6 +41,7 @@ import com.vtol.petpal.domain.repository.EmergencyRepository
 import com.vtol.petpal.domain.repository.FeedbackRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.repository.NotificationRepository
+import com.vtol.petpal.domain.repository.PremiumRepository
 import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.repository.UpdateRepository
 import com.vtol.petpal.domain.repository.UserRepository
@@ -379,6 +382,19 @@ object AppModule {
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
         WorkManager.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun provideBillingManager(
+        @ApplicationContext context: Context,
+        premiumRepository: PremiumRepositoryImpl
+    ): BillingManager = BillingManager(context, premiumRepository)
+
+    @Provides
+    @Singleton
+    fun providePremiumRepository(
+        dataStore: DataStore<Preferences>
+    ): PremiumRepository = PremiumRepositoryImpl(dataStore)
 
     @Provides
     @Singleton
