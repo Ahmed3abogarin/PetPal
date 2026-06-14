@@ -7,6 +7,7 @@ import com.vtol.petpal.domain.model.tasks.RepeatInterval // <-- Added Import
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,9 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
@@ -95,15 +94,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // --- UPDATED FILTERING LOGIC ---
+    // --- PRODUCTION READY FILTERING LOGIC ---
 
     fun todayTasks(tasks: List<TaskUi>): List<TaskUi> {
         val today = LocalDate.now()
 
         return tasks.filter { task ->
-            val taskDate = Instant.ofEpochMilli(task.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
+            // Use your utility extension to ensure identical timezone parsing across screens
+            val taskDate = task.dateTime.toLocalDate()
 
-            // 1. Calculate if this task repeats or falls on today's date
             val occursToday = when (task.repeatInterval ?: RepeatInterval.Never) {
                 RepeatInterval.Never -> taskDate == today
                 RepeatInterval.Daily -> taskDate <= today
@@ -111,19 +110,38 @@ class HomeViewModel @Inject constructor(
                 RepeatInterval.Monthly -> taskDate <= today && taskDate.dayOfMonth == today.dayOfMonth
             }
 
-            // 2. Filter out if today's date exists in the deleted exceptions list
             occursToday && !task.deletedDates.contains(today)
         }
     }
 
     fun upcomingTasks(tasks: List<TaskUi>): List<TaskUi> {
         val today = LocalDate.now()
+        // Define a visible window for "Upcoming" on the Home Screen (e.g., the next 7 days)
+        val upcomingWindowEnd = today.plusDays(7)
 
         return tasks.filter { task ->
-            val taskDate = Instant.ofEpochMilli(task.dateTime).atZone(ZoneId.systemDefault()).toLocalDate()
+            val taskDate = task.dateTime.toLocalDate()
 
-            // Only capture future tasks and ensure their specific target date wasn't deleted
-            taskDate.isAfter(today) && !task.deletedDates.contains(taskDate)
+            // Check if this task hits ANY valid repeating day in the next 7 days
+            var hasUpcomingOccurrence = false
+            var checkDate = today.plusDays(1)
+
+            while (checkDate <= upcomingWindowEnd) {
+                val occursOnCheckDate = when (task.repeatInterval ?: RepeatInterval.Never) {
+                    RepeatInterval.Never -> taskDate == checkDate
+                    RepeatInterval.Daily -> taskDate <= checkDate
+                    RepeatInterval.Weekly -> taskDate <= checkDate && ChronoUnit.DAYS.between(taskDate, checkDate) % 7 == 0L
+                    RepeatInterval.Monthly -> taskDate <= checkDate && taskDate.dayOfMonth == checkDate.dayOfMonth
+                }
+
+                if (occursOnCheckDate && !task.deletedDates.contains(checkDate)) {
+                    hasUpcomingOccurrence = true
+                    break // Found one! No need to keep looping for this task
+                }
+                checkDate = checkDate.plusDays(1)
+            }
+
+            hasUpcomingOccurrence
         }
     }
 }
