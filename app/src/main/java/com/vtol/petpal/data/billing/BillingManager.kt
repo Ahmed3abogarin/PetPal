@@ -18,14 +18,16 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
 
 @Singleton
 class BillingManager @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val premiumRepository: PremiumRepositoryImpl
 ) {
     private val billingClient = BillingClient.newBuilder(context)
@@ -71,15 +73,18 @@ class BillingManager @Inject constructor(
 
     suspend fun launchPurchaseFlow(activity: Activity, plan: PremiumPlan): Result<Unit> {
         return try {
+            if (!billingClient.isReady) {
+                val connected = connectIfNeeded()
+                if (!connected) return Result.failure(Exception("Billing service unavailable"))
+            }
+
             val productId = when (plan) {
                 PremiumPlan.MONTHLY -> "premium_monthly"
                 PremiumPlan.YEARLY -> "premium_yearly"
-                PremiumPlan.LIFETIME -> "premium_lifetime"
             }
 
             val productType = when (plan) {
                 PremiumPlan.MONTHLY, PremiumPlan.YEARLY -> BillingClient.ProductType.SUBS
-                PremiumPlan.LIFETIME -> BillingClient.ProductType.INAPP
             }
 
             val params = QueryProductDetailsParams.newBuilder()
@@ -124,14 +129,6 @@ class BillingManager @Inject constructor(
                         BillingFlowParams.ProductDetailsParams.newBuilder()
                             .setProductDetails(productDetails)
                             .setOfferToken(offerToken)
-                            .build()
-                    )
-                }
-
-                PremiumPlan.LIFETIME -> {
-                    listOf(
-                        BillingFlowParams.ProductDetailsParams.newBuilder()
-                            .setProductDetails(productDetails)
                             .build()
                     )
                 }
@@ -204,6 +201,19 @@ class BillingManager @Inject constructor(
                     }
                 }
             }
+        }
+    }
+    private suspend fun connectIfNeeded(): Boolean {
+        return suspendCancellableCoroutine { continuation ->
+            billingClient.startConnection(object : BillingClientStateListener {
+                override fun onBillingSetupFinished(result: BillingResult) {
+                    continuation.resume(result.responseCode == BillingClient.BillingResponseCode.OK)
+                }
+
+                override fun onBillingServiceDisconnected() {
+                    continuation.resume(false)
+                }
+            })
         }
     }
 }

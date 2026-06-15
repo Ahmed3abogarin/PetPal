@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.premium
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -35,6 +37,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -46,12 +50,11 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.premium.PremiumFeature
 import com.vtol.petpal.domain.model.premium.premiumFeatures
 import com.vtol.petpal.ui.theme.BackgroundColor
+import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 
-// TODO: Redesign the ui and replace the icons
-// TODO: Configure the billing in the console
 @Composable
 fun PremiumScreen(
     state: PremiumUiState,
@@ -66,9 +69,8 @@ fun PremiumScreen(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF1A0533),
-                        Color(0xFF2D0A5C),
-                        BackgroundColor
+                        BackgroundColor,
+                        Color.White
                     )
                 )
             )
@@ -81,130 +83,170 @@ fun PremiumScreen(
                 .navigationBarsPadding()
         ) {
 
-            // Close button
-            IconButton(
-                onClick = navigateUp,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "close",
-                    tint = Color.White
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Crown icon
-            Icon(
-                painter = painterResource(R.drawable.ic_crown),
-                contentDescription = null,
-                tint = Color(0xFFFFD700),
-                modifier = Modifier
-                    .size(64.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Title
-            Text(
-                text = "Unlock PetPal Premium",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                ),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Text(
-                text = "Everything your pet deserves",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.White.copy(alpha = 0.7f)
-                ),
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 4.dp)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Features list
-            premiumFeatures.forEach { feature ->
-                PremiumFeatureRow(feature = feature)
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Plan selector
-            PlanSelector(
-                selectedPlan = state.selectedPlan,
-                onPlanSelected = { onEvent(PremiumEvent.PlanSelected(it)) }
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // CTA Button
-            Button(
-                onClick = {
-                    activity?.let {
-                        onEvent(PremiumEvent.PurchaseClicked(it))
-                    }
-                },
-                enabled = !state.isPurchasing,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MainPurple
-                )
+                    .padding(top = 12.dp)
             ) {
-                if (state.isPurchasing) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text(
-                        text = when (state.selectedPlan) {
-                            PremiumPlan.MONTHLY -> "Start Monthly – $4.99/mo"
-                            PremiumPlan.YEARLY -> "Start Yearly – $29.99/yr"
-                            PremiumPlan.LIFETIME -> "Get Lifetime – $79.99"
-                        },
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
+                // Close button
+                IconButton(
+                    onClick = navigateUp,
+                    colors = IconButtonDefaults.iconButtonColors(containerColor = Color.White),
+                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "close",
+                        tint = Color.Black
                     )
                 }
+
+                // Crown icon
+                Image(
+                    painter = painterResource(R.drawable.img_premium),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .width(184.dp)
+                        .padding(top = 22.dp)
+                )
+
+
             }
 
-            // Error
-            state.error?.let {
+
+            Column(
+                modifier = Modifier
+                    .shadow(2.dp,RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .background(Color.White)
+            ) {
+                Spacer(modifier = Modifier.height(22.dp))
+
+                // Title
+                Row(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_crown),
+                        contentDescription = null,
+                        tint = Color(0xFFFFD700),
+                        modifier = Modifier
+                            .width(34.dp)
+                    )
+                    Text(
+                        text = "Unlock PetPal Premium",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    )
+
+                }
+
+
                 Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "Everything your pet deserves",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = Color.Black.copy(alpha = 0.7f)
+                    ),
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 8.dp)
+                        .padding(top = 4.dp)
                 )
+                val period = when (state.selectedPlan) {
+                    PremiumPlan.MONTHLY -> "7"
+                    PremiumPlan.YEARLY -> "14"
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Features list
+                premiumFeatures.forEach { feature ->
+                    PremiumFeatureRow(feature = feature)
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Plan selector
+                PlanSelector(
+                    selectedPlan = state.selectedPlan,
+                    onPlanSelected = { onEvent(PremiumEvent.PlanSelected(it)) }
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "\uD83C\uDF89 $period-Day Free Trial",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = Color.Black.copy(alpha = 0.7f)
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 8.dp)
+                )
+                // CTA Button
+                Button(
+                    onClick = {
+                        activity?.let {
+                            onEvent(PremiumEvent.PurchaseClicked(it))
+                        }
+                    },
+                    enabled = !state.isPurchasing,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MainPurple
+                    )
+                ) {
+                    if (state.isPurchasing) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = when (state.selectedPlan) {
+                                PremiumPlan.MONTHLY -> "Start Monthly – $4.99/mo"
+                                PremiumPlan.YEARLY -> "Start Yearly – $29.99/yr"
+                            },
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
+                // Error
+                state.error?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 8.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Fine print
+                Text(
+                    text = "Cancel anytime • Secure payment via Google Play",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color.White.copy(alpha = 0.4f)
+                    ),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Fine print
-            Text(
-                text = "Cancel anytime • Secure payment via Google Play",
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.White.copy(alpha = 0.4f)
-                ),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -229,7 +271,7 @@ fun PremiumFeatureRow(feature: PremiumFeature) {
             Icon(
                 painter = painterResource(feature.icon),
                 contentDescription = null,
-                tint = Color(0xFFFFD700),
+                tint = MainPurple,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -241,13 +283,13 @@ fun PremiumFeatureRow(feature: PremiumFeature) {
                 text = feature.title,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                    color = Color.Black
                 )
             )
             Text(
                 text = feature.description,
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = Color.White.copy(alpha = 0.6f)
+                    color = Color.Black
                 )
             )
         }
@@ -279,13 +321,6 @@ fun PlanSelector(
             isSelected = selectedPlan == PremiumPlan.YEARLY,
             onClick = { onPlanSelected(PremiumPlan.YEARLY) }
         )
-        PlanCard(
-            title = "Lifetime",
-            price = "$79.99 one-time",
-            badge = "Best Value",
-            isSelected = selectedPlan == PremiumPlan.LIFETIME,
-            onClick = { onPlanSelected(PremiumPlan.LIFETIME) }
-        )
     }
 }
 
@@ -297,18 +332,18 @@ fun PlanCard(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    Card (
+    Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(
             width = if (isSelected) 2.dp else 0.5.dp,
-            color = if (isSelected) MainPurple else Color.White.copy(alpha = 0.2f)
+            color = if (isSelected) MainPurple else MaterialTheme.colorScheme.outlineVariant
         ),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected)
                 MainPurple.copy(alpha = 0.2f)
             else
-                Color.White.copy(alpha = 0.05f)
+                MainPurple.copy(alpha = 0.05f)
         )
     ) {
         Row(
@@ -324,7 +359,7 @@ fun PlanCard(
                     onClick = onClick,
                     colors = RadioButtonDefaults.colors(
                         selectedColor = MainPurple,
-                        unselectedColor = Color.White.copy(alpha = 0.4f)
+                        unselectedColor = LightPurple
                     )
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -333,13 +368,13 @@ fun PlanCard(
                         text = title,
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            color = Color.Black
                         )
                     )
                     Text(
                         text = price,
                         style = MaterialTheme.typography.bodySmall.copy(
-                            color = Color.White.copy(alpha = 0.6f)
+                            color = Color.Black
                         )
                     )
                 }
@@ -370,7 +405,7 @@ fun PlanCard(
 
 @Preview
 @Composable
-fun PremiumPreview(){
+fun PremiumPreview() {
     PetPalTheme {
         PremiumScreen(
             state = PremiumUiState(),

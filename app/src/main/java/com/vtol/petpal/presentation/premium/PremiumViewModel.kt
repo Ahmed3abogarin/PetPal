@@ -19,7 +19,7 @@ data class PremiumUiState(
     val error: String? = null
 )
 
-enum class PremiumPlan { MONTHLY, YEARLY, LIFETIME }
+enum class PremiumPlan { MONTHLY, YEARLY } // LIFETIME
 
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
