@@ -21,11 +21,13 @@ import com.vtol.petpal.data.local.TasksDB
 import com.vtol.petpal.data.local.TasksDao
 import com.vtol.petpal.data.notification.NotificationPermissionManager
 import com.vtol.petpal.data.remote.CloudRepository
+import com.vtol.petpal.data.remote.GalleryRemoteDataSource
 import com.vtol.petpal.data.repository.AppRepositoryImpl
 import com.vtol.petpal.data.repository.AuthRepositoryImpl
 import com.vtol.petpal.data.repository.CloudRepositoryImpl
 import com.vtol.petpal.data.repository.EmergencyRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
+import com.vtol.petpal.data.repository.GalleryRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.NotificationRepositoryImpl
 import com.vtol.petpal.data.repository.PremiumRepositoryImpl
@@ -39,6 +41,7 @@ import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.domain.repository.EmergencyRepository
 import com.vtol.petpal.domain.repository.FeedbackRepository
+import com.vtol.petpal.domain.repository.GalleryRepository
 import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.repository.NotificationRepository
 import com.vtol.petpal.domain.repository.PremiumRepository
@@ -408,4 +411,12 @@ object AppModule {
         dataStore: DataStore<Preferences>
     ): SettingsRepository =
         SettingsRepositoryImpl(dataStore)
+
+
+    @Provides
+    @Singleton
+    fun provideGalleryRepository(
+        galleryRemoteDataSource: GalleryRemoteDataSource
+    ): GalleryRepository =
+        GalleryRepositoryImpl(galleryRemoteDataSource)
 }

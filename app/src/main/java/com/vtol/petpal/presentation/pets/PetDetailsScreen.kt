@@ -45,9 +45,11 @@ import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
 import com.vtol.petpal.presentation.components.AppIconButton
 import com.vtol.petpal.presentation.pets.components.PetShimmerEffect
-import com.vtol.petpal.presentation.pets.tabs.GalleryTab
+import com.vtol.petpal.presentation.pets.tabs.gallery.GalleryTab
 import com.vtol.petpal.presentation.pets.tabs.HealthTab
 import com.vtol.petpal.presentation.pets.tabs.OverviewTab
+import com.vtol.petpal.presentation.pets.tabs.gallery.GalleryEvent
+import com.vtol.petpal.presentation.pets.tabs.gallery.GalleryUiState
 import com.vtol.petpal.ui.theme.CellsBgPurple
 import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightPurple
@@ -61,6 +63,8 @@ import com.vtol.petpal.util.toAgeString
 fun PetDetailsScreen(
     modifier: Modifier = Modifier,
     state: DetailsState,
+    galleryUiState: GalleryUiState,
+    galleryEvent: (GalleryEvent) -> Unit,
     navigateUp: () -> Unit,
     onRangeChanged: (WeightRange) -> Unit,
     onAddWeightClicked: (WeightRecord) -> Unit,
@@ -242,7 +246,7 @@ fun PetDetailsScreen(
                         state = state
                     )
 
-                    2 -> GalleryTab(isPremium = false) { context.showToast() }
+                    2 -> GalleryTab(isPremium = true, state = galleryUiState, event = galleryEvent) { context.showToast() }
                 }
             }
         }
@@ -260,9 +264,10 @@ fun PetDetailsScreen(
 @Composable
 fun PetScreenPreview() {
     PetPalTheme {
-
         PetDetailsScreen(
             state = DetailsState(),
+            galleryUiState = GalleryUiState(),
+            galleryEvent = {},
             onAddWeightClicked = {},
             navigateUp = {},
             onAddTaskClick = {},

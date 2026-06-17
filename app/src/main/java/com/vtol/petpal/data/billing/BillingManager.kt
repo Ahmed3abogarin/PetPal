@@ -171,19 +171,19 @@ class BillingManager @Inject constructor(
                 return@queryPurchasesAsync
             }
 
-            // check one-time purchases (lifetime)
-            billingClient.queryPurchasesAsync(
-                QueryPurchasesParams.newBuilder()
-                    .setProductType(BillingClient.ProductType.INAPP)
-                    .build()
-            ) { _, inAppPurchases ->
-                val hasLifetime = inAppPurchases.any {
-                    it.purchaseState == Purchase.PurchaseState.PURCHASED
-                }
-                CoroutineScope(Dispatchers.IO).launch {
-                    premiumRepository.setPremium(hasLifetime)
-                }
-            }
+//            // check one-time purchases (lifetime)
+//            billingClient.queryPurchasesAsync(
+//                QueryPurchasesParams.newBuilder()
+//                    .setProductType(BillingClient.ProductType.INAPP)
+//                    .build()
+//            ) { _, inAppPurchases ->
+//                val hasLifetime = inAppPurchases.any {
+//                    it.purchaseState == Purchase.PurchaseState.PURCHASED
+//                }
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    premiumRepository.setPremium(hasLifetime)
+//                }
+//            }
         }
     }
 

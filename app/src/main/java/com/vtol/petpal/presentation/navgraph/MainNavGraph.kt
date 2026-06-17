@@ -38,6 +38,7 @@ import com.vtol.petpal.presentation.pets.PetsScreen
 import com.vtol.petpal.presentation.pets.edit.EditPetScreen
 import com.vtol.petpal.presentation.pets.edit.EditPetViewModel
 import com.vtol.petpal.presentation.pets.edit.EditUiEffect
+import com.vtol.petpal.presentation.pets.tabs.gallery.GalleryViewModel
 import com.vtol.petpal.presentation.premium.PremiumScreen
 import com.vtol.petpal.presentation.premium.PremiumViewModel
 import com.vtol.petpal.presentation.premium.RestorePurchasesScreen
@@ -192,11 +193,16 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             arguments = listOf(navArgument("petId") { type = NavType.StringType }),
         ) {
             val petDetailsVM: PetDetailsViewModel = hiltViewModel()
+            val galleryVm: GalleryViewModel = hiltViewModel()
 
             val state by petDetailsVM.state.collectAsState()
 
+            val galleryState by galleryVm.state.collectAsState()
+
             PetDetailsScreen(
                 state = state,
+                galleryUiState = galleryState,
+                galleryEvent = galleryVm::onEvent,
                 navigateUp = { navController.navigateUp() },
                 onAddWeightClicked = {
                     petDetailsVM.addWeight(state.pet?.id, it)

@@ -16,16 +16,18 @@ import com.vtol.petpal.domain.model.tasks.details.VetDetails
 import com.vtol.petpal.domain.model.tasks.details.WalkDetails
 import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.premium.IsPremiumUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -84,8 +86,9 @@ data class AddTaskState(
 class AddTaskViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val permissionManager: NotificationPermissionManager,
-    private val settingsRepository: SettingsRepository,
     private val syncScheduler: SyncScheduler,
+    settingsRepository: SettingsRepository,
+    isPremiumUseCase: IsPremiumUseCase,
     savedStateHandle: SavedStateHandle,
     private val gson: Gson
 ) : ViewModel() {
@@ -93,6 +96,11 @@ class AddTaskViewModel @Inject constructor(
     private val _state = MutableStateFlow(AddTaskState())
     val state = _state.asStateFlow()
 
+    val _isPremium = isPremiumUseCase()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _isCloudSyncEnabled = settingsRepository.isCloudSyncEnabled()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
     private val _uiEffect = Channel<AddTaskUiEffect>()
     val uiEffect = _uiEffect.receiveAsFlow()
 
@@ -234,7 +242,7 @@ class AddTaskViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 appUseCases.insertTask(task, state.value.selectedPet?.petName ?: "your pet")
-                if (settingsRepository.isCloudSyncEnabled().first()) {
+                if (_isPremium.value && _isCloudSyncEnabled.value) {
                     syncScheduler.scheduleSync() // then trigger background sync
                 }
                 pendingTask = null

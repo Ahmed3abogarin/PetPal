@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.pets.tabs
+package com.vtol.petpal.presentation.pets.tabs.gallery
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,11 +32,15 @@ import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 
 @Composable
-fun GalleryTab(isPremium: Boolean, onUpgradeClicked: () -> Unit) {
+fun GalleryTab(
+    isPremium: Boolean,
+    state: GalleryUiState,
+    event: (GalleryEvent) -> Unit,
+    onUpgradeClicked: () -> Unit
+) {
 
     if (isPremium) {
-
-
+        GalleryContentScreen(state = state, event)
     } else {
         Box(
             modifier = Modifier
@@ -45,7 +49,7 @@ fun GalleryTab(isPremium: Boolean, onUpgradeClicked: () -> Unit) {
         ) {
             Box(
                 modifier = Modifier.blur(7.dp)
-            ){
+            ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
                     painter = painterResource(R.drawable.gallery_upgrade_img),
@@ -53,16 +57,22 @@ fun GalleryTab(isPremium: Boolean, onUpgradeClicked: () -> Unit) {
                     contentScale = ContentScale.FillBounds
                 )
                 Box(
-                    Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3f))
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.3f))
                 )
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
-                    modifier = Modifier.clip(CircleShape).background(Color.White)
-                ){
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(Color.White)
+                ) {
                     Icon(
-                        modifier = Modifier.size(92.dp).padding(24.dp),
+                        modifier = Modifier
+                            .size(92.dp)
+                            .padding(24.dp),
                         painter = painterResource(R.drawable.ic_lock_filled),
                         contentDescription = null,
                         tint = MainPurple
@@ -99,7 +109,7 @@ fun GalleryTab(isPremium: Boolean, onUpgradeClicked: () -> Unit) {
 @Composable
 fun GalleryPreview() {
     PetPalTheme {
-        GalleryTab(isPremium = false, onUpgradeClicked = {})
+        GalleryTab(isPremium = false, onUpgradeClicked = {}, event = {}, state = GalleryUiState())
 
     }
 }
