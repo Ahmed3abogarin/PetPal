@@ -1,10 +1,14 @@
 package com.vtol.petpal.presentation.register.login
 
 import android.content.Context
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import com.vtol.petpal.presentation.register.GoogleAuthUiClient
+import com.vtol.petpal.util.AnalyticsParams
 import com.vtol.petpal.util.ValidationUtils.validateEmail
 import com.vtol.petpal.util.ValidationUtils.validatePassword
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val useCases: AuthUseCases,
-    private val googleAuthUiClient: GoogleAuthUiClient
+    private val googleAuthUiClient: GoogleAuthUiClient,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -92,6 +97,11 @@ class LoginViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null) }
             useCases.signInWithFacebook(idToken)
                 .onSuccess {
+                    firebaseAnalyticsHelper.logEvent(
+                        FirebaseAnalytics.Event.LOGIN, bundleOf(
+                            AnalyticsParams.METHOD to "facebook"
+                        )
+                    )
                     _uiState.update { it.copy(isLoading = false, error = null) }
                 }
                 .onFailure { throwable ->
@@ -113,6 +123,11 @@ class LoginViewModel @Inject constructor(
 
             useCases.signInWithGoogle(token)
                 .onSuccess {
+                    firebaseAnalyticsHelper.logEvent(
+                        FirebaseAnalytics.Event.LOGIN, bundleOf(
+                            AnalyticsParams.METHOD to "google"
+                        )
+                    )
                     _uiState.update { it.copy(isLoading = false, error = null) }
                 }
                 .onFailure { throwable ->
@@ -139,14 +154,22 @@ class LoginViewModel @Inject constructor(
         }
 
         result
-            .onSuccess { _uiState.update { it.copy(error = "Welcome back") } }
+            .onSuccess {
+                firebaseAnalyticsHelper.logEvent(
+                    FirebaseAnalytics.Event.LOGIN, bundleOf(
+                        AnalyticsParams.METHOD to "email"
+                    )
+                )
+
+                _uiState.update { it.copy(error = "Welcome back") }
+            }
             .onFailure { throwable ->
                 _uiState.update { it.copy(isLoading = false, error = throwable.message) }
                 Timber.tag("Failure").e(throwable)
             }
     }
 
-    private fun clearForgotPasswordState(){
+    private fun clearForgotPasswordState() {
         _uiState.update {
             it.copy(
                 forgetPasswordSuccess = false,

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class EditPetViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val validateInput: ValidatePetInputUseCase,
+    private val analyticsHelper: FirebaseAnalyticsHelper,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -67,6 +69,8 @@ class EditPetViewModel @Inject constructor(
 
             is EditPetEvent.OnRemoveClicked -> _state.update { it.copy(imageUri = null, imagePath = "") }
             is EditPetEvent.OnSaveClicked -> updatePet()
+
+            is EditPetEvent.LogScreenView -> analyticsHelper.logScreenView("edit_pet_screen")
         }
     }
 

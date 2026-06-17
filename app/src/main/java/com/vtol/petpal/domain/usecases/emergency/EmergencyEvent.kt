@@ -11,6 +11,7 @@ sealed class EmergencyEvent {
     data class OpenDelete(val contact: EmergencyContact) : EmergencyEvent()
     data class OpenDetails(val contact: EmergencyContact) : EmergencyEvent()
     data object DismissSheet : EmergencyEvent()
+    data object LogScreenView : EmergencyEvent()
 
 
 

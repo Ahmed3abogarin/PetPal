@@ -1,11 +1,15 @@
 package com.vtol.petpal.presentation.register.signup
 
 import android.content.Context
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import com.vtol.petpal.presentation.register.GoogleAuthUiClient
+import com.vtol.petpal.util.AnalyticsParams
 import com.vtol.petpal.util.ValidationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val useCases: AuthUseCases,
-    private val googleAuthUiClient: GoogleAuthUiClient
+    private val googleAuthUiClient: GoogleAuthUiClient,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
@@ -53,6 +58,7 @@ class SignUpViewModel @Inject constructor(
                     )
                 }
             }
+
             is SignUpEvent.ErrorShown -> {
                 _uiState.update { it.copy(error = null) }
             }
@@ -68,6 +74,12 @@ class SignUpViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null) }
             useCases.signInWithFacebook(idToken)
                 .onSuccess {
+                    firebaseAnalyticsHelper.logEvent(
+                        FirebaseAnalytics.Event.SIGN_UP, bundleOf(
+                            AnalyticsParams.METHOD to "facebook"
+                        )
+                    )
+
                     _uiState.update { it.copy(isLoading = false, error = null) }
                 }
                 .onFailure { throwable ->
@@ -90,6 +102,12 @@ class SignUpViewModel @Inject constructor(
 
             useCases.signInWithGoogle(token)
                 .onSuccess {
+                    firebaseAnalyticsHelper.logEvent(
+                        FirebaseAnalytics.Event.SIGN_UP, bundleOf(
+                            AnalyticsParams.METHOD to "google"
+                        )
+                    )
+
                     _uiState.update { it.copy(isLoading = false, error = null) }
                 }
                 .onFailure { throwable ->
@@ -117,11 +135,16 @@ class SignUpViewModel @Inject constructor(
         }
         _uiState.update { it.copy(isLoading = true, error = null) }
 
-
         useCases.signUp(
             User(name = _uiState.value.name, email = _uiState.value.email),
             _uiState.value.password
-        )
+        ).onSuccess {
+            firebaseAnalyticsHelper.logEvent(
+                FirebaseAnalytics.Event.SIGN_UP, bundleOf(
+                    AnalyticsParams.METHOD to "email"
+                )
+            )
+        }
             .onFailure { failure ->
                 _uiState.update {
                     it.copy(isLoading = false, error = failure.message)

@@ -2,7 +2,6 @@ package com.vtol.petpal.presentation.pets.edit
 
 import android.net.Uri
 import com.vtol.petpal.domain.model.PetGender
-import com.vtol.petpal.domain.model.WeightUnit
 
 sealed class EditPetEvent {
     class OnNameChanged(val name: String): EditPetEvent()
@@ -15,4 +14,5 @@ sealed class EditPetEvent {
     object OnRemoveClicked: EditPetEvent()
     object OnSaveClicked: EditPetEvent()
     object ReloadPet: EditPetEvent()
+    object LogScreenView: EditPetEvent()
 }

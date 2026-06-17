@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.profile.emergency
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.EmergencyContact
 import com.vtol.petpal.domain.usecases.emergency.EmergencyEvent
 import com.vtol.petpal.domain.usecases.emergency.EmergencyUseCases
@@ -20,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EmergencyViewModel @Inject constructor(
-    private val useCases: EmergencyUseCases
+    private val useCases: EmergencyUseCases,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EmergencyUiState())
@@ -50,6 +52,8 @@ class EmergencyViewModel @Inject constructor(
             is EmergencyEvent.DeleteContact -> deleteContact(event.contact)
             is EmergencyEvent.UpdateContact -> updateContact(event.contact)
             is EmergencyEvent.ErrorShown -> _state.update { it.copy(message = null) }
+
+            is EmergencyEvent.LogScreenView -> firebaseAnalyticsHelper.logScreenView("emergency_screen")
         }
     }
 

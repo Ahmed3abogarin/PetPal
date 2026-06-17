@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.explore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.LocationProvider
 import com.vtol.petpal.domain.model.map.PlaceCategory
 import com.vtol.petpal.domain.model.map.PlaceAddress
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
     private val appUseCases: MapsUseCases,
-    private val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -65,6 +67,10 @@ class ExploreViewModel @Inject constructor(
                 _uiState.update { it.copy(error = e.message, isLoading = false) }
             }
         }
+    }
+
+    fun logScreenView(screenName: String) {
+        firebaseAnalyticsHelper.logScreenView(screenName)
     }
 }
 

@@ -240,6 +240,7 @@ fun ExploreScreenContent(
 @Composable
 fun ExploreScreen(
     state: UiState,
+    logScreenView: () -> Unit,
     onCategoryClicked: (PlaceCategory) -> Unit,
     onPermissionGranted: () -> Unit
 ) {
@@ -252,6 +253,10 @@ fun ExploreScreen(
                 context, Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         )
+    }
+
+    LaunchedEffect(Unit) {
+        logScreenView()
     }
 
     var showRationale by remember { mutableStateOf(false) }

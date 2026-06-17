@@ -66,6 +66,10 @@ fun EmergencyScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        event(EmergencyEvent.LogScreenView)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

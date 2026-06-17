@@ -6,6 +6,8 @@ import android.net.Uri
 sealed class EditEvents {
     object RemoveImage: EditEvents()
     object ErrorShown: EditEvents()
+
+    object LogScreenView: EditEvents()
     data class ReAuthWithGoogle(val context: Context): EditEvents()
     data class UpdateImage(val uri: Uri): EditEvents()
     data class UpdateUsername(val name: String) : EditEvents()

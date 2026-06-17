@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.GoogleAuthProvider
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.user.DeleteAccount
@@ -34,7 +35,8 @@ class UserViewModel @Inject constructor(
     private val removeUserImage: RemoveUserImage,
     private val getProviderInfo: GetProvider,
     private val deleteAccountUseCase: DeleteAccount,
-    private val googleAuthUiClient: GoogleAuthUiClient
+    private val googleAuthUiClient: GoogleAuthUiClient,
+    private val analyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
     private val _state = MutableStateFlow(UserUiState())
     val state = _state.asStateFlow()
@@ -63,6 +65,8 @@ class UserViewModel @Inject constructor(
             is EditEvents.ErrorShown -> _state.update { it.copy(message = null) }
             is EditEvents.DeleteAccount -> deleteAccount(event.credential)
             is EditEvents.ReAuthWithGoogle -> reAuthWithGoogle(event.context)
+
+            is EditEvents.LogScreenView -> analyticsHelper.logScreenView("edit_profile_screen")
         }
     }
 

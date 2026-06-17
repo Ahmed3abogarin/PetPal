@@ -97,6 +97,10 @@ fun EditProfileScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        event(EditEvents.LogScreenView)
+    }
+
     // Crop launcher — receives the cropped URI result
     val cropLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()

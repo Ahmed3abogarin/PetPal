@@ -27,6 +27,7 @@ import com.vtol.petpal.data.repository.AuthRepositoryImpl
 import com.vtol.petpal.data.repository.CloudRepositoryImpl
 import com.vtol.petpal.data.repository.EmergencyRepositoryImpl
 import com.vtol.petpal.data.repository.FeedbackRepositoryImpl
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.data.repository.GalleryRepositoryImpl
 import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.NotificationRepositoryImpl
@@ -37,6 +38,7 @@ import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.data.util.ImageCompressorImpl
 import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.LocationProvider
+import com.vtol.petpal.domain.repository.AnalyticsHelper
 import com.vtol.petpal.domain.repository.AppRepository
 import com.vtol.petpal.domain.repository.AuthRepository
 import com.vtol.petpal.domain.repository.EmergencyRepository
@@ -100,6 +102,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    @Provides
+    @Singleton
+    fun provideHelper(analytics: FirebaseAnalytics): AnalyticsHelper =
+        FirebaseAnalyticsHelper(analytics)
 
     @Provides
     @Singleton
