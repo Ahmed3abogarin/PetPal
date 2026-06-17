@@ -49,6 +49,7 @@ import com.vtol.petpal.presentation.profile.edit.EditProfileScreen
 import com.vtol.petpal.presentation.profile.emergency.EmergencyScreen
 import com.vtol.petpal.presentation.profile.emergency.EmergencyViewModel
 import com.vtol.petpal.presentation.profile.settings.SettingsScreen
+import com.vtol.petpal.presentation.profile.settings.SettingsUiEffect
 import com.vtol.petpal.presentation.profile.settings.SettingsViewModel
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
@@ -346,6 +347,14 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
         ) {
             val viewModel: SettingsViewModel = hiltViewModel()
             val state by viewModel.state.collectAsState()
+
+            LaunchedEffect(Unit) {
+                viewModel.uiEffect.collect {
+                    when (it) {
+                        is SettingsUiEffect.NavigateToPremium -> navController.navigate(Routes.PremiumScreen.route)
+                    }
+                }
+            }
             SettingsScreen(
                 state = state,
                 event = viewModel::onEvent,
