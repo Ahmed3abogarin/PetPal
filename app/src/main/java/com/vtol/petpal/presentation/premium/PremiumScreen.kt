@@ -73,8 +73,8 @@ fun PremiumScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .statusBarsPadding()
-                .navigationBarsPadding()
+                .statusBarsPadding() // Kept here to pad the top close button area
+            // REMOVED: .navigationBarsPadding() moved from here
         ) {
 
             Box(
@@ -104,14 +104,12 @@ fun PremiumScreen(
                         .width(184.dp)
                         .padding(top = 22.dp)
                 )
-
-
             }
-
 
             Column(
                 modifier = Modifier
-                    .shadow(2.dp,RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .fillMaxWidth() // Changed fillMaxSize to fillMaxWidth for card stability
+                    .shadow(2.dp, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                     .background(Color.White)
             ) {
@@ -127,8 +125,7 @@ fun PremiumScreen(
                         painter = painterResource(R.drawable.ic_crown),
                         contentDescription = null,
                         tint = Color(0xFFFFD700),
-                        modifier = Modifier
-                            .width(34.dp)
+                        modifier = Modifier.width(34.dp)
                     )
                     Text(
                         text = "Unlock PetPal Premium",
@@ -232,12 +229,18 @@ fun PremiumScreen(
                 Text(
                     text = "Cancel anytime • Secure payment via Google Play",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = Color.White.copy(alpha = 0.4f)
+                        // Quick note: dynamic black text here so it's readable on the white background card
+                        color = Color.Black.copy(alpha = 0.4f)
                     ),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                // ADDED: Navigation bar padding is safely placed inside the white card now
+                Spacer(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .height(24.dp)
+                )
             }
         }
     }
