@@ -45,7 +45,7 @@ fun PlanCard(
             containerColor = if (isSelected)
                 MainPurple.copy(alpha = 0.2f)
             else
-                MainPurple.copy(alpha = 0.05f)
+                Color(0XFFEFE9FF)
         )
     ) {
         Row(

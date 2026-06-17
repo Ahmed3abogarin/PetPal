@@ -35,7 +35,7 @@ fun PremiumFeatureRow(feature: PremiumFeature) {
             modifier = Modifier
                 .size(48.dp)
                 .background(
-                    color = MainPurple.copy(alpha = 0.3f),
+                    color = Color(0XFFEFE9FF),
                     shape = RoundedCornerShape(12.dp)
                 ),
             contentAlignment = Alignment.Center
