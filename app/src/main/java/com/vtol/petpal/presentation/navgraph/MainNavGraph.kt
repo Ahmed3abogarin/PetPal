@@ -199,8 +199,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
             val galleryState by galleryVm.state.collectAsState()
 
+            val isPremium by galleryVm._isPremium.collectAsState()
+
             PetDetailsScreen(
                 state = state,
+                isPremium = isPremium,
                 galleryUiState = galleryState,
                 galleryEvent = galleryVm::onEvent,
                 navigateUp = { navController.navigateUp() },
@@ -429,7 +432,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             route = Routes.PremiumScreen.route,
             exitTransition = { slideOutVertically(targetOffsetY = { it }) },
             enterTransition = { slideInVertically(initialOffsetY = { it }) }
-        ){
+        ) {
             val viewModel: PremiumViewModel = hiltViewModel()
 
             val state by viewModel.state.collectAsState()

@@ -62,6 +62,7 @@ import com.vtol.petpal.util.toAgeString
 @Composable
 fun PetDetailsScreen(
     modifier: Modifier = Modifier,
+    isPremium: Boolean,
     state: DetailsState,
     galleryUiState: GalleryUiState,
     galleryEvent: (GalleryEvent) -> Unit,
@@ -246,7 +247,7 @@ fun PetDetailsScreen(
                         state = state
                     )
 
-                    2 -> GalleryTab(isPremium = true, state = galleryUiState, event = galleryEvent) { context.showToast() }
+                    2 -> GalleryTab(isPremium = isPremium, state = galleryUiState, event = galleryEvent) { context.showToast() }
                 }
             }
         }
@@ -272,7 +273,8 @@ fun PetScreenPreview() {
             navigateUp = {},
             onAddTaskClick = {},
             onRangeChanged = {},
-            navigateToEdit = {}
+            navigateToEdit = {},
+            isPremium = false
         )
     }
 }

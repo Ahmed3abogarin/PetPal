@@ -109,7 +109,6 @@ fun GalleryTab(
 @Composable
 fun GalleryPreview() {
     PetPalTheme {
-        GalleryTab(isPremium = false, onUpgradeClicked = {}, event = {}, state = GalleryUiState())
-
+        GalleryTab(onUpgradeClicked = {}, event = {}, state = GalleryUiState(), isPremium = false)
     }
 }

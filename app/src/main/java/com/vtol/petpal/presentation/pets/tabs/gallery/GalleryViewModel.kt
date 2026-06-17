@@ -8,14 +8,17 @@ import com.vtol.petpal.domain.model.PetPhoto
 import com.vtol.petpal.domain.usecases.gallery.DeleteGalleryImageUseCase
 import com.vtol.petpal.domain.usecases.gallery.GetPhotosUseCase
 import com.vtol.petpal.domain.usecases.gallery.UploadGalleryImageUseCase
+import com.vtol.petpal.domain.usecases.premium.IsPremiumUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,8 +47,15 @@ class GalleryViewModel @Inject constructor(
     private val getPetPhotosUseCase: GetPhotosUseCase,
     private val addPetPhotoUseCase: UploadGalleryImageUseCase,
     private val deletePetPhotoUseCase: DeleteGalleryImageUseCase,
+    isPremiumUseCase: IsPremiumUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    val _isPremium = isPremiumUseCase().stateIn(
+        viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
 
     private val petId: String = checkNotNull(savedStateHandle["petId"])
 
