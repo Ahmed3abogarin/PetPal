@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.pets
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.weight.WeightRange
 import com.vtol.petpal.domain.model.WeightRecord
@@ -20,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PetDetailsViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -107,7 +109,13 @@ class PetDetailsViewModel @Inject constructor(
 //
 //    }
 
+    fun logScreenView(screenName: String){
+        firebaseAnalyticsHelper.logScreenView(screenName)
+    }
+
 }
+
+
 
 fun filterWeights(
     entries: List<WeightRecord>,

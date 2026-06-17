@@ -224,6 +224,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                     navController.navigate(Routes.EditPetScreen.createRoute(id)) {
                         launchSingleTop = false
                     }
+                },
+                logScreenView = {
+                    petDetailsVM.logScreenView(it)
                 }
             )
         }

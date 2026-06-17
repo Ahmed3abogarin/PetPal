@@ -8,7 +8,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.usecases.register.AuthUseCases
 import com.vtol.petpal.presentation.register.GoogleAuthUiClient
-import com.vtol.petpal.util.AnalyticsParams
 import com.vtol.petpal.util.ValidationUtils.validateEmail
 import com.vtol.petpal.util.ValidationUtils.validatePassword
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -99,7 +98,7 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     firebaseAnalyticsHelper.logEvent(
                         FirebaseAnalytics.Event.LOGIN, bundleOf(
-                            AnalyticsParams.METHOD to "facebook"
+                            FirebaseAnalytics.Param.METHOD to "facebook"
                         )
                     )
                     _uiState.update { it.copy(isLoading = false, error = null) }
@@ -125,7 +124,7 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     firebaseAnalyticsHelper.logEvent(
                         FirebaseAnalytics.Event.LOGIN, bundleOf(
-                            AnalyticsParams.METHOD to "google"
+                            FirebaseAnalytics.Param.METHOD to "google"
                         )
                     )
                     _uiState.update { it.copy(isLoading = false, error = null) }
@@ -157,7 +156,7 @@ class LoginViewModel @Inject constructor(
             .onSuccess {
                 firebaseAnalyticsHelper.logEvent(
                     FirebaseAnalytics.Event.LOGIN, bundleOf(
-                        AnalyticsParams.METHOD to "email"
+                        FirebaseAnalytics.Param.METHOD to "email"
                     )
                 )
 

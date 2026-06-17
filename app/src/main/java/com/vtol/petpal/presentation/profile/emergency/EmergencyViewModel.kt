@@ -6,6 +6,7 @@ import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.EmergencyContact
 import com.vtol.petpal.domain.usecases.emergency.EmergencyEvent
 import com.vtol.petpal.domain.usecases.emergency.EmergencyUseCases
+import com.vtol.petpal.util.AnalyticsParams.EMERGENCY_SCREEN
 import com.vtol.petpal.util.ValidationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +54,7 @@ class EmergencyViewModel @Inject constructor(
             is EmergencyEvent.UpdateContact -> updateContact(event.contact)
             is EmergencyEvent.ErrorShown -> _state.update { it.copy(message = null) }
 
-            is EmergencyEvent.LogScreenView -> firebaseAnalyticsHelper.logScreenView("emergency_screen")
+            is EmergencyEvent.LogScreenView -> firebaseAnalyticsHelper.logScreenView(EMERGENCY_SCREEN)
         }
     }
 

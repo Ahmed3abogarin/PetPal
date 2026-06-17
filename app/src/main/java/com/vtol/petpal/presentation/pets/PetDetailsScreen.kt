@@ -55,6 +55,7 @@ import com.vtol.petpal.ui.theme.ExtraLightPurple
 import com.vtol.petpal.ui.theme.LightPurple
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.AnalyticsParams
 import com.vtol.petpal.util.AppColors.petPalGradient
 import com.vtol.petpal.util.showToast
 import com.vtol.petpal.util.toAgeString
@@ -67,6 +68,7 @@ fun PetDetailsScreen(
     galleryUiState: GalleryUiState,
     galleryEvent: (GalleryEvent) -> Unit,
     navigateUp: () -> Unit,
+    logScreenView: (String) -> Unit,
     onRangeChanged: (WeightRange) -> Unit,
     onAddWeightClicked: (WeightRecord) -> Unit,
     onAddTaskClick: (String) -> Unit,
@@ -192,6 +194,15 @@ fun PetDetailsScreen(
             var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
             val tabs = listOf("Overview", "Health", "Gallery")
 
+
+            LaunchedEffect(selectedTabIndex) {
+                when(selectedTabIndex){
+                    0 -> logScreenView(AnalyticsParams.OVERVIEW_TAB)
+                    1 -> logScreenView(AnalyticsParams.HEALTH_TAB)
+                    2 -> logScreenView(AnalyticsParams.GALLERY_TAB)
+                }
+            }
+
             // A column will act as a container for the tabs
 
             Column(
@@ -274,6 +285,7 @@ fun PetScreenPreview() {
             onAddTaskClick = {},
             onRangeChanged = {},
             navigateToEdit = {},
+            logScreenView = {},
             isPremium = false
         )
     }

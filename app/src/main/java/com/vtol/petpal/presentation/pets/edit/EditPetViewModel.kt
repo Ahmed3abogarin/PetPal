@@ -9,6 +9,7 @@ import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.PetGender
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.pets.ValidatePetInputUseCase
+import com.vtol.petpal.util.AnalyticsParams.EDIT_PET_SCREEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,7 +71,7 @@ class EditPetViewModel @Inject constructor(
             is EditPetEvent.OnRemoveClicked -> _state.update { it.copy(imageUri = null, imagePath = "") }
             is EditPetEvent.OnSaveClicked -> updatePet()
 
-            is EditPetEvent.LogScreenView -> analyticsHelper.logScreenView("edit_pet_screen")
+            is EditPetEvent.LogScreenView -> analyticsHelper.logScreenView(EDIT_PET_SCREEN)
         }
     }
 
