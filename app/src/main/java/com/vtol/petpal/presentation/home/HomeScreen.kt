@@ -49,6 +49,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    logScreenView: () -> Unit,
     onAddTaskClicked: () -> Unit,
     onAddPetClicked: () -> Unit,
     onPetClicked: (String) -> Unit,
@@ -56,9 +57,11 @@ fun HomeScreen(
     state: HomeState
 ) {
     val context = LocalContext.current
-
-
     val scaffoldState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        logScreenView()
+    }
 
 
     /*

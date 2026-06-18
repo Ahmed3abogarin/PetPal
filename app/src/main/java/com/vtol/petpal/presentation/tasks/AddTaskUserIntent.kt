@@ -24,6 +24,7 @@ sealed interface AddTaskUserIntent {
     data class NoteChanged(val text: String) : AddTaskUserIntent
     data class TypeSelected(val type: TaskType) : AddTaskUserIntent
     data class PetSelected(val pet: Pet) : AddTaskUserIntent
+    object LogScreenView : AddTaskUserIntent
     object SaveClicked : AddTaskUserIntent
 
     // Permission specific intents

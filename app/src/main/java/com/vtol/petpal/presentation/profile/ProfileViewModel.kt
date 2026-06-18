@@ -3,6 +3,7 @@ package com.vtol.petpal.presentation.profile
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -26,7 +27,8 @@ class ProfileViewModel @Inject constructor(
     private val submitFeedBackUseCase: SubmitFeedBackUseCase,
     private val appUseCases: AppUseCases,
     private val authUseCases: AuthUseCases,
-    private val updateUserImageUseCase: UpdateUserImageUseCase
+    private val updateUserImageUseCase: UpdateUserImageUseCase,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
 
 
@@ -112,6 +114,10 @@ class ProfileViewModel @Inject constructor(
                         FeedbackUiState.Error
                 }
         }
+    }
+
+    fun logScreenView(screenName: String){
+        firebaseAnalyticsHelper.logScreenView(screenName)
     }
 }
 

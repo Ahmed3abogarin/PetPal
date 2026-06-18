@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +52,14 @@ import java.time.YearMonth
 fun CalenderScreen(
     modifier: Modifier = Modifier,
     state: CalendarState,
+    logScreenView: () -> Unit,
     onDeleteAll: (String) -> Unit,
     onDeleteThis: (TaskUi, LocalDate) -> Unit
 ) {
 
+    LaunchedEffect(Unit) {
+        logScreenView()
+    }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     val context = LocalContext.current
@@ -207,6 +212,6 @@ fun CalenderScreen(
 @Composable
 fun CalendarPreview() {
     PetPalTheme {
-        CalenderScreen(state = CalendarState(), onDeleteThis = {_, _ ->}, onDeleteAll = {})
+        CalenderScreen(state = CalendarState(), onDeleteThis = {_, _ ->}, logScreenView = {}, onDeleteAll = {})
     }
 }

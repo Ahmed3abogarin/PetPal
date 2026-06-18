@@ -4,7 +4,9 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vtol.petpal.data.billing.BillingManager
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.repository.PremiumRepository
+import com.vtol.petpal.util.AnalyticsParams.PREMIUM_SCREEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +26,8 @@ enum class PremiumPlan { MONTHLY, YEARLY } // LIFETIME
 @HiltViewModel
 class PremiumViewModel @Inject constructor(
     private val billingManager: BillingManager,
-    private val premiumRepository: PremiumRepository
+    private val premiumRepository: PremiumRepository,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PremiumUiState())
@@ -42,6 +45,7 @@ class PremiumViewModel @Inject constructor(
         when(event){
             is PremiumEvent.PlanSelected -> onPlanSelected(event.plan)
             is PremiumEvent.PurchaseClicked -> onPurchaseClicked(event.activity)
+            is PremiumEvent.LogScreenView -> logScreenView()
         }
     }
     private fun onPlanSelected(plan: PremiumPlan) {
@@ -60,5 +64,9 @@ class PremiumViewModel @Inject constructor(
                     _state.update { it.copy(isPurchasing = false, error = e.message) }
                 }
         }
+    }
+
+    private fun logScreenView(){
+        firebaseAnalyticsHelper.logScreenView(PREMIUM_SCREEN)
     }
 }

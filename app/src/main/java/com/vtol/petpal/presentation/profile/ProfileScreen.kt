@@ -74,6 +74,7 @@ fun ProfileScreen(
     state: ProfileUiState,
     petsCount: Int = 0,
     doneTasks: Int = 0,
+    logScreenView: () -> Unit,
     navigateToFeedBack: () -> Unit,
     navigateToEdit: () -> Unit,
     navigateToSettings: () -> Unit,
@@ -84,6 +85,10 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        logScreenView()
+    }
 
 
     // Crop launcher — receives the cropped URI result
@@ -403,7 +408,8 @@ fun SettingsButtonPreview() {
             navigateToEdit = {},
             navigateToSettings = {},
             navigateToEmergency = {},
-            navigateToPremium = {}
+            navigateToPremium = {},
+            logScreenView = {}
         )
     }
 }

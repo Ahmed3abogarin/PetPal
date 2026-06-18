@@ -53,6 +53,10 @@ import com.vtol.petpal.presentation.profile.settings.SettingsUiEffect
 import com.vtol.petpal.presentation.profile.settings.SettingsViewModel
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
+import com.vtol.petpal.util.AnalyticsParams
+import com.vtol.petpal.util.AnalyticsParams.EXPLORE_SCREEN
+import com.vtol.petpal.util.AnalyticsParams.FEEDBACK_SCREEN
+import com.vtol.petpal.util.AnalyticsParams.SETTINGS_SCREEN
 import com.vtol.petpal.util.showToast
 
 fun NavGraphBuilder.mainNavGraph(navController: NavController) {
@@ -66,6 +70,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
             HomeScreen(
                 state = state,
+                logScreenView = {
+                    homeViewModel.logScreenView()
+                },
                 onAddTaskClicked = {
                     navController.navigate(Routes.AddTaskScreen.createRoute())
                 },
@@ -88,6 +95,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
 
             PetsScreen(
                 state = state,
+                logScreenView = {
+                    viewmodel.logScreenView()
+                },
                 navigateToAddPetScreen = {
                     navController.navigate(Routes.AddPetScreen.route)
                 },
@@ -111,6 +121,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             val state = calendarViewModel.state.collectAsState()
             CalenderScreen(
                 state = state.value,
+                logScreenView = {
+                    calendarViewModel.logScreenView()
+                },
                 onDeleteAll = { id -> calendarViewModel.deleteTask(id) },
                 onDeleteThis = { task, date ->
                     calendarViewModel.deleteSpecificOccurrence(task, date)
@@ -128,7 +141,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             ExploreScreen(
                 onPermissionGranted = { viewModel.getLocations() },
                 logScreenView = {
-                    viewModel.logScreenView("explore_screen")
+                    viewModel.logScreenView(EXPLORE_SCREEN)
                 },
                 onCategoryClicked = {
                     viewModel.onCategorySelected(it)
@@ -140,10 +153,14 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             val profileViewModel = hiltViewModel<ProfileViewModel>()
             val state by profileViewModel.uiState.collectAsState()
 
+            // TODO: REMOVE PET AND HOME VIEW MODELS FROM THIS SCREEN
 
             ProfileScreen(
                 state = state,
                 event = profileViewModel::onEvent,
+                logScreenView = {
+                    profileViewModel.logScreenView(AnalyticsParams.PROFILE_SCREEN)
+                },
                 petsCount = hiltViewModel<PetViewModel>().state.collectAsState().value.pets.size,
                 doneTasks = hiltViewModel<HomeViewModel>().state.collectAsState().value.completedCount,
                 navigateToFeedBack = {
@@ -265,6 +282,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             FeedbackScreen(
                 state = state,
                 onSubmitClick = { viewModel.submitFeedback(it) },
+                logScreenView = {viewModel.logScreenView(FEEDBACK_SCREEN)},
                 navigateUp = { navController.navigateUp() }
             )
         }
@@ -365,6 +383,8 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 state = state,
                 event = viewModel::onEvent,
                 navigateToRestorePurchases = { navController.navigate(Routes.RestorePurchasesScreen.route) },
+                navigateToPremium = { navController.navigate(Routes.PremiumScreen.route) },
+                logScreenView = { viewModel.logScreenView(SETTINGS_SCREEN) },
                 navigateUp = { navController.navigateUp() }
             )
         }

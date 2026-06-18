@@ -57,8 +57,12 @@ import java.util.Locale
 fun FeedbackScreen(
     state: FeedbackUiState,
     onSubmitClick: (HashMap<String, Any>) -> Unit,
+    logScreenView: () -> Unit,
     navigateUp: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        logScreenView()
+    }
     when (state) {
         is FeedbackUiState.FeedbackForm -> FeedbackScreenContent(
             onSubmitClick = onSubmitClick,

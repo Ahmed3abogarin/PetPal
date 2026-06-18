@@ -21,6 +21,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +43,6 @@ import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.util.getVersionName
-import com.vtol.petpal.util.showToast
 
 @Composable
 fun SettingsScreen(
@@ -50,12 +50,18 @@ fun SettingsScreen(
     state: SettingsUiState,
     event: (SettingsEvent) -> Unit,
     navigateToRestorePurchases: () -> Unit,
-    navigateUp: () -> Unit
+    logScreenView: () -> Unit,
+    navigateUp: () -> Unit,
+    navigateToPremium: () -> Unit,
 ) {
     val context = LocalContext.current
 
     var showNotificationSheet by remember { mutableStateOf(false) }
     var showLanguagesSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        logScreenView()
+    }
 
     Column(
         modifier = Modifier
@@ -110,7 +116,7 @@ fun SettingsScreen(
                 description = "Unlock exclusive features",
                 bgColor = Color(0XFFFFF4DE),
                 icon = R.drawable.ic_crown
-            ) { context.showToast() }
+            ) { navigateToPremium() }
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -232,7 +238,10 @@ fun SettingsPreview() {
         SettingsScreen(
             state = SettingsUiState(),
             event = {},
+            navigateUp = {},
+            navigateToPremium = {},
+            logScreenView = {},
             navigateToRestorePurchases = {}
-        ) {}
+        )
     }
 }

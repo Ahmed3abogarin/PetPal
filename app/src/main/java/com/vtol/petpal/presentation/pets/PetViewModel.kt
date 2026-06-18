@@ -2,9 +2,11 @@ package com.vtol.petpal.presentation.pets
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.util.AnalyticsParams
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PetViewModel @Inject constructor(
-    private val appUseCases: AppUseCases
+    private val appUseCases: AppUseCases,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
     private val _state = MutableStateFlow(PetsState())
     val state = _state.asStateFlow()
@@ -97,6 +100,11 @@ class PetViewModel @Inject constructor(
             .catch { emit(PetsState(error = it.message)) }
             .onEach { _state.value = it }
             .launchIn(viewModelScope)
+    }
+
+
+    fun logScreenView() {
+        firebaseAnalyticsHelper.logScreenView(AnalyticsParams.PETS_SCREEN)
     }
 }
 

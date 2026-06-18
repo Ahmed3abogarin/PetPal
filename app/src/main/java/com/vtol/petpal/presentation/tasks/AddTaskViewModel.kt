@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.vtol.petpal.data.notification.NotificationPermissionManager
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
@@ -17,6 +18,7 @@ import com.vtol.petpal.domain.model.tasks.details.WalkDetails
 import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.premium.IsPremiumUseCase
+import com.vtol.petpal.util.AnalyticsParams.ADD_TASK_SCREEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -87,6 +89,7 @@ class AddTaskViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val permissionManager: NotificationPermissionManager,
     private val syncScheduler: SyncScheduler,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper,
     settingsRepository: SettingsRepository,
     isPremiumUseCase: IsPremiumUseCase,
     savedStateHandle: SavedStateHandle,
@@ -140,6 +143,7 @@ class AddTaskViewModel @Inject constructor(
             is AddTaskUserIntent.RecurrenceChanged -> _state.update { it.copy(recurrence = intent.repeat) }
             is AddTaskUserIntent.DateChanged -> _state.update { it.copy(dueDate = intent.date) }
             is AddTaskUserIntent.TimeChanged -> _state.update { it.copy(dueTime = intent.time) }
+            is AddTaskUserIntent.LogScreenView -> logScreenView()
             AddTaskUserIntent.SaveClicked -> submitTask()
 
             // Handlers for dynamic dialogues route cleanly here
@@ -148,6 +152,10 @@ class AddTaskViewModel @Inject constructor(
             AddTaskUserIntent.DismissNotificationDialog -> dismissNotificationDialog()
             AddTaskUserIntent.DismissExactAlarmDialog -> dismissExactAlarmDialog()
         }
+    }
+
+    private fun logScreenView(){
+        firebaseAnalyticsHelper.logScreenView(ADD_TASK_SCREEN)
     }
 
     fun getPets() {

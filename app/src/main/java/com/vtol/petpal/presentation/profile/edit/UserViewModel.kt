@@ -16,6 +16,7 @@ import com.vtol.petpal.domain.usecases.user.UpdatePhoneNumber
 import com.vtol.petpal.domain.usecases.user.UpdateUserImageUseCase
 import com.vtol.petpal.domain.usecases.user.UpdateUsername
 import com.vtol.petpal.presentation.register.GoogleAuthUiClient
+import com.vtol.petpal.util.AnalyticsParams.EDIT_PROFILE_SCREEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,7 +67,7 @@ class UserViewModel @Inject constructor(
             is EditEvents.DeleteAccount -> deleteAccount(event.credential)
             is EditEvents.ReAuthWithGoogle -> reAuthWithGoogle(event.context)
 
-            is EditEvents.LogScreenView -> analyticsHelper.logScreenView("edit_profile_screen")
+            is EditEvents.LogScreenView -> analyticsHelper.logScreenView(EDIT_PROFILE_SCREEN)
         }
     }
 

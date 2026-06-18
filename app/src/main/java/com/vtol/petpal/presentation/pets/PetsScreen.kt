@@ -52,12 +52,17 @@ import com.vtol.petpal.util.showToast
 @Composable
 fun PetsScreen(
     state: PetsState,
+    logScreenView: () -> Unit,
     navigateToAddPetScreen: () -> Unit,
     onScheduleClick: (String) -> Unit,
     onCardClick: (String) -> Unit,
     onEditClick: (String) -> Unit,
 ) {
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        logScreenView()
+    }
 
     Column(
         modifier = Modifier
@@ -180,6 +185,7 @@ fun PetsPreview() {
     PetPalTheme {
         PetsScreen(
             state = PetsState(),
+            logScreenView = {},
             onCardClick = {},
             onScheduleClick = {},
             navigateToAddPetScreen = {},

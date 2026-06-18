@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
@@ -10,6 +11,7 @@ import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
 import com.vtol.petpal.domain.usecases.premium.IsPremiumUseCase
+import com.vtol.petpal.util.AnalyticsParams
 import com.vtol.petpal.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val syncScheduler: SyncScheduler,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper,
     settingsRepository: SettingsRepository,
     isPremiumUseCase: IsPremiumUseCase
 ) : ViewModel() {
@@ -163,6 +166,11 @@ class HomeViewModel @Inject constructor(
 
             hasUpcomingOccurrence
         }
+    }
+
+
+    fun logScreenView(){
+        firebaseAnalyticsHelper.logScreenView(AnalyticsParams.HOME_SCREEN)
     }
 }
 

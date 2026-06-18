@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.profile.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.data.worker.SyncScheduler
 import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
@@ -27,6 +28,7 @@ class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
     private val syncScheduler: SyncScheduler,
     private val restoreTasksUseCase: RestoreTasksUseCase,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper,
     isPremiumUseCase: IsPremiumUseCase
 ) : ViewModel() {
 
@@ -111,6 +113,10 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             useCases.toggleNotification(enabled)
         }
+    }
+
+    fun logScreenView(screenName: String){
+        firebaseAnalyticsHelper.logScreenView(screenName)
     }
 }
 

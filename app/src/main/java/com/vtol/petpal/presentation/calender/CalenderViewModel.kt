@@ -2,10 +2,12 @@ package com.vtol.petpal.presentation.calender
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vtol.petpal.data.repository.FirebaseAnalyticsHelper
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.domain.model.tasks.RepeatInterval
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.util.AnalyticsParams.CALENDAR_SCREEN
 import com.vtol.petpal.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CalenderViewModel @Inject constructor(
-    private val appUseCases: AppUseCases
+    private val appUseCases: AppUseCases,
+    private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper
 ) : ViewModel() {
     private val _state = MutableStateFlow(CalendarState())
     val state = _state.asStateFlow()
@@ -147,6 +150,10 @@ class CalenderViewModel @Inject constructor(
                 appUseCases.updateTask(updatedTask)
             }
         }
+    }
+
+    fun logScreenView(){
+        firebaseAnalyticsHelper.logScreenView(CALENDAR_SCREEN)
     }
 }
 

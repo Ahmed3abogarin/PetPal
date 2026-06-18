@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +57,10 @@ fun PremiumScreen(
     navigateUp: () -> Unit
 ) {
     val activity = LocalActivity.current
+
+    LaunchedEffect(Unit) {
+        onEvent(PremiumEvent.LogScreenView)
+    }
 
     Box(
         modifier = Modifier
