@@ -22,7 +22,7 @@ fun PlanSelector(
     ) {
         PlanCard(
             title = "Monthly",
-            price = "$4.99 / month",
+            price = "$1.99 / month",
             badge = null,
             isSelected = selectedPlan == PremiumPlan.MONTHLY,
             onClick = { onPlanSelected(PremiumPlan.MONTHLY) }

@@ -39,13 +39,13 @@ fun PlanCard(
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(
             width = if (isSelected) 2.dp else 0.5.dp,
-            color = if (isSelected) MainPurple else MaterialTheme.colorScheme.outlineVariant
+            color = if (isSelected) MainPurple else LightPurple
         ),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected)
                 MainPurple.copy(alpha = 0.2f)
             else
-                Color(0XFFEFE9FF)
+                Color.White
         )
     ) {
         Row(
