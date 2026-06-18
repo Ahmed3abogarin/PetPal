@@ -10,6 +10,7 @@ import com.vtol.petpal.domain.model.tasks.TaskUi
 import com.vtol.petpal.domain.model.user.User
 import com.vtol.petpal.domain.repository.SettingsRepository
 import com.vtol.petpal.domain.usecases.AppUseCases
+import com.vtol.petpal.domain.usecases.GetActionCenterCountUseCase
 import com.vtol.petpal.domain.usecases.premium.IsPremiumUseCase
 import com.vtol.petpal.util.AnalyticsParams
 import com.vtol.petpal.util.toLocalDate
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -35,6 +37,7 @@ class HomeViewModel @Inject constructor(
     private val appUseCases: AppUseCases,
     private val syncScheduler: SyncScheduler,
     private val firebaseAnalyticsHelper: FirebaseAnalyticsHelper,
+    private val getActionCenterCountUseCase: GetActionCenterCountUseCase,
     settingsRepository: SettingsRepository,
     isPremiumUseCase: IsPremiumUseCase
 ) : ViewModel() {
@@ -51,12 +54,21 @@ class HomeViewModel @Inject constructor(
     init {
         observeHomeData()
         getUser()
+        getBadgeCount()
         viewModelScope.launch {
             // wait for both flows to emit their first value
             if (isPremium.value && isCloudSyncEnabled.value) {
                 syncScheduler.scheduleSync()
             }
         }
+    }
+
+    private fun getBadgeCount() {
+        getActionCenterCountUseCase()
+            .onEach { count ->
+                Timber.e(count.toString())
+                _state.update { it.copy(badgeCount = count) }
+            }.launchIn(viewModelScope)
     }
 
     private fun observeHomeData() {
@@ -96,7 +108,8 @@ class HomeViewModel @Inject constructor(
                         showNotificationPermissionDialog = currentState.showNotificationPermissionDialog,
                         showExactAlarmPermissionDialog = currentState.showExactAlarmPermissionDialog,
                         isUserLoading = currentState.isUserLoading,
-                        user = currentState.user
+                        user = currentState.user,
+                        badgeCount = currentState.badgeCount
                     )
                 }
             }.launchIn(viewModelScope)
@@ -129,7 +142,11 @@ class HomeViewModel @Inject constructor(
             val occursToday = when (task.repeatInterval ?: RepeatInterval.Never) {
                 RepeatInterval.Never -> taskDate == today
                 RepeatInterval.Daily -> taskDate <= today
-                RepeatInterval.Weekly -> taskDate <= today && ChronoUnit.DAYS.between(taskDate, today) % 7 == 0L
+                RepeatInterval.Weekly -> taskDate <= today && ChronoUnit.DAYS.between(
+                    taskDate,
+                    today
+                ) % 7 == 0L
+
                 RepeatInterval.Monthly -> taskDate <= today && taskDate.dayOfMonth == today.dayOfMonth
             }
 
@@ -153,7 +170,11 @@ class HomeViewModel @Inject constructor(
                 val occursOnCheckDate = when (task.repeatInterval ?: RepeatInterval.Never) {
                     RepeatInterval.Never -> taskDate == checkDate
                     RepeatInterval.Daily -> taskDate <= checkDate
-                    RepeatInterval.Weekly -> taskDate <= checkDate && ChronoUnit.DAYS.between(taskDate, checkDate) % 7 == 0L
+                    RepeatInterval.Weekly -> taskDate <= checkDate && ChronoUnit.DAYS.between(
+                        taskDate,
+                        checkDate
+                    ) % 7 == 0L
+
                     RepeatInterval.Monthly -> taskDate <= checkDate && taskDate.dayOfMonth == checkDate.dayOfMonth
                 }
 
@@ -169,7 +190,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun logScreenView(){
+    fun logScreenView() {
         firebaseAnalyticsHelper.logScreenView(AnalyticsParams.HOME_SCREEN)
     }
 }
@@ -186,6 +207,8 @@ data class HomeState(
     val showExactAlarmPermissionDialog: Boolean = false,
     val taskSaved: Boolean = false,
     val user: User? = null,
+
+    val badgeCount: Int = 0,
 
     val completedCount: Int = 0,
     val total: Int = 0,

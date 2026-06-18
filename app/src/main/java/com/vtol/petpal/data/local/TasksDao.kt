@@ -33,6 +33,7 @@ interface TasksDao {
 
     @Query("SELECT * FROM pet_tasks WHERE id = :id LIMIT 1")
     suspend fun getTaskById(id: String): Task?
+
     @Query("SELECT * FROM pet_tasks WHERE type = :type ORDER BY dateTime ASC")
     fun getSpecificTasks(type: TaskType): Flow<List<Task>>
 
@@ -45,4 +46,54 @@ interface TasksDao {
     @Upsert
     suspend fun upsertRemoteTasks(tasks: List<Task>)
     //  @Query("SELECT * FROM pet_tasks WHERE petId = :petId ORDER BY dateTime ASC")
+
+
+    // Reminders-center
+    @Query(
+        """
+        SELECT * FROM pet_tasks
+        WHERE isCompleted = 0
+        AND dateTime < :now
+        ORDER BY dateTime ASC
+    """
+    )
+    fun getOverdueTasks(
+        now: Long = System.currentTimeMillis()
+    ): Flow<List<Task>>
+
+    @Query(
+        """
+        SELECT * FROM pet_tasks
+        WHERE isCompleted = 0
+        AND dateTime BETWEEN :now AND :endTime
+        ORDER BY dateTime ASC
+    """
+    )
+    fun getUpcomingTasks(
+        now: Long,
+        endTime: Long
+    ): Flow<List<Task>>
+
+    @Query(
+        """
+        SELECT * FROM pet_tasks
+        WHERE isCompleted = 0
+        ORDER BY dateTime ASC
+    """
+    )
+    fun getPendingTasks(): Flow<List<Task>>
+
+    @Query(
+        """
+    SELECT COUNT(*)
+    FROM pet_tasks
+    WHERE isCompleted = 0
+    AND dateTime BETWEEN :now AND :next24Hours
+    """
+    )
+    fun getActionCenterCount(
+        now: Long,
+        next24Hours: Long
+    ): Flow<Int>
+
 }

@@ -54,7 +54,7 @@ fun HomeScreen(
     onAddPetClicked: () -> Unit,
     onPetClicked: (String) -> Unit,
     onToggleClicked: (Int, Boolean) -> Unit,
-    state: HomeState
+    state: HomeState,
 ) {
     val context = LocalContext.current
     val scaffoldState = remember { SnackbarHostState() }
@@ -118,7 +118,9 @@ fun HomeScreen(
                         .statusBarsPadding()
                         .padding(top = 16.dp),
                     isLoading = state.isUserLoading,
-                    userName = state.user?.name
+                    userName = state.user?.name,
+                    badgeCount = state.badgeCount,
+                    navigateToActionCenter = {}
                 )
             }
 

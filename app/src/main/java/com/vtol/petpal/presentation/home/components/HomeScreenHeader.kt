@@ -1,6 +1,5 @@
 package com.vtol.petpal.presentation.home.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,14 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,13 +31,14 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vtol.petpal.R
 import com.vtol.petpal.ui.theme.MainPurple
-import com.vtol.petpal.util.showToast
 
 @Composable
 fun HomeScreenHeader(
     modifier: Modifier = Modifier,
+    badgeCount: Int,
     isLoading: Boolean,
-    userName: String?
+    userName: String?,
+    navigateToActionCenter: () -> Unit
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.greeting_anim),
@@ -61,7 +55,6 @@ fun HomeScreenHeader(
         shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
         elevation = CardDefaults.cardElevation(6.dp),
     ) {
-        val context = LocalContext.current
         Column(modifier = modifier.padding(horizontal = 12.dp)) {
             Row(
                 modifier = Modifier
@@ -89,22 +82,10 @@ fun HomeScreenHeader(
                     Text(text = "PetPal", fontSize = 24.sp, color = Color.White)
                 }
 
-                OutlinedCard(
-                    onClick = {
-                        context.showToast()
-                    },
-                    shape = CircleShape,
-                    border = BorderStroke(width = 1.dp, color = Color.White),
-                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.6f))
-                ) {
-                    Icon(
-                        modifier = Modifier.padding(10.dp),
-                        imageVector = Icons.Default.Notifications,
-                        tint = Color.White,
-                        contentDescription = "notification icon"
-                    )
-
-                }
+                NotificationBell(
+                    badgeCount = badgeCount,
+                    onClick = navigateToActionCenter
+                )
             }
 
             Row(

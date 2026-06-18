@@ -33,6 +33,7 @@ import com.vtol.petpal.data.repository.MapsRepositoryImpl
 import com.vtol.petpal.data.repository.NotificationRepositoryImpl
 import com.vtol.petpal.data.repository.PremiumRepositoryImpl
 import com.vtol.petpal.data.repository.SettingsRepositoryImpl
+import com.vtol.petpal.data.repository.TaskRepositoryImpl
 import com.vtol.petpal.data.repository.UpdateRepositoryImpl
 import com.vtol.petpal.data.repository.UserRepositoryImpl
 import com.vtol.petpal.data.util.ImageCompressorImpl
@@ -48,6 +49,7 @@ import com.vtol.petpal.domain.repository.MapsRepository
 import com.vtol.petpal.domain.repository.NotificationRepository
 import com.vtol.petpal.domain.repository.PremiumRepository
 import com.vtol.petpal.domain.repository.SettingsRepository
+import com.vtol.petpal.domain.repository.TaskRepository
 import com.vtol.petpal.domain.repository.UpdateRepository
 import com.vtol.petpal.domain.repository.UserRepository
 import com.vtol.petpal.domain.usecases.AddPet
@@ -425,4 +427,10 @@ object AppModule {
         galleryRemoteDataSource: GalleryRemoteDataSource
     ): GalleryRepository =
         GalleryRepositoryImpl(galleryRemoteDataSource)
+
+
+    @Provides
+    @Singleton
+    fun provideTaskRepository(dao: TasksDao, gson: Gson): TaskRepository =
+        TaskRepositoryImpl(dao, gson)
 }
