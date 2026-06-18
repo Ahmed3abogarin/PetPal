@@ -1,6 +1,5 @@
 package com.vtol.petpal.domain.repository
 
-import com.vtol.petpal.domain.model.tasks.Task
 import com.vtol.petpal.domain.model.tasks.TaskUi
 import kotlinx.coroutines.flow.Flow
 

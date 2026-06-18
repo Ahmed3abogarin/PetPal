@@ -5,7 +5,7 @@ import com.vtol.petpal.domain.repository.AppRepository
 class ToggleTask(
     private val appRepository: AppRepository
 ) {
-    suspend operator fun invoke(taskId: Int, isCompleted: Boolean) {
+    suspend operator fun invoke(taskId: String, isCompleted: Boolean) {
         appRepository.toggleTaskCompletion(taskId, isCompleted)
     }
 }

@@ -52,8 +52,9 @@ fun HomeScreen(
     logScreenView: () -> Unit,
     onAddTaskClicked: () -> Unit,
     onAddPetClicked: () -> Unit,
+    navigateToReminders: () -> Unit,
     onPetClicked: (String) -> Unit,
-    onToggleClicked: (Int, Boolean) -> Unit,
+    onToggleClicked: (String, Boolean) -> Unit,
     state: HomeState,
 ) {
     val context = LocalContext.current
@@ -120,7 +121,7 @@ fun HomeScreen(
                     isLoading = state.isUserLoading,
                     userName = state.user?.name,
                     badgeCount = state.badgeCount,
-                    navigateToActionCenter = {}
+                    navigateToActionCenter = navigateToReminders
                 )
             }
 
@@ -200,7 +201,7 @@ fun HomeScreen(
                             task = task,
                             petName = state.petMap[task.petId] ?: "Unknown",
                             onCheckedChange = {
-                                onToggleClicked(task.id.toInt(), it)
+                                onToggleClicked(task.id, it)
                             }
                         )
                     }
@@ -228,7 +229,7 @@ fun HomeScreen(
                         task = task,
                         petName = state.petMap[task.petId] ?: "Unknown",
                         onCheckedChange = {
-                            onToggleClicked(task.id.toInt(), it)
+                            onToggleClicked(task.id, it)
                         }
                     )
                     if (tasks.last() == task) {

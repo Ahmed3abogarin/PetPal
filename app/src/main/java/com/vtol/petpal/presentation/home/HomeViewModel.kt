@@ -124,7 +124,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun toggleCompletion(taskId: Int, isCompleted: Boolean) {
+    fun toggleCompletion(taskId: String, isCompleted: Boolean) {
         viewModelScope.launch {
             appUseCases.toggleTask(taskId, isCompleted)
         }

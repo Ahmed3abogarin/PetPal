@@ -16,6 +16,7 @@ sealed class Routes(val route: String) {
     data object LoginScreen: Routes("loginScreen")
     data object SignUpScreen: Routes("signUpScreen")
     data object HomeScreen: Routes("homeScreen")
+    data object RemindersScreen: Routes("remindersScreen")
     data object PetsScreen: Routes("petsScreen")
     data object CalenderScreen: Routes("calenderScreen")
     data object NearbyScreen: Routes("nearbyScreen")

@@ -1,7 +1,7 @@
 package com.vtol.petpal.domain.usecases
 
 import com.vtol.petpal.domain.repository.TaskRepository
-import com.vtol.petpal.presentation.home.ActionCenterState
+import com.vtol.petpal.presentation.reminders.ActionCenterState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject

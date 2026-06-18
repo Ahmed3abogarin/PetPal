@@ -51,6 +51,8 @@ import com.vtol.petpal.presentation.profile.emergency.EmergencyViewModel
 import com.vtol.petpal.presentation.profile.settings.SettingsScreen
 import com.vtol.petpal.presentation.profile.settings.SettingsUiEffect
 import com.vtol.petpal.presentation.profile.settings.SettingsViewModel
+import com.vtol.petpal.presentation.reminders.RemindersScreen
+import com.vtol.petpal.presentation.reminders.ActionCenterViewModel
 import com.vtol.petpal.presentation.tasks.AddTaskUiEffect
 import com.vtol.petpal.presentation.tasks.AddTaskViewModel
 import com.vtol.petpal.util.AnalyticsParams
@@ -72,6 +74,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 state = state,
                 logScreenView = {
                     homeViewModel.logScreenView()
+                },
+                navigateToReminders = {
+                    navController.navigate(Routes.RemindersScreen.route)
                 },
                 onAddTaskClicked = {
                     navController.navigate(Routes.AddTaskScreen.createRoute())
@@ -478,6 +483,25 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 navController.navigateUp()
             }
 
+        }
+
+        composable (route = Routes.RemindersScreen.route){
+            val viewModel: ActionCenterViewModel = hiltViewModel()
+
+            val state by viewModel.state.collectAsState()
+            RemindersScreen(
+                overdueTasks = state.overdueTasks,
+                upcomingTasks = state.upcomingTasks,
+                onToggleCompletion = { id, enabled ->
+                    viewModel.toggleCompletion(id,enabled)
+                },
+                onDeleteTask = { id ->
+                    viewModel.deleteTask(id)
+                },
+                navigateUp = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

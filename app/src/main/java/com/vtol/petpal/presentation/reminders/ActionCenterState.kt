@@ -1,4 +1,4 @@
-package com.vtol.petpal.presentation.home
+package com.vtol.petpal.presentation.reminders
 
 import com.vtol.petpal.domain.model.tasks.TaskUi
 
