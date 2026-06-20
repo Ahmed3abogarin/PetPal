@@ -3,17 +3,14 @@ package com.vtol.petpal.presentation.home.components
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +27,7 @@ import coil.request.ImageRequest
 import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.Pet
 import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.util.dashedCircleBorder
 
 @Composable
 fun HomePetsList(
@@ -50,7 +48,8 @@ fun HomePetsList(
                         .clip(CircleShape)
                         .border(2.dp, Color.Gray, CircleShape)
                         .clickable { onPetClicked(it.id) },
-                    model = ImageRequest.Builder(context).data(it.imagePath).crossfade(true).build(),
+                    model = ImageRequest.Builder(context).data(it.imagePath).crossfade(true)
+                        .build(),
                     placeholder = painterResource(R.drawable.pet_placeholder),
                     error = painterResource(R.drawable.pet_placeholder),
                     contentDescription = "pet image",
@@ -60,17 +59,22 @@ fun HomePetsList(
             }
         }
         item {
-            FilledIconButton(
-                colors = IconButtonDefaults.iconButtonColors(containerColor = MainPurple),
-                modifier = Modifier.size(64.dp),
-                onClick = { onAddPetClicked() },
-                shape = CircleShape,
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { onAddPetClicked() }
+                    .size(64.dp)
+                    .dashedCircleBorder(
+                        color = MainPurple,
+                        strokeWidth = 2.dp
+                    ),
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    modifier = Modifier.size(32.dp),
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "",
-                    tint = Color.White
+                    modifier = Modifier.size(18.dp),
+                    painter = painterResource(R.drawable.ic_add),
+                    contentDescription = null,
+                    tint = MainPurple,
                 )
             }
         }

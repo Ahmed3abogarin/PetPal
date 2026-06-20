@@ -1,104 +1,46 @@
 package com.vtol.petpal.presentation.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.vtol.petpal.R
-import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.TaskUi
-import com.vtol.petpal.util.toTimeString
+import com.vtol.petpal.ui.theme.MainPurple
 
 @Composable
-fun TaskCard(modifier: Modifier = Modifier, task: TaskUi, petName: String? = null, onCheckedChange: (Boolean) -> Unit) {
-
-    val (taskType, taskImg) = when (task.type) {
-        TaskType.VET -> "Vet" to R.drawable.ic_vets
-        TaskType.FEED -> "Feed" to R.drawable.ic_feed
-        TaskType.MEDICATION -> "Medicine" to R.drawable.ic_pharmacy
-        TaskType.WALK -> "Walk" to R.drawable.ic_parks
-    }
-
+fun TasksList(
+    modifier: Modifier = Modifier,
+    isToday: Boolean,
+    tasksList: List<TaskUi>,
+    petMap: Map<String, String>,
+    onToggleClicked: (String, Boolean) -> Unit
+) {
     Card(
-        modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.elevatedCardElevation(2.dp),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        shape = RoundedCornerShape(20.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
+        border = BorderStroke(0.3.dp, MainPurple.copy(alpha = 0.3f))
     ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-                Surface(
-                    shape = CircleShape,
-                    color = Color(0x8BDCC5FF),
-                    modifier = Modifier.size(66.dp)
-                ) {
-                    Image(
-                        modifier = Modifier.padding(12.dp),
-                        contentScale = ContentScale.Crop,
-                        painter = painterResource(taskImg), contentDescription = "Pet Image"
-                    )
+        tasksList.forEachIndexed { index, task ->
+            TaskCard(
+                isToday = isToday,
+                task = task,
+                petName = petMap[task.petId] ?: "Unknown",
+                onCheckedChange = {
+                    onToggleClicked(task.id, it)
                 }
-
-
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-
-                    Text(
-                        text = taskType,
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium)
-                    )
-
-
-                    // TODO: get the pets names associate with the task
-                    petName?.let {
-                        Text(
-                            text = it,
-                            fontSize = 12.sp
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = task.dateTime.toTimeString(),
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium)
+            )
+            if (index != tasksList.lastIndex) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    color = MainPurple.copy(0.3f),
+                    thickness = 0.2.dp
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(modifier = Modifier.size(24.dp)) {
-                    RadioButton(selected = task.isCompleted, onClick = {onCheckedChange(!task.isCompleted)})
-                }
             }
         }
     }

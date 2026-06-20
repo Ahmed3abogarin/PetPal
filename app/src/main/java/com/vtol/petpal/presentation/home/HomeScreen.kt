@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -33,11 +32,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vtol.petpal.R
-import com.vtol.petpal.presentation.components.TaskCard
+import com.vtol.petpal.presentation.components.TasksList
 import com.vtol.petpal.presentation.home.components.HomePetsList
 import com.vtol.petpal.presentation.home.components.HomeScreenHeader
 import com.vtol.petpal.presentation.home.components.HomeShimmer
@@ -45,6 +45,7 @@ import com.vtol.petpal.presentation.home.components.ProgressCard
 import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
 import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.util.showToast
 
 @Composable
 fun HomeScreen(
@@ -64,12 +65,12 @@ fun HomeScreen(
         logScreenView()
     }
 
-
     /*
     TODO:
       1- Fix the bottom padding in HomeScreen
       2- Fix Vet Visit Card in Pet Screen
      */
+
     LaunchedEffect(state.error) {
         state.error?.let {
             scaffoldState.showSnackbar(it)
@@ -120,17 +121,26 @@ fun HomeScreen(
                         .padding(top = 16.dp),
                     isLoading = state.isUserLoading,
                     userName = state.user?.name,
-                    badgeCount = state.badgeCount,
-                    navigateToActionCenter = navigateToReminders
+                    showBadge = state.badgeCount > 0,
+                    navigateToActionCenter = navigateToReminders,
+                    userImg = state.user?.imgPath
                 )
             }
 
 
             item {
                 // Pets list
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(26.dp))
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "My Pets",
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold
+                )
 
                 val petsList = state.petsList
+                Spacer(modifier = Modifier.height(14.dp))
 
                 HomePetsList(
                     pets = petsList,
@@ -139,11 +149,10 @@ fun HomeScreen(
                         if (petsList.size < 2) {
                             onAddPetClicked()
                         } else {
-                            Toast.makeText(context, "Upgrade to premium", Toast.LENGTH_SHORT).show()
+                            context.showToast("Upgrade to premium")
                         }
                     }
                 )
-                Spacer(modifier = Modifier.height(16.dp))
             }
 
 
@@ -154,7 +163,6 @@ fun HomeScreen(
                     completed = state.completedCount,
                     percentage = state.percentage
                 )
-                Spacer(modifier = Modifier.height(16.dp))
             }
 
 
@@ -176,7 +184,7 @@ fun HomeScreen(
                             text = "No tasks yet!\nAdd a task to get started.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Gray,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -188,21 +196,22 @@ fun HomeScreen(
                     // the header
                     item {
                         Text(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            text = "Today",
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                            modifier = Modifier.padding(start = 16.dp),
+                            text = "Today's Tasks",
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
                         )
+                        Spacer(modifier = Modifier.height(14.dp))
                     }
 
                     // The tasks list (today)
-                    items(state.todayTasks) { task ->
-                        TaskCard(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            task = task,
-                            petName = state.petMap[task.petId] ?: "Unknown",
-                            onCheckedChange = {
-                                onToggleClicked(task.id, it)
-                            }
+                    item {
+                        TasksList(
+                            isToday = true,
+                            tasksList = state.todayTasks,
+                            petMap = state.petMap,
+                            onToggleClicked = onToggleClicked
                         )
                     }
                 }
@@ -211,31 +220,32 @@ fun HomeScreen(
                 if (state.upcomingTasks.isNotEmpty()) {
                     // The header
                     item {
-                        Spacer(modifier = Modifier.height(18.dp))
+                        Spacer(modifier= Modifier.height(26.dp))
                         Text(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            text = "Upcoming",
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold)
+                            modifier = Modifier.padding(start = 16.dp),
+                            text = "Upcoming Tasks",
+                            fontSize = 20.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
                         )
+                        Spacer(modifier = Modifier.height(14.dp))
                     }
                 }
-
 
                 // the list of tasks
                 val tasks = state.upcomingTasks
-                items(tasks) { task ->
-                    TaskCard(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        task = task,
-                        petName = state.petMap[task.petId] ?: "Unknown",
-                        onCheckedChange = {
-                            onToggleClicked(task.id, it)
-                        }
+                item {
+                    TasksList(
+                        isToday = false,
+                        tasksList = tasks,
+                        petMap = state.petMap,
+                        onToggleClicked = onToggleClicked
                     )
-                    if (tasks.last() == task) {
-                        Spacer(modifier = Modifier.height(72.dp))
-                    }
                 }
+            }
+
+            item {
+                Spacer(modifier= Modifier.height(84.dp))
             }
         }
 
@@ -249,6 +259,15 @@ fun HomeScreen(
 @Composable
 fun HomePreView() {
     PetPalTheme {
+        HomeScreen(
+            logScreenView = { },
+            onAddTaskClicked = {},
+            onAddPetClicked = {},
+            navigateToReminders = {},
+            onPetClicked = {},
+            onToggleClicked = { _, _ -> },
+            state = HomeState()
+        )
 
     }
 }

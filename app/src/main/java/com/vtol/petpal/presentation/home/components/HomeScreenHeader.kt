@@ -2,6 +2,7 @@ package com.vtol.petpal.presentation.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,11 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,23 +22,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.vtol.petpal.R
+import com.vtol.petpal.ui.theme.BackgroundColor
 import com.vtol.petpal.ui.theme.MainPurple
+import com.vtol.petpal.ui.theme.PetPalTheme
+import com.vtol.petpal.ui.theme.Red
+import com.vtol.petpal.util.getGreeting
 
 @Composable
 fun HomeScreenHeader(
     modifier: Modifier = Modifier,
-    badgeCount: Int,
+    showBadge: Boolean,
     isLoading: Boolean,
     userName: String?,
+    userImg: String?,
     navigateToActionCenter: () -> Unit
 ) {
     val composition by rememberLottieComposition(
@@ -50,83 +61,138 @@ fun HomeScreenHeader(
         restartOnPlay = false
     )
 
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MainPurple),
-        shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp),
-        elevation = CardDefaults.cardElevation(6.dp),
+
+    Column(
+        modifier = modifier
+            .background(BackgroundColor)
+            .padding(horizontal = 12.dp)
     ) {
-        Column(modifier = modifier.padding(horizontal = 12.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color.White),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(34.dp),
-                            painter = painterResource(R.drawable.ic_logo),
-                            contentDescription = ""
-                        )
-                    }
 
-                    Text(text = "PetPal", fontSize = 24.sp, color = Color.White)
-                }
+                Image(
+                    modifier = Modifier
+                        .size(34.dp),
+                    painter = painterResource(R.drawable.ic_logo),
+                    contentDescription = null
+                )
 
-                NotificationBell(
-                    badgeCount = badgeCount,
-                    onClick = navigateToActionCenter
+                Text(
+                    text = "PetPal",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MainPurple
                 )
             }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Column {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(text = "Hello,", fontSize = 28.sp, color = Color.White)
-                    when  {
-                        isLoading -> {
-                            Text(
-                                text = "Loading...",
-                                fontSize = 28.sp,
-                                color = Color.White.copy(alpha = 0.7f)
-                            )
-                        }
+                Box {
+                    Icon(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .clickable { navigateToActionCenter() }
+                            .background(Color.White)
+                            .padding(10.dp)
+                            .size(18.dp),
+                        painter = painterResource(R.drawable.ic_bell),
+                        contentDescription = null
+                    )
 
-                        userName != null -> {
-                            Row(verticalAlignment = Alignment.Bottom) {
-                                Text(
-                                    modifier = Modifier.padding(start = 3.dp),
-                                    text = userName,
-                                    fontSize = 28.sp,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                LottieAnimation(
-                                    modifier = Modifier.size(38.dp),
-                                    composition = composition,
-                                    progress = { progress }
-                                )
-                            }
-                        }
-
-                        else -> Unit
+                    if (showBadge) {
+                        Box(
+                            modifier = Modifier
+                                .offset(y = (-9).dp, x = (10).dp)
+                                .align(Alignment.BottomStart)
+                                .clip(CircleShape)
+                                .background(Red)
+                                .size(6.dp)
+                        )
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
                 }
+
+                AsyncImage(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(38.dp),
+                    model = ImageRequest.Builder(LocalContext.current).data(userImg).build(),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "user image",
+                    placeholder = painterResource(R.drawable.img_profile_ph)
+                )
             }
         }
+
+        Spacer(modifier = Modifier.height(26.dp))
+
+        Column(horizontalAlignment = Alignment.Start) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                when {
+                    isLoading -> {
+                        Text(
+                            text = "Loading...",
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black.copy(alpha = 0.7f)
+                        )
+                    }
+
+                    userName != null -> {
+                        Text(
+                            modifier = Modifier.padding(start = 3.dp),
+                            text = "${getGreeting()}, $userName!",
+                            fontSize = 24.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.Medium
+                        )
+                        LottieAnimation(
+                            modifier = Modifier.size(38.dp),
+                            composition = composition,
+                            progress = { progress }
+                        )
+                    }
+
+                    else -> Unit
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = "Here is what’s happening with your pets today",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HeaderPreview() {
+    PetPalTheme {
+        HomeScreenHeader(
+            showBadge = true,
+            isLoading = false,
+            userName = "Ahmed",
+            userImg = "",
+            navigateToActionCenter = {}
+        )
     }
 }

@@ -45,10 +45,7 @@ import com.vtol.petpal.R
 import com.vtol.petpal.domain.model.tasks.SyncStatus
 import com.vtol.petpal.domain.model.tasks.TaskType
 import com.vtol.petpal.domain.model.tasks.TaskUi
-import com.vtol.petpal.domain.model.tasks.details.FoodDetails
-import com.vtol.petpal.domain.model.tasks.details.MedDetails
 import com.vtol.petpal.domain.model.tasks.details.VetDetails
-import com.vtol.petpal.domain.model.tasks.details.WalkDetails
 import com.vtol.petpal.presentation.calender.components.DeleteTaskDialog
 import com.vtol.petpal.ui.theme.CellsBgPurple
 import com.vtol.petpal.ui.theme.LightOrange
@@ -59,6 +56,7 @@ import com.vtol.petpal.ui.theme.PetPalTheme
 import com.vtol.petpal.ui.theme.Pink100
 import com.vtol.petpal.ui.theme.Pink50
 import com.vtol.petpal.util.formatDate
+import com.vtol.petpal.util.getPetTaskTitle
 import com.vtol.petpal.util.toTimeString
 import com.vtol.petpal.util.truncate
 
@@ -82,37 +80,6 @@ fun PetTaskCard(
         TaskType.VET -> Pair(Pink100, Pink50)
     }
 
-
-    val (title, subTitle) = when (task.type) {
-        TaskType.FEED -> {
-            val d = task.details as? FoodDetails
-            "Feed $petName" to (d?.let { "${it.amount} of ${it.brand}" }
-                ?: "")
-        }
-
-        TaskType.MEDICATION -> {
-            val d = task.details as? MedDetails
-            "$petName's Medication" to (d?.let {
-                if (it.medicineName.isBlank()) return@let ""
-                "${it.medicineName} • ${it.dosage}"
-            } ?: "")
-        }
-
-        TaskType.WALK -> {
-            val d = task.details as? WalkDetails
-            "Walk with $petName" to (d?.let {
-                "${it.durationMinutes} min • ${it.location}"
-            } ?: ""
-                    )
-        }
-
-        TaskType.VET -> {
-            val d = task.details as? VetDetails
-            "Vet Visit for $petName" to (d?.let { "${it.clinicName} • ${it.reason}" }
-                ?: "")
-        }
-    }
-
     val icon = when (task.type) {
         TaskType.FEED -> R.drawable.ic_task_feed
         TaskType.MEDICATION -> R.drawable.ic_task_meds
@@ -120,6 +87,8 @@ fun PetTaskCard(
         TaskType.VET -> R.drawable.ic_task_vet
 
     }
+
+    val (title, subTitle) = getPetTaskTitle(task,petName)
 
     Row(
         modifier = modifier

@@ -365,14 +365,12 @@ fun AddTaskScreen(
                     title = "Enable Notifications",
                     message = "Allow PetPal to send reminders so you never miss a pet task.",
                     onConfirm = {
-                        // 1. Launch the intent to request the exact alarm permission
+                        event(AddTaskUserIntent.DismissExactAlarmDialog) // dismiss first to avoid flicker
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             exactAlarmSettingsLauncher.launch(
                                 Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
                             )
                         }
-                        // 2. Trigger the event to update state and hide the dialog
-                        event(AddTaskUserIntent.DismissExactAlarmDialog)
                     },
                     onDismiss = { event(AddTaskUserIntent.DismissExactAlarmDialog) }
                 )

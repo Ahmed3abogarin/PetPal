@@ -7,16 +7,18 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,12 +28,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun FlippingText(
+    modifier: Modifier = Modifier,
     texts: List<String>,
+    specieFontWeight: FontWeight = FontWeight.Medium,
+    fontWeight: FontWeight = FontWeight.SemiBold,
+    textColor: Color = MainPurple,
     interval: Long = 2000L
 ) {
     if (texts.isEmpty()) return
 
-    var index by remember { mutableStateOf(0) }
+    var index by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -50,13 +56,13 @@ fun FlippingText(
     ) { text ->
         val isSpecie = text.startsWith("Specie: ")
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = modifier.fillMaxWidth(),verticalAlignment = Alignment.CenterVertically) {
 
             if (isSpecie) {
                 Text(
                     text = "Specie:",
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = specieFontWeight,
                     color = TextPurple
                 )
 
@@ -64,15 +70,15 @@ fun FlippingText(
                     modifier = Modifier.padding(start = 3.dp),
                     text = text.removePrefix("Specie: "),
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = fontWeight,
                     color = MainPurple
                 )
             } else {
                 Text(
                     text = text,
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MainPurple
+                    fontWeight = fontWeight,
+                    color = textColor
                 )
             }
         }

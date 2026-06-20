@@ -147,7 +147,7 @@ fun PetCard(
                     if (task != null) {
                         list.add(taskTxt)
                     }
-                    FlippingText(list)
+                    FlippingText(texts = list)
                 }
             }
             Spacer(modifier = Modifier.height(26.dp))

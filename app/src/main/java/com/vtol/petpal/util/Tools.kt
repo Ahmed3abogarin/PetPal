@@ -2,12 +2,26 @@ package com.vtol.petpal.util
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.vtol.petpal.domain.model.tasks.TaskType
+import com.vtol.petpal.domain.model.tasks.TaskUi
+import com.vtol.petpal.domain.model.tasks.details.FoodDetails
+import com.vtol.petpal.domain.model.tasks.details.MedDetails
+import com.vtol.petpal.domain.model.tasks.details.VetDetails
+import com.vtol.petpal.domain.model.tasks.details.WalkDetails
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -102,3 +116,76 @@ fun Context.getVersionName(): String{
 }
 
 fun String.truncate(limit: Int) = if (length > limit) take(limit) + "…" else this
+
+fun getGreeting(): String {
+    val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+    return when (hour) {
+        in 5..11 -> "Good Morning️"
+        in 12..16 -> "Good Afternoon"
+        in 17..20 -> "Good Evening"
+        else -> "Good Night"
+    }
+}
+
+fun Modifier.dashedCircleBorder(
+    color: Color,
+    strokeWidth: Dp = 2.dp
+) = drawBehind {
+    drawCircle(
+        color = color,
+        radius = size.minDimension / 2 - strokeWidth.toPx() / 2,
+        style = Stroke(
+            width = strokeWidth.toPx(),
+            pathEffect = PathEffect.dashPathEffect(
+                floatArrayOf(18f, 18f)
+            )
+        )
+    )
+}
+
+fun getPetTaskTitle(task: TaskUi, petName: String): Pair<String, String> {
+    return when (task.type) {
+        TaskType.FEED -> {
+            val d = task.details as? FoodDetails
+            "Feed $petName" to (d?.let { "${it.amount} of ${it.brand}" }
+                ?: "")
+        }
+
+        TaskType.MEDICATION -> {
+            val d = task.details as? MedDetails
+            "$petName's Medication" to (d?.let {
+                if (it.medicineName.isBlank()) return@let ""
+                "${it.medicineName} • ${it.dosage}"
+            } ?: "")
+        }
+
+        TaskType.WALK -> {
+            val d = task.details as? WalkDetails
+            "Walk with $petName" to (d?.let {
+                "${it.durationMinutes} min • ${it.location}"
+            } ?: ""
+                    )
+        }
+
+        TaskType.VET -> {
+            val d = task.details as? VetDetails
+            "Vet Visit for $petName" to (d?.let { "${it.clinicName} • ${it.reason}" }
+                ?: "")
+        }
+    }
+}
+
+fun Long.toFriendlyDate(): String {
+    val taskDate = Instant.ofEpochMilli(this)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+
+    return when (taskDate) {
+        LocalDate.now() -> "Today"
+        LocalDate.now().plusDays(1) -> "Tomorrow"
+        else -> taskDate.format(
+            DateTimeFormatter.ofPattern("EEE, MMM d")
+        )
+    }
+}
