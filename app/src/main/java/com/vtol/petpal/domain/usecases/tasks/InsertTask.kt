@@ -10,13 +10,13 @@ class InsertTask(
     private val notificationRepository: NotificationRepository
 ) {
     suspend operator fun invoke(task: Task, petName: String){
-        val insertedId = appRepository.insertTask(task)
+        appRepository.insertTask(task)
 
         val notificationsEnabled = notificationRepository.isNotificationsEnabled().first()
 
         if (notificationsEnabled) {
             notificationRepository.scheduleTaskNotification(
-                task.copy(id = insertedId.toString()),
+                task,
                 petName
             )
         }

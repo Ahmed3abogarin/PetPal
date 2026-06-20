@@ -67,6 +67,7 @@ fun PetDetailsScreen(
     state: DetailsState,
     galleryUiState: GalleryUiState,
     galleryEvent: (GalleryEvent) -> Unit,
+    navigateToPremium: () -> Unit,
     navigateUp: () -> Unit,
     logScreenView: (String) -> Unit,
     onRangeChanged: (WeightRange) -> Unit,
@@ -258,7 +259,7 @@ fun PetDetailsScreen(
                         state = state
                     )
 
-                    2 -> GalleryTab(isPremium = isPremium, state = galleryUiState, event = galleryEvent) { context.showToast() }
+                    2 -> GalleryTab(isPremium = isPremium, state = galleryUiState, event = galleryEvent) { navigateToPremium() }
                 }
             }
         }
@@ -286,7 +287,8 @@ fun PetScreenPreview() {
             onRangeChanged = {},
             navigateToEdit = {},
             logScreenView = {},
-            isPremium = false
+            isPremium = false,
+            navigateToPremium = {}
         )
     }
 }

@@ -23,8 +23,9 @@ class TaskAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var appUseCases: AppUseCases
 
+    // TaskAlarmReceiver.kt — fix both toInt() calls and valueOf crash
+
     override fun onReceive(context: Context, intent: Intent) {
-        // goAsync() keeps the Receiver alive while Coroutines do background database work
         val pendingResult = goAsync()
 
         val id = intent.getStringExtra("task_id") ?: ""
@@ -35,31 +36,28 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // 1. Fetch the task from the database
-                // Note: Make sure getTaskById exists in your AppUseCases and returns a single TaskUi or Entity!
                 val task = appUseCases.getTaskById(id)
 
-                // 2. Convert trigger time to LocalDate to check exclusions
                 val triggerDate = Instant.ofEpochMilli(oldTime)
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
 
-                // 3. Show notification ONLY if task exists and this date isn't deleted
                 if (task != null && !task.deletedDates.contains(triggerDate)) {
-                    val taskType = TaskType.valueOf(type)
+                    // Safe enum parsing — won't crash on unknown values
+                    val taskType = runCatching { TaskType.valueOf(type) }.getOrNull()
 
-                    val (title, message) = when(taskType) {
-                        TaskType.FEED -> Pair("\uD83C\uDF56 Feeding Reminder","It's time to feed $name. Scheduled for ${oldTime.toTimeString()}.")
-                        TaskType.WALK -> Pair("\uD83D\uDC15 Walk Reminder","Walk $name is due now.")
-                        TaskType.MEDICATION -> Pair("\uD83D\uDC8A Medication Reminder", "It's time to give $name their medication.")
-                        TaskType.VET -> Pair("\uD83E\uDE7A Vet Reminder", "$name has a scheduled vet task.")
+                    if (taskType != null) {
+                        val (title, message) = when (taskType) {
+                            TaskType.FEED -> Pair("🍖 Feeding Reminder", "It's time to feed $name. Scheduled for ${oldTime.toTimeString()}.")
+                            TaskType.WALK -> Pair("🐕 Walk Reminder", "Walk $name is due now.")
+                            TaskType.MEDICATION -> Pair("💊 Medication Reminder", "It's time to give $name their medication.")
+                            TaskType.VET -> Pair("🩺 Vet Reminder", "$name has a scheduled vet task.")
+                        }
+
+                        NotificationHelper.showNotification(context, taskId = id, title = title, message = message)
                     }
-
-                    // Show the notification
-                    NotificationHelper.showNotification(context, taskId = id, title = title, message = message)
                 }
 
-                // 4. Always calculate and schedule next trigger time so the alarm chain doesn't break
                 val nextTime = when (repeat) {
                     "Daily" -> oldTime + AlarmManager.INTERVAL_DAY
                     "Weekly" -> oldTime + AlarmManager.INTERVAL_DAY * 7
@@ -70,7 +68,6 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     else -> null
                 }
 
-                // Reschedule the alarm if repeat is set
                 if (nextTime != null) {
                     val newIntent = Intent(context, TaskAlarmReceiver::class.java).apply {
                         putExtra("task_id", id)
@@ -80,8 +77,9 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                         putExtra("trigger_time", nextTime)
                     }
 
+                    // Use hashCode() instead of toInt() — safe for UUIDs
                     val pendingIntent = PendingIntent.getBroadcast(
-                        context, id.toInt(), newIntent,
+                        context, id.hashCode(), newIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
 
@@ -93,7 +91,6 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     )
                 }
             } finally {
-                // Crucial: Tell Android the background work is done, preventing memory leaks/crashes
                 pendingResult.finish()
             }
         }

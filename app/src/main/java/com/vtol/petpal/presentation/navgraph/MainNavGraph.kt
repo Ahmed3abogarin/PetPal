@@ -249,6 +249,9 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 },
                 logScreenView = {
                     petDetailsVM.logScreenView(it)
+                },
+                navigateToPremium = {
+                    navController.navigate(Routes.PremiumScreen.route)
                 }
             )
         }

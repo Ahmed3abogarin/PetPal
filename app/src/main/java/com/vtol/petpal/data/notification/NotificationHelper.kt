@@ -36,6 +36,7 @@ object NotificationHelper {
     }
 
     fun showNotification(context: Context, taskId: String, title: String, message: String) {
+        val notificationId = taskId.hashCode()
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_pets_filled)
             .setContentTitle(title)
@@ -49,7 +50,7 @@ object NotificationHelper {
                 context, Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            NotificationManagerCompat.from(context).notify(taskId.toInt(), notification)
+            NotificationManagerCompat.from(context).notify(notificationId, notification)
         }
     }
 }

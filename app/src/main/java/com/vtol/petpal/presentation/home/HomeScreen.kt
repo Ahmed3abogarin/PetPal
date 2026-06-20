@@ -172,7 +172,7 @@ fun HomeScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(32.dp),
+                            .padding(horizontal = 32.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
@@ -213,6 +213,7 @@ fun HomeScreen(
                             petMap = state.petMap,
                             onToggleClicked = onToggleClicked
                         )
+                        Spacer(modifier= Modifier.height(26.dp))
                     }
                 }
 
@@ -220,7 +221,6 @@ fun HomeScreen(
                 if (state.upcomingTasks.isNotEmpty()) {
                     // The header
                     item {
-                        Spacer(modifier= Modifier.height(26.dp))
                         Text(
                             modifier = Modifier.padding(start = 16.dp),
                             text = "Upcoming Tasks",

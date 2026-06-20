@@ -208,7 +208,7 @@ fun PremiumScreen(
                         Text(
                             text = when (state.selectedPlan) {
                                 PremiumPlan.MONTHLY -> "Start Monthly – $4.99/mo"
-                                PremiumPlan.YEARLY -> "Start Yearly – $29.99/yr"
+                                PremiumPlan.YEARLY -> "Start Yearly – $19.9 9/yr"
                             },
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 16.sp

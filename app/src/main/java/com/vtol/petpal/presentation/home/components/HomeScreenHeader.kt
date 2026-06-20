@@ -128,7 +128,8 @@ fun HomeScreenHeader(
                     model = ImageRequest.Builder(LocalContext.current).data(userImg).build(),
                     contentScale = ContentScale.Crop,
                     contentDescription = "user image",
-                    placeholder = painterResource(R.drawable.img_profile_ph)
+                    placeholder = painterResource(R.drawable.img_profile_ph),
+                    error = painterResource(R.drawable.img_profile_ph)
                 )
             }
         }
